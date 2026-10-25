@@ -1,4 +1,17 @@
+/*
+ * ------------------------------------------------------------
+ * Lelap theme — generated from the Figma design. Edit in the
+ * theme editor; changes made there are saved back to this file.
+ * ------------------------------------------------------------
+ */
 {
-  "sections": { "main": { "type": "main-register", "settings": {} } },
-  "order": ["main"]
+  "sections": {
+    "main": {
+      "type": "main-register",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
 }

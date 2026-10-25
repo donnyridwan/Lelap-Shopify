@@ -1,19 +1,74 @@
+/*
+ * ------------------------------------------------------------
+ * Lelap theme — generated from the Figma design. Edit in the
+ * theme editor; changes made there are saved back to this file.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "main-search",
       "blocks": {
-        "topic-1": { "type": "topic", "settings": { "label": "Falling asleep" } },
-        "topic-2": { "type": "topic", "settings": { "label": "Staying asleep" } },
-        "topic-3": { "type": "topic", "settings": { "label": "Travel & shifts" } },
-        "topic-4": { "type": "topic", "settings": { "label": "Stress & mind" } },
-        "topic-5": { "type": "topic", "settings": { "label": "Melatonin 101" } },
-        "popular-1": { "type": "popular", "settings": { "fallback": "photo-phone.jpg", "tag": "Falling asleep", "title": "7 small changes that help melatonin work better" } },
-        "popular-2": { "type": "popular", "settings": { "fallback": "photo-tea.jpg", "tag": "Stress & mind", "title": "Why your brain gets loud at bedtime, and what helps" } }
+        "topic-1": {
+          "type": "topic",
+          "settings": {
+            "label": "Falling asleep"
+          }
+        },
+        "topic-2": {
+          "type": "topic",
+          "settings": {
+            "label": "Staying asleep"
+          }
+        },
+        "topic-3": {
+          "type": "topic",
+          "settings": {
+            "label": "Travel & shifts"
+          }
+        },
+        "topic-4": {
+          "type": "topic",
+          "settings": {
+            "label": "Stress & mind"
+          }
+        },
+        "topic-5": {
+          "type": "topic",
+          "settings": {
+            "label": "Melatonin 101"
+          }
+        },
+        "popular-1": {
+          "type": "popular",
+          "settings": {
+            "fallback": "photo-phone.jpg",
+            "tag": "Falling asleep",
+            "title": "7 small changes that help melatonin work better"
+          }
+        },
+        "popular-2": {
+          "type": "popular",
+          "settings": {
+            "fallback": "photo-tea.jpg",
+            "tag": "Stress & mind",
+            "title": "Why your brain gets loud at bedtime, and what helps"
+          }
+        }
       },
-      "block_order": ["topic-1", "topic-2", "topic-3", "topic-4", "topic-5", "popular-1", "popular-2"],
+      "block_order": [
+        "topic-1",
+        "topic-2",
+        "topic-3",
+        "topic-4",
+        "topic-5",
+        "popular-1",
+        "popular-2"
+      ],
       "settings": {}
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }

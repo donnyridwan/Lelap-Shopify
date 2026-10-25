@@ -1,3 +1,9 @@
+/*
+ * ------------------------------------------------------------
+ * Lelap theme — generated from the Figma design. Edit in the
+ * theme editor; changes made there are saved back to this file.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -7,15 +13,60 @@
         "notice": "Template. Final wording must be reviewed by your legal counsel before launch."
       },
       "blocks": {
-        "p1": { "type": "policy", "settings": { "title": "Terms of Service", "link": "/pages/terms-of-service" } },
-        "p2": { "type": "policy", "settings": { "title": "Privacy Policy", "link": "/policies/privacy-policy" } },
-        "p3": { "type": "policy", "settings": { "title": "Telehealth Consent", "link": "/pages/telehealth-consent" } },
-        "p4": { "type": "policy", "settings": { "title": "Subscription Terms", "link": "/policies/subscription-policy" } },
-        "p5": { "type": "policy", "settings": { "title": "Shipping Policy", "link": "/policies/shipping-policy" } },
-        "p6": { "type": "policy", "settings": { "title": "Refunds & 30-Night Promise", "link": "/policies/refund-policy" } }
+        "p1": {
+          "type": "policy",
+          "settings": {
+            "title": "Terms of Service",
+            "link": "/pages/terms-of-service"
+          }
+        },
+        "p2": {
+          "type": "policy",
+          "settings": {
+            "title": "Privacy Policy",
+            "link": "/policies/privacy-policy"
+          }
+        },
+        "p3": {
+          "type": "policy",
+          "settings": {
+            "title": "Telehealth Consent",
+            "link": "/pages/telehealth-consent"
+          }
+        },
+        "p4": {
+          "type": "policy",
+          "settings": {
+            "title": "Subscription Terms",
+            "link": "/policies/subscription-policy"
+          }
+        },
+        "p5": {
+          "type": "policy",
+          "settings": {
+            "title": "Shipping Policy",
+            "link": "/policies/shipping-policy"
+          }
+        },
+        "p6": {
+          "type": "policy",
+          "settings": {
+            "title": "Refunds & 30-Night Promise",
+            "link": "/policies/refund-policy"
+          }
+        }
       },
-      "block_order": ["p1", "p2", "p3", "p4", "p5", "p6"]
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6"
+      ]
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }

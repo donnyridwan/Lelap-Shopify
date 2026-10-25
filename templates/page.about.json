@@ -1,3 +1,9 @@
+/*
+ * ------------------------------------------------------------
+ * Lelap theme — generated from the Figma design. Edit in the
+ * theme editor; changes made there are saved back to this file.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
@@ -14,11 +20,33 @@
     "why": {
       "type": "numbered-cards",
       "blocks": {
-        "c1": { "type": "card", "settings": { "title": "The problem", "text": "Many adults struggle with sleep, and most self-treat with whatever is on the shelf, with no one to ask about dose or safety." } },
-        "c2": { "type": "card", "settings": { "title": "Our answer", "text": "A short assessment, a licensed doctor and a low-dose formula matched to your sleep problem." } },
-        "c3": { "type": "card", "settings": { "title": "Our promise", "text": "If a doctor says lelap isn’t right for you, you get every cent back." } }
+        "c1": {
+          "type": "card",
+          "settings": {
+            "title": "The problem",
+            "text": "Many adults struggle with sleep, and most self-treat with whatever is on the shelf, with no one to ask about dose or safety."
+          }
+        },
+        "c2": {
+          "type": "card",
+          "settings": {
+            "title": "Our answer",
+            "text": "A short assessment, a licensed doctor and a low-dose formula matched to your sleep problem."
+          }
+        },
+        "c3": {
+          "type": "card",
+          "settings": {
+            "title": "Our promise",
+            "text": "If a doctor says lelap isn’t right for you, you get every cent back."
+          }
+        }
       },
-      "block_order": ["c1", "c2", "c3"]
+      "block_order": [
+        "c1",
+        "c2",
+        "c3"
+      ]
     },
     "founder": {
       "type": "founder-note",
@@ -30,14 +58,50 @@
     },
     "values": {
       "type": "icon-cards",
-      "settings": { "style": "outline", "heading": "What we stand for" },
-      "blocks": {
-        "v1": { "type": "card", "settings": { "icon": "drop", "title": "Less, not more", "text": "We use the lowest dose that works and never upsell a higher one." } },
-        "v2": { "type": "card", "settings": { "icon": "steth", "title": "Doctors decide", "text": "Medical calls are made by licensed doctors, never by marketing." } },
-        "v3": { "type": "card", "settings": { "icon": "eye", "title": "Radically clear", "text": "Every ingredient and amount is on the label and on this site." } },
-        "v4": { "type": "card", "settings": { "icon": "heart", "title": "Sleep is personal", "text": "Four formulas, because four kinds of nights need different help." } }
+      "settings": {
+        "style": "outline",
+        "heading": "What we stand for"
       },
-      "block_order": ["v1", "v2", "v3", "v4"]
+      "blocks": {
+        "v1": {
+          "type": "card",
+          "settings": {
+            "icon": "drop",
+            "title": "Less, not more",
+            "text": "We use the lowest dose that works and never upsell a higher one."
+          }
+        },
+        "v2": {
+          "type": "card",
+          "settings": {
+            "icon": "steth",
+            "title": "Doctors decide",
+            "text": "Medical calls are made by licensed doctors, never by marketing."
+          }
+        },
+        "v3": {
+          "type": "card",
+          "settings": {
+            "icon": "eye",
+            "title": "Radically clear",
+            "text": "Every ingredient and amount is on the label and on this site."
+          }
+        },
+        "v4": {
+          "type": "card",
+          "settings": {
+            "icon": "heart",
+            "title": "Sleep is personal",
+            "text": "Four formulas, because four kinds of nights need different help."
+          }
+        }
+      },
+      "block_order": [
+        "v1",
+        "v2",
+        "v3",
+        "v4"
+      ]
     },
     "cta": {
       "type": "cta-center",
@@ -52,5 +116,11 @@
       }
     }
   },
-  "order": ["hero", "why", "founder", "values", "cta"]
+  "order": [
+    "hero",
+    "why",
+    "founder",
+    "values",
+    "cta"
+  ]
 }

@@ -37,5 +37,7 @@ for n in names:
     tpl['sections'][key] = section_from_preset(n)
     tpl['order'].append(key)
 with open(os.path.join(root, out), 'w') as f:
+    f.write('/*\n * Lelap theme — generated from the Figma design. Edit in the theme editor.\n */\n')
     json.dump(tpl, f, indent=2, ensure_ascii=False)
+    f.write('\n')
 print('wrote', out, len(names), 'sections')

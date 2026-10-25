@@ -1,3 +1,9 @@
+/*
+ * ------------------------------------------------------------
+ * Lelap theme — generated from the Figma design. Edit in the
+ * theme editor; changes made there are saved back to this file.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -12,18 +18,82 @@
         "per_page": 6
       },
       "blocks": {
-        "a1": { "type": "fallback", "settings": { "title": "7 small changes that help melatonin work better", "tag": "Falling asleep", "read": "6 min read", "excerpt": "Timing, light and what you eat after 8pm all change how well a low dose works. Here’s what our doctors tell patients first.", "image_asset": "photo-phone-feature.jpg" } },
-        "a2": { "type": "fallback", "settings": { "title": "How to beat jet lag on a Jakarta to Tokyo flight", "tag": "Travel & shifts", "read": "8 min read", "excerpt": "", "image_asset": "photo-plane.jpg" } },
-        "a3": { "type": "fallback", "settings": { "title": "Why your brain gets loud at bedtime, and what helps", "tag": "Stress & mind", "read": "5 min read", "excerpt": "", "image_asset": "photo-tea-card.jpg" } },
-        "a4": { "type": "fallback", "settings": { "title": "Waking up at 3am? Here’s what’s usually behind it", "tag": "Staying asleep", "read": "7 min read", "excerpt": "", "image_asset": "photo-bedroom-card.jpg" } },
-        "a5": { "type": "fallback", "settings": { "title": "Melatonin, chamomile and L-theanine: what each one does", "tag": "Melatonin 101", "read": "6 min read", "excerpt": "", "image_asset": "photo-ingredients-card.jpg" } },
-        "a6": { "type": "fallback", "settings": { "title": "The 30-minute wind-down routine our doctors recommend", "tag": "Falling asleep", "read": "4 min read", "excerpt": "", "image_asset": "photo-morning-card.jpg" } }
+        "a1": {
+          "type": "fallback",
+          "settings": {
+            "title": "7 small changes that help melatonin work better",
+            "tag": "Falling asleep",
+            "read": "6 min read",
+            "excerpt": "Timing, light and what you eat after 8pm all change how well a low dose works. Here’s what our doctors tell patients first.",
+            "image_asset": "photo-phone-feature.jpg"
+          }
+        },
+        "a2": {
+          "type": "fallback",
+          "settings": {
+            "title": "How to beat jet lag on a Jakarta to Tokyo flight",
+            "tag": "Travel & shifts",
+            "read": "8 min read",
+            "excerpt": "",
+            "image_asset": "photo-plane.jpg"
+          }
+        },
+        "a3": {
+          "type": "fallback",
+          "settings": {
+            "title": "Why your brain gets loud at bedtime, and what helps",
+            "tag": "Stress & mind",
+            "read": "5 min read",
+            "excerpt": "",
+            "image_asset": "photo-tea-card.jpg"
+          }
+        },
+        "a4": {
+          "type": "fallback",
+          "settings": {
+            "title": "Waking up at 3am? Here’s what’s usually behind it",
+            "tag": "Staying asleep",
+            "read": "7 min read",
+            "excerpt": "",
+            "image_asset": "photo-bedroom-card.jpg"
+          }
+        },
+        "a5": {
+          "type": "fallback",
+          "settings": {
+            "title": "Melatonin, chamomile and L-theanine: what each one does",
+            "tag": "Melatonin 101",
+            "read": "6 min read",
+            "excerpt": "",
+            "image_asset": "photo-ingredients-card.jpg"
+          }
+        },
+        "a6": {
+          "type": "fallback",
+          "settings": {
+            "title": "The 30-minute wind-down routine our doctors recommend",
+            "tag": "Falling asleep",
+            "read": "4 min read",
+            "excerpt": "",
+            "image_asset": "photo-morning-card.jpg"
+          }
+        }
       },
-      "block_order": ["a1", "a2", "a3", "a4", "a5", "a6"]
+      "block_order": [
+        "a1",
+        "a2",
+        "a3",
+        "a4",
+        "a5",
+        "a6"
+      ]
     },
     "newsletter": {
       "type": "blog-newsletter"
     }
   },
-  "order": ["main", "newsletter"]
+  "order": [
+    "main",
+    "newsletter"
+  ]
 }

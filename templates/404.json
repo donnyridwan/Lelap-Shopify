@@ -1,16 +1,53 @@
+/*
+ * ------------------------------------------------------------
+ * Lelap theme — generated from the Figma design. Edit in the
+ * theme editor; changes made there are saved back to this file.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "main-404",
       "blocks": {
-        "link-1": { "type": "link", "settings": { "label": "Shop all formulas", "url": "/collections/all" } },
-        "link-2": { "type": "link", "settings": { "label": "How lelap works", "url": "/pages/science-doctors" } },
-        "link-3": { "type": "link", "settings": { "label": "Sleep library", "url": "/blogs/sleep-library" } },
-        "link-4": { "type": "link", "settings": { "label": "Help center", "url": "/pages/help" } }
+        "link-1": {
+          "type": "link",
+          "settings": {
+            "label": "Shop all formulas",
+            "url": "/collections/all"
+          }
+        },
+        "link-2": {
+          "type": "link",
+          "settings": {
+            "label": "How lelap works",
+            "url": "/pages/science-doctors"
+          }
+        },
+        "link-3": {
+          "type": "link",
+          "settings": {
+            "label": "Sleep library",
+            "url": "/blogs/sleep-library"
+          }
+        },
+        "link-4": {
+          "type": "link",
+          "settings": {
+            "label": "Help center",
+            "url": "/pages/help"
+          }
+        }
       },
-      "block_order": ["link-1", "link-2", "link-3", "link-4"],
+      "block_order": [
+        "link-1",
+        "link-2",
+        "link-3",
+        "link-4"
+      ],
       "settings": {}
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }

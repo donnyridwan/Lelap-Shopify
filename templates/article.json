@@ -1,3 +1,9 @@
+/*
+ * ------------------------------------------------------------
+ * Lelap theme — generated from the Figma design. Edit in the
+ * theme editor; changes made there are saved back to this file.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -13,14 +19,48 @@
     },
     "related": {
       "type": "article-related",
-      "settings": { "heading": "Keep reading", "limit": 3 },
-      "blocks": {
-        "r1": { "type": "fallback", "settings": { "title": "How to beat jet lag on a Jakarta to Tokyo flight", "tag": "Travel & shifts", "read": "8 min read", "image_asset": "photo-plane.jpg" } },
-        "r2": { "type": "fallback", "settings": { "title": "Why your brain gets loud at bedtime, and what helps", "tag": "Stress & mind", "read": "5 min read", "image_asset": "photo-tea-card.jpg" } },
-        "r3": { "type": "fallback", "settings": { "title": "Waking up at 3am? Here’s what’s usually behind it", "tag": "Staying asleep", "read": "7 min read", "image_asset": "photo-bedroom-card.jpg" } }
+      "settings": {
+        "heading": "Keep reading",
+        "limit": 3
       },
-      "block_order": ["r1", "r2", "r3"]
+      "blocks": {
+        "r1": {
+          "type": "fallback",
+          "settings": {
+            "title": "How to beat jet lag on a Jakarta to Tokyo flight",
+            "tag": "Travel & shifts",
+            "read": "8 min read",
+            "image_asset": "photo-plane.jpg"
+          }
+        },
+        "r2": {
+          "type": "fallback",
+          "settings": {
+            "title": "Why your brain gets loud at bedtime, and what helps",
+            "tag": "Stress & mind",
+            "read": "5 min read",
+            "image_asset": "photo-tea-card.jpg"
+          }
+        },
+        "r3": {
+          "type": "fallback",
+          "settings": {
+            "title": "Waking up at 3am? Here’s what’s usually behind it",
+            "tag": "Staying asleep",
+            "read": "7 min read",
+            "image_asset": "photo-bedroom-card.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "r1",
+        "r2",
+        "r3"
+      ]
     }
   },
-  "order": ["main", "related"]
+  "order": [
+    "main",
+    "related"
+  ]
 }

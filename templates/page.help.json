@@ -1,3 +1,9 @@
+/*
+ * ------------------------------------------------------------
+ * Lelap theme — generated from the Figma design. Edit in the
+ * theme editor; changes made there are saved back to this file.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "help": {
@@ -14,41 +20,233 @@
         "contact_link": "https://wa.me/6281100005327"
       },
       "blocks": {
-        "t1": { "type": "topic", "settings": { "icon": "box", "title": "Orders & shipping", "text": "Tracking, delivery times, missing parcels" } },
-        "t2": { "type": "topic", "settings": { "icon": "refresh", "title": "Subscriptions", "text": "Skip, pause, change formula or cancel" } },
-        "t3": { "type": "topic", "settings": { "icon": "steth", "title": "Doctor review", "text": "How approval works and what doctors check" } },
-        "t4": { "type": "topic", "settings": { "icon": "card", "title": "Payments", "text": "Cards, Apple Pay, Google Pay, PayPal and Klarna" } },
-        "t5": { "type": "topic", "settings": { "icon": "undo", "title": "Returns & refunds", "text": "30-night promise and refund timelines" } },
-        "t6": { "type": "topic", "settings": { "icon": "user", "title": "Account", "text": "Login, password and personal data" } },
-        "f1": { "type": "faq", "settings": { "question": "How do I skip or pause my subscription?", "answer": "<p>Go to Account, then Overview, and choose Skip next delivery or Pause. Changes made at least 2 days before your delivery date apply right away.</p>", "topic": "Subscriptions", "keywords": "skip pause delivery", "popular": true } },
-        "f2": { "type": "faq", "settings": { "question": "What happens if my doctor doesn’t approve?", "answer": "<p>If a doctor decides lelap isn’t right for you, we refund the full amount within 3 working days.</p>", "topic": "Doctor review", "keywords": "declined refund", "popular": true } },
-        "f3": { "type": "faq", "settings": { "question": "When will my order arrive?", "answer": "<p>Free regular delivery across Indonesia in 2–4 working days. Express next-day delivery in Jabodetabek for $5.</p>", "topic": "Orders & shipping", "keywords": "shipping tracking", "popular": true } },
-        "f4": { "type": "faq", "settings": { "question": "Can I change my formula later?", "answer": "<p>Yes. Switching formulas is free. Your doctor reviews the change before your next delivery.</p>", "topic": "Subscriptions", "keywords": "switch", "popular": true } },
-        "f5": { "type": "faq", "settings": { "question": "How does the 30-night sleep promise work?", "answer": "<p>Not sleeping better after 30 nights? We refund your first order. No need to send it back.</p>", "topic": "Returns & refunds", "keywords": "refund guarantee return", "popular": true } },
-        "f6": { "type": "faq", "settings": { "question": "Can I change my delivery date?", "answer": "<p>Yes. Pick any date in the next 60 days from Change delivery date in your account. We charge 2 days before it ships.</p>", "topic": "Subscriptions", "keywords": "reschedule", "popular": false } },
-        "f7": { "type": "faq", "settings": { "question": "What if I’m travelling when my pouch arrives?", "answer": "<p>Skip a delivery, move the date, or send it to another address for that month only.</p>", "topic": "Orders & shipping", "keywords": "travel holiday address delivery", "popular": false } },
-        "f8": { "type": "faq", "settings": { "question": "Does skipping affect my doctor check-in?", "answer": "<p>No. Your check-in stays on schedule. If you pause for longer than a month, it moves with your pause.</p>", "topic": "Doctor review", "keywords": "", "popular": false } }
+        "t1": {
+          "type": "topic",
+          "settings": {
+            "icon": "box",
+            "title": "Orders & shipping",
+            "text": "Tracking, delivery times, missing parcels"
+          }
+        },
+        "t2": {
+          "type": "topic",
+          "settings": {
+            "icon": "refresh",
+            "title": "Subscriptions",
+            "text": "Skip, pause, change formula or cancel"
+          }
+        },
+        "t3": {
+          "type": "topic",
+          "settings": {
+            "icon": "steth",
+            "title": "Doctor review",
+            "text": "How approval works and what doctors check"
+          }
+        },
+        "t4": {
+          "type": "topic",
+          "settings": {
+            "icon": "card",
+            "title": "Payments",
+            "text": "Cards, Apple Pay, Google Pay, PayPal and Klarna"
+          }
+        },
+        "t5": {
+          "type": "topic",
+          "settings": {
+            "icon": "undo",
+            "title": "Returns & refunds",
+            "text": "30-night promise and refund timelines"
+          }
+        },
+        "t6": {
+          "type": "topic",
+          "settings": {
+            "icon": "user",
+            "title": "Account",
+            "text": "Login, password and personal data"
+          }
+        },
+        "f1": {
+          "type": "faq",
+          "settings": {
+            "question": "How do I skip or pause my subscription?",
+            "answer": "<p>Go to Account, then Overview, and choose Skip next delivery or Pause. Changes made at least 2 days before your delivery date apply right away.</p>",
+            "topic": "Subscriptions",
+            "keywords": "skip pause delivery",
+            "popular": true
+          }
+        },
+        "f2": {
+          "type": "faq",
+          "settings": {
+            "question": "What happens if my doctor doesn’t approve?",
+            "answer": "<p>If a doctor decides lelap isn’t right for you, we refund the full amount within 3 working days.</p>",
+            "topic": "Doctor review",
+            "keywords": "declined refund",
+            "popular": true
+          }
+        },
+        "f3": {
+          "type": "faq",
+          "settings": {
+            "question": "When will my order arrive?",
+            "answer": "<p>Free regular delivery across Indonesia in 2–4 working days. Express next-day delivery in Jabodetabek for $5.</p>",
+            "topic": "Orders & shipping",
+            "keywords": "shipping tracking",
+            "popular": true
+          }
+        },
+        "f4": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I change my formula later?",
+            "answer": "<p>Yes. Switching formulas is free. Your doctor reviews the change before your next delivery.</p>",
+            "topic": "Subscriptions",
+            "keywords": "switch",
+            "popular": true
+          }
+        },
+        "f5": {
+          "type": "faq",
+          "settings": {
+            "question": "How does the 30-night sleep promise work?",
+            "answer": "<p>Not sleeping better after 30 nights? We refund your first order. No need to send it back.</p>",
+            "topic": "Returns & refunds",
+            "keywords": "refund guarantee return",
+            "popular": true
+          }
+        },
+        "f6": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I change my delivery date?",
+            "answer": "<p>Yes. Pick any date in the next 60 days from Change delivery date in your account. We charge 2 days before it ships.</p>",
+            "topic": "Subscriptions",
+            "keywords": "reschedule",
+            "popular": false
+          }
+        },
+        "f7": {
+          "type": "faq",
+          "settings": {
+            "question": "What if I’m travelling when my pouch arrives?",
+            "answer": "<p>Skip a delivery, move the date, or send it to another address for that month only.</p>",
+            "topic": "Orders & shipping",
+            "keywords": "travel holiday address delivery",
+            "popular": false
+          }
+        },
+        "f8": {
+          "type": "faq",
+          "settings": {
+            "question": "Does skipping affect my doctor check-in?",
+            "answer": "<p>No. Your check-in stays on schedule. If you pause for longer than a month, it moves with your pause.</p>",
+            "topic": "Doctor review",
+            "keywords": "",
+            "popular": false
+          }
+        }
       },
-      "block_order": ["t1", "t2", "t3", "t4", "t5", "t6", "f1", "f6", "f7", "f8", "f2", "f3", "f4", "f5"]
+      "block_order": [
+        "t1",
+        "t2",
+        "t3",
+        "t4",
+        "t5",
+        "t6",
+        "f1",
+        "f6",
+        "f7",
+        "f8",
+        "f2",
+        "f3",
+        "f4",
+        "f5"
+      ]
     },
     "policies": {
       "type": "help-policies",
       "blocks": {
-        "p1": { "type": "policy", "settings": { "title": "Shipping", "text": "Free regular delivery across Indonesia in 2–4 working days. Express next-day delivery in Jabodetabek for $5.", "link_label": "Read full policy", "link": "/policies/shipping-policy" } },
-        "p2": { "type": "policy", "settings": { "title": "30-night promise", "text": "Not sleeping better after 30 nights? We refund your first order. No need to send it back.", "link_label": "Read full policy", "link": "/policies/refund-policy" } },
-        "p3": { "type": "policy", "settings": { "title": "Doctor declines", "text": "If a doctor decides lelap isn’t right for you, we refund the full amount within 3 working days.", "link_label": "Read full policy", "link": "/policies/refund-policy" } }
+        "p1": {
+          "type": "policy",
+          "settings": {
+            "title": "Shipping",
+            "text": "Free regular delivery across Indonesia in 2–4 working days. Express next-day delivery in Jabodetabek for $5.",
+            "link_label": "Read full policy",
+            "link": "/policies/shipping-policy"
+          }
+        },
+        "p2": {
+          "type": "policy",
+          "settings": {
+            "title": "30-night promise",
+            "text": "Not sleeping better after 30 nights? We refund your first order. No need to send it back.",
+            "link_label": "Read full policy",
+            "link": "/policies/refund-policy"
+          }
+        },
+        "p3": {
+          "type": "policy",
+          "settings": {
+            "title": "Doctor declines",
+            "text": "If a doctor decides lelap isn’t right for you, we refund the full amount within 3 working days.",
+            "link_label": "Read full policy",
+            "link": "/policies/refund-policy"
+          }
+        }
       },
-      "block_order": ["p1", "p2", "p3"]
+      "block_order": [
+        "p1",
+        "p2",
+        "p3"
+      ]
     },
     "contact": {
       "type": "help-contact",
       "blocks": {
-        "c1": { "type": "channel", "settings": { "icon": "phone", "title": "WhatsApp", "value": "+62 811 0000 5327", "note": "Fastest, usually under 15 minutes", "link": "https://wa.me/6281100005327" } },
-        "c2": { "type": "channel", "settings": { "icon": "chat", "title": "Message your doctor", "value": "From your account", "note": "Replies within 4 hours", "link": "/account" } },
-        "c3": { "type": "channel", "settings": { "icon": "mail", "title": "Email", "value": "care@lelap.id", "note": "Replies within 1 working day", "link": "mailto:care@lelap.id" } }
+        "c1": {
+          "type": "channel",
+          "settings": {
+            "icon": "phone",
+            "title": "WhatsApp",
+            "value": "+62 811 0000 5327",
+            "note": "Fastest, usually under 15 minutes",
+            "link": "https://wa.me/6281100005327"
+          }
+        },
+        "c2": {
+          "type": "channel",
+          "settings": {
+            "icon": "chat",
+            "title": "Message your doctor",
+            "value": "From your account",
+            "note": "Replies within 4 hours",
+            "link": "/account"
+          }
+        },
+        "c3": {
+          "type": "channel",
+          "settings": {
+            "icon": "mail",
+            "title": "Email",
+            "value": "care@lelap.id",
+            "note": "Replies within 1 working day",
+            "link": "mailto:care@lelap.id"
+          }
+        }
       },
-      "block_order": ["c1", "c2", "c3"]
+      "block_order": [
+        "c1",
+        "c2",
+        "c3"
+      ]
     }
   },
-  "order": ["help", "policies", "contact"]
+  "order": [
+    "help",
+    "policies",
+    "contact"
+  ]
 }
