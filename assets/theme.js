@@ -92,9 +92,89 @@
     return fmt.replace(/\{\{\s*(\w+)\s*\}\}/, (_, k) => map[k] || map.amount);
   };
 
-  function init(root) { initAccordions(root); initTabs(root); initScrollers(root); }
 
-  document.addEventListener('DOMContentLoaded', () => { initMenu(); initMegaMenu(); init(document); });
+  /* Motion: scroll reveals, header shadow, smooth accordions, cart bump ------ */
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const REVEAL_GROUPS = [
+    '.need__head', '.need__large-track', '.need__small', '.how__head', '.how__steps', '.pgrid__head', '.pgrid__grid',
+    '.care__inner', '.cmp__head', '.cmp__card', '.cmp__cta', '.benefits__head', '.benefits__steps', '.benefits__howto',
+    '.benefits__collage', '.ingr__head', '.ingr__track', '.reviews__head', '.reviews__grid', '.guarantee__panel',
+    '.faq__title', '.faq__list', '.safety__box', '.final-cta__panel', '.social-proof__inner',
+    '.pg-hero__copy', '.pg-hero__media', '.help-topics', '.blog-head', '.c-shop__grid'
+  ];
+  const STAGGER_CHILDREN = ['.need__large-track', '.need__small', '.how__steps', '.pgrid__grid', '.care__inner', '.benefits__steps',
+    '.benefits__collage', '.ingr__track', '.reviews__grid', '.faq__list', '.social-proof__inner', '.help-topics', '.c-shop__grid'];
+
+  function initReveal(root) {
+    if (reduceMotion || !('IntersectionObserver' in window)) return;
+    const targets = [];
+    (root || document).querySelectorAll(REVEAL_GROUPS.join(',')).forEach((el) => {
+      if (el.closest('.mega-menu, .mobile-menu, .cart-drawer')) return;
+      const stagger = STAGGER_CHILDREN.some((sel) => el.matches(sel));
+      const items = stagger ? Array.from(el.children) : [el];
+      items.forEach((item, i) => {
+        if (item.hasAttribute('data-reveal')) return;
+        item.setAttribute('data-reveal', '');
+        item.style.setProperty('--reveal-delay', Math.min(i, 6) * 80 + 'ms');
+        targets.push(item);
+      });
+    });
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-revealed'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+    targets.forEach((t) => io.observe(t));
+  }
+
+  function initHeaderShadow() {
+    const onScroll = () => document.body.classList.toggle('is-scrolled', window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  function animateDetails(d, open) {
+    const summary = d.querySelector('summary');
+    const start = d.offsetHeight;
+    d.setAttribute('data-animating', '');
+    if (open) d.open = true;
+    const end = open ? d.scrollHeight : summary.offsetHeight + parseFloat(getComputedStyle(d).paddingTop) + parseFloat(getComputedStyle(d).paddingBottom) + 1;
+    const anim = d.animate({ height: [start + 'px', end + 'px'] }, { duration: 320, easing: 'cubic-bezier(.22,.61,.36,1)' });
+    anim.onfinish = () => { if (!open) d.open = false; d.removeAttribute('data-animating'); };
+  }
+  function initSmoothDetails(root) {
+    if (reduceMotion || !Element.prototype.animate) return;
+    (root || document).querySelectorAll('[data-accordion] details').forEach((d) => {
+      if (d.dataset.smooth) return;
+      d.dataset.smooth = '1';
+      const summary = d.querySelector('summary');
+      if (!summary) return;
+      summary.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (d.hasAttribute('data-animating')) return;
+        const willOpen = !d.open;
+        if (willOpen) {
+          const group = d.closest('[data-accordion]');
+          if (group && group.dataset.accordion === 'single') group.querySelectorAll('details[open]').forEach((o) => { if (o !== d) animateDetails(o, false); });
+        }
+        animateDetails(d, willOpen);
+      });
+    });
+  }
+
+  function initCartBump() {
+    document.querySelectorAll('[data-cart-count]').forEach((el) => {
+      let last = el.textContent;
+      new MutationObserver(() => {
+        if (el.textContent !== last && Number(el.textContent) > Number(last || 0)) {
+          el.classList.remove('is-bumped'); void el.offsetWidth; el.classList.add('is-bumped');
+        }
+        last = el.textContent;
+      }).observe(el, { childList: true, characterData: true, subtree: true });
+    });
+  }
+
+  function init(root) { initAccordions(root); initTabs(root); initScrollers(root); initSmoothDetails(root); initReveal(root); }
+
+  document.addEventListener('DOMContentLoaded', () => { initMenu(); initMegaMenu(); initHeaderShadow(); initCartBump(); init(document); });
   document.addEventListener('shopify:section:load', (e) => init(e.target));
   window.LelapUI = { init };
 })();
