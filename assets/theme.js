@@ -25,6 +25,18 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-open')) close(); });
   }
 
+  /* Desktop mega menu ------------------------------------------------------ */
+  function initMegaMenu() {
+    const menu = document.querySelector('[data-mega-menu]');
+    const toggle = document.querySelector('[data-mega-toggle]');
+    if (!menu || !toggle) return;
+    const set = (open) => { menu.hidden = !open; toggle.setAttribute('aria-expanded', String(open)); };
+    toggle.addEventListener('click', (e) => { e.stopPropagation(); set(menu.hidden); });
+    menu.querySelectorAll('[data-mega-close]').forEach((el) => el.addEventListener('click', () => set(false)));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { set(false); toggle.focus(); } });
+    document.addEventListener('click', (e) => { if (!menu.hidden && !menu.contains(e.target) && e.target !== toggle) set(false); });
+  }
+
   /* Accordions (FAQ) — single-open groups -------------------------------- */
   function initAccordions(root) {
     (root || document).querySelectorAll('[data-accordion]').forEach((group) => {
@@ -82,7 +94,7 @@
 
   function init(root) { initAccordions(root); initTabs(root); initScrollers(root); }
 
-  document.addEventListener('DOMContentLoaded', () => { initMenu(); init(document); });
+  document.addEventListener('DOMContentLoaded', () => { initMenu(); initMegaMenu(); init(document); });
   document.addEventListener('shopify:section:load', (e) => init(e.target));
   window.LelapUI = { init };
 })();

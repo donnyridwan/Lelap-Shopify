@@ -1,6 +1,68 @@
 {%- liquid
   assign quiz_url = settings.quiz_url | default: '/pages/sleep-quiz'
+  assign account_url = routes.account_login_url
+  if customer
+    assign account_url = routes.account_url
+  endif
 -%}
+{%- capture menu_panel -%}
+  <div class="nav-panel__need">
+    <p class="nav-panel__title">{{ section.settings.need_title_1 }} <span class="text-lav">{{ section.settings.need_title_2 }}</span></p>
+    <div class="nav-panel__tiles">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign p = block.settings.product
+          assign h = block.settings.handle
+          if p != blank
+            assign h = p.handle
+          endif
+          assign link = block.settings.link
+          if link == blank
+            if p != blank
+              assign link = p.url
+            else
+              assign link = '/products/' | append: h
+            endif
+          endif
+        -%}
+        <a href="{{ link }}" class="nav-tile" {{ block.shopify_attributes }}>
+          <span class="nav-tile__title">{{ block.settings.lead }} <span class="text-lav">{{ block.settings.accent }}</span></span>
+          <span class="nav-tile__img">{% render 'product-image', product: p, handle: h, width: 300, sizes: '133px', alt: '' %}</span>
+        </a>
+      {%- endfor -%}
+    </div>
+    <a href="{{ quiz_url }}" class="nav-quiz">
+      {% render 'icon', name: 'moon', size: 18 %}
+      <span class="nav-quiz__copy"><strong>{{ section.settings.quiz_title }}</strong><span>{{ section.settings.quiz_text }}</span></span>
+      {% render 'icon', name: 'arrow', size: 18 %}
+    </a>
+  </div>
+  <div class="nav-panel__links">
+    <a href="{{ section.settings.shop_link | default: routes.all_products_collection_url }}" class="nav-link nav-link--lead">
+      <span><strong>{{ section.settings.shop_label }}</strong><small>{{ section.settings.shop_sub }}</small></span>
+      {% render 'icon', name: 'arrow', color: '#efeb9f' %}
+    </a>
+    {%- if section.settings.menu.links.size > 0 -%}
+      {%- for link in section.settings.menu.links offset: 1 -%}
+        <a href="{{ link.url }}" class="nav-link"><span>{{ link.title }}</span>{% render 'icon', name: 'arrow', color: '#ffffff' %}</a>
+      {%- endfor -%}
+    {%- else -%}
+      <a href="/pages/science-doctors" class="nav-link"><span>Science &amp; doctors</span>{% render 'icon', name: 'arrow', color: '#ffffff' %}</a>
+      <a href="/blogs/sleep-library" class="nav-link"><span>Sleep library</span>{% render 'icon', name: 'arrow', color: '#ffffff' %}</a>
+      <a href="/pages/about" class="nav-link"><span>About us</span>{% render 'icon', name: 'arrow', color: '#ffffff' %}</a>
+      <a href="/pages/help" class="nav-link"><span>Help center</span>{% render 'icon', name: 'arrow', color: '#ffffff' %}</a>
+    {%- endif -%}
+    <div class="nav-panel__foot">
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{{ account_url }}">{% render 'icon', name: 'user', color: '#ffffff', size: 16 %}{% if customer %}{{ section.settings.account_label }}{% else %}{{ section.settings.login_label }}{% endif %}</a>
+      {%- endif -%}
+      {%- if section.settings.whatsapp_link != blank -%}
+        <a href="{{ section.settings.whatsapp_link }}" target="_blank" rel="noopener">{% render 'icon', name: 'phone', color: '#ffffff', size: 16 %}{{ section.settings.whatsapp_label }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endcapture -%}
+
 <header class="site-header" data-header>
   <div class="site-header__inner">
     <a href="{{ routes.root_url }}" class="wordmark site-header__logo" aria-label="{{ shop.name }}">
@@ -12,22 +74,26 @@
     </a>
 
     <nav class="site-header__nav" aria-label="{{ 'sections.header.menu' | t }}">
-      {%- for link in section.settings.menu.links -%}
-        <a href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
+      {%- if section.settings.menu.links.size > 0 -%}
+        {%- for link in section.settings.menu.links -%}
+          {%- if forloop.first -%}
+            <button type="button" class="site-header__navbtn" data-mega-toggle aria-expanded="false" aria-controls="MegaMenu">{{ link.title }}</button>
+          {%- else -%}
+            <a href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
+          {%- endif -%}
+        {%- endfor -%}
       {%- else -%}
-        <a href="{{ routes.all_products_collection_url }}">Shop</a>
+        <button type="button" class="site-header__navbtn" data-mega-toggle aria-expanded="false" aria-controls="MegaMenu">Shop</button>
         <a href="/pages/science-doctors">Science &amp; doctors</a>
         <a href="/blogs/sleep-library">Sleep library</a>
         <a href="/pages/about">About</a>
         <a href="/pages/help">Help</a>
-      {%- endfor -%}
+      {%- endif -%}
     </nav>
 
     <div class="site-header__actions">
       {%- if shop.customer_accounts_enabled -%}
-        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="site-header__account">
-          {{- section.settings.account_label | default: 'Account' -}}
-        </a>
+        <a href="{{ account_url }}" class="site-header__account">{{ section.settings.account_label | default: 'Account' }}</a>
       {%- endif -%}
       <a href="{{ quiz_url }}" class="btn btn--primary btn--sm">{{ section.settings.cta_label | default: 'Take the quiz' }}</a>
       <a href="{{ routes.cart_url }}" class="site-header__cart" data-cart-toggle aria-label="{{ 'sections.header.cart' | t }}">
@@ -40,29 +106,21 @@
     </div>
   </div>
 
-  <div class="mobile-menu" id="MobileMenu" data-mobile-menu aria-hidden="true">
-    <div class="mobile-menu__top">
-      <a href="{{ routes.root_url }}" class="wordmark site-header__logo">{{ section.settings.logo_text | default: 'lelap' }}</a>
-      <button type="button" class="mobile-menu__close" data-menu-close aria-label="{{ 'sections.header.close_menu' | t }}">
-        {% render 'icon', name: 'close', size: 24 %}
-      </button>
-    </div>
-    <nav class="mobile-menu__links" aria-label="{{ 'sections.header.menu' | t }}">
-      {%- for link in section.settings.menu.links -%}
-        <a href="{{ link.url }}">{{ link.title }} {% render 'icon', name: 'chevr' %}</a>
-      {%- else -%}
-        <a href="{{ routes.all_products_collection_url }}">Shop {% render 'icon', name: 'chevr' %}</a>
-        <a href="/pages/science-doctors">Science &amp; doctors {% render 'icon', name: 'chevr' %}</a>
-        <a href="/blogs/sleep-library">Sleep library {% render 'icon', name: 'chevr' %}</a>
-        <a href="/pages/about">About {% render 'icon', name: 'chevr' %}</a>
-        <a href="/pages/help">Help {% render 'icon', name: 'chevr' %}</a>
-      {%- endfor -%}
-    </nav>
-    <div class="mobile-menu__bottom">
-      <a href="{{ quiz_url }}" class="btn btn--primary btn--block">{{ section.settings.cta_label | default: 'Take the quiz' }}</a>
-      {%- if shop.customer_accounts_enabled -%}
-        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="btn btn--outline btn--block">{{ section.settings.account_label | default: 'Account' }}</a>
-      {%- endif -%}
+  <div class="mega-menu" id="MegaMenu" data-mega-menu hidden>
+    <div class="mega-menu__panel nav-panel">{{ menu_panel }}</div>
+    <div class="mega-menu__backdrop" data-mega-close></div>
+  </div>
+
+  <div class="mobile-menu" id="MobileMenu" data-mobile-menu aria-hidden="true" role="dialog" aria-modal="true" aria-label="{{ 'sections.header.menu' | t }}">
+    <div class="nav-panel nav-panel--mobile">
+      <div class="mobile-menu__top">
+        <a href="{{ routes.root_url }}" class="wordmark site-header__logo">{{ section.settings.logo_text | default: 'lelap' }}</a>
+        <div class="mobile-menu__icons">
+          <a href="{{ routes.cart_url }}" class="site-header__cart" data-cart-toggle aria-label="{{ 'sections.header.cart' | t }}">{% render 'icon', name: 'cart' %}</a>
+          <button type="button" class="mobile-menu__close" data-menu-close aria-label="{{ 'sections.header.close_menu' | t }}">{% render 'icon', name: 'x', color: '#1d2142', size: 18 %}</button>
+        </div>
+      </div>
+      {{ menu_panel }}
     </div>
   </div>
 </header>
@@ -71,12 +129,37 @@
 {
   "name": "Header",
   "class": "site-header-section",
+  "max_blocks": 4,
   "settings": [
     { "type": "image_picker", "id": "logo", "label": "Logo image", "info": "Leave empty to use the lelap wordmark (Fraunces)." },
     { "type": "text", "id": "logo_text", "label": "Wordmark text", "default": "lelap" },
-    { "type": "link_list", "id": "menu", "label": "Menu", "info": "Leave empty to use the default lelap navigation." },
+    { "type": "link_list", "id": "menu", "label": "Menu", "info": "First link opens the shop menu. Leave empty to use the default lelap navigation." },
     { "type": "text", "id": "account_label", "label": "Account label", "default": "Account" },
-    { "type": "text", "id": "cta_label", "label": "Button label", "default": "Take the quiz" }
+    { "type": "text", "id": "cta_label", "label": "Button label", "default": "Take the quiz" },
+    { "type": "header", "content": "Shop menu" },
+    { "type": "text", "id": "need_title_1", "label": "Heading", "default": "What’s keeping" },
+    { "type": "text", "id": "need_title_2", "label": "Heading accent (lavender)", "default": "you up?" },
+    { "type": "text", "id": "quiz_title", "label": "Quiz banner title", "default": "Not sure? Take the 2-minute quiz" },
+    { "type": "text", "id": "quiz_text", "label": "Quiz banner text", "default": "A doctor matches you to the right formula" },
+    { "type": "text", "id": "shop_label", "label": "Shop link label", "default": "Shop all formulas" },
+    { "type": "text", "id": "shop_sub", "label": "Shop link subtitle", "default": "4 formulas for 4 kinds of nights" },
+    { "type": "url", "id": "shop_link", "label": "Shop link" },
+    { "type": "text", "id": "login_label", "label": "Log in label", "default": "Log in" },
+    { "type": "text", "id": "whatsapp_label", "label": "WhatsApp label", "default": "Chat on WhatsApp" },
+    { "type": "url", "id": "whatsapp_link", "label": "WhatsApp link", "default": "https://wa.me/" }
+  ],
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Need tile",
+      "settings": [
+        { "type": "text", "id": "lead", "label": "Title", "default": "Fall asleep" },
+        { "type": "text", "id": "accent", "label": "Title accent", "default": "faster" },
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "text", "id": "handle", "label": "Fallback product handle", "default": "sleep-classic" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
   ]
 }
 {% endschema %}

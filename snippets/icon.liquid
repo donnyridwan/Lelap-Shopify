@@ -24,8 +24,35 @@
   if c == blank
     assign c = d
   endif
+  assign px = size
+  if px == blank
+    case name
+      when 'moon', 'x'
+        assign px = 12
+      when 'check', 'lock', 'leaf', 'sun', 'chevd'
+        assign px = 14
+      when 'skip', 'swap', 'pause', 'doc', 'edit'
+        assign px = 15
+      when 'chev', 'info', 'factory', 'flask', 'card', 'p', 'clock', 'eye', 'home', 'box', 'pin', 'user', 'out', 'clip', 'arrow', 'chevl', 'chevr', 'alert'
+        assign px = 18
+      when 'search', 'back', 'heart', 'undo', 'close'
+        assign px = 20
+      when 'cart', 'minus', 'plus', 'drop', 'target'
+        assign px = 22
+      when 'menu'
+        assign px = 24
+      when 'bottle', 'mail'
+        assign px = 28
+      when 'bag'
+        assign px = 36
+      when 'shield'
+        assign px = 40
+      else
+        assign px = 16
+    endcase
+  endif
 -%}
-<span class="icon icon--{{ name }}{% if class %} {{ class }}{% endif %}" style="color: {{ c }};{% if size %} width: {{ size }}px; height: {{ size }}px;{% endif %}" aria-hidden="true">
+<span class="icon icon--{{ name }}{% if class %} {{ class }}{% endif %}" style="color: {{ c }}; --icon-size: {{ px }}px;" aria-hidden="true">
 {%- case name -%}
 {%- when 'truck' -%}<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.33333 10.6667V4H2V10.6667H9.33333ZM9.33333 10.6667H14V8L12 6H9.33333" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.66659 13.3334C5.40297 13.3334 5.99992 12.7364 5.99992 12C5.99992 11.2636 5.40297 10.6667 4.66659 10.6667C3.93021 10.6667 3.33325 11.2636 3.33325 12C3.33325 12.7364 3.93021 13.3334 4.66659 13.3334Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.3333 13.3334C12.0697 13.3334 12.6667 12.7364 12.6667 12C12.6667 11.2636 12.0697 10.6667 11.3333 10.6667C10.597 10.6667 10 11.2636 10 12C10 12.7364 10.597 13.3334 11.3333 13.3334Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
 {%- when 'steth' -%}<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 2V6C4 6.88406 4.35119 7.7319 4.97631 8.35702C5.60143 8.98214 6.44928 9.33333 7.33333 9.33333C8.21739 9.33333 9.06523 8.98214 9.69036 8.35702C10.3155 7.7319 10.6667 6.88406 10.6667 6V2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.33325 9.33331V10.6666C7.33325 11.5507 7.68444 12.3985 8.30956 13.0237C8.93468 13.6488 9.78253 14 10.6666 14C11.5506 14 12.3985 13.6488 13.0236 13.0237C13.6487 12.3985 13.9999 11.5507 13.9999 10.6666V9.99998" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 9.66669C14.5523 9.66669 15 9.21897 15 8.66669C15 8.1144 14.5523 7.66669 14 7.66669C13.4477 7.66669 13 8.1144 13 8.66669C13 9.21897 13.4477 9.66669 14 9.66669Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>

@@ -54,8 +54,57 @@
       "settings": {
         "logo_text": "lelap",
         "account_label": "Account",
-        "cta_label": "Take the quiz"
-      }
+        "cta_label": "Take the quiz",
+        "need_title_1": "What’s keeping",
+        "need_title_2": "you up?",
+        "quiz_title": "Not sure? Take the 2-minute quiz",
+        "quiz_text": "A doctor matches you to the right formula",
+        "shop_label": "Shop all formulas",
+        "shop_sub": "4 formulas for 4 kinds of nights",
+        "login_label": "Log in",
+        "whatsapp_label": "Chat on WhatsApp",
+        "whatsapp_link": "https://wa.me/"
+      },
+      "blocks": {
+        "tile-1": {
+          "type": "tile",
+          "settings": {
+            "lead": "Fall asleep",
+            "accent": "faster",
+            "handle": "sleep-classic"
+          }
+        },
+        "tile-2": {
+          "type": "tile",
+          "settings": {
+            "lead": "Stay",
+            "accent": "asleep",
+            "handle": "sleep-deep"
+          }
+        },
+        "tile-3": {
+          "type": "tile",
+          "settings": {
+            "lead": "Jet lag",
+            "accent": "& shifts",
+            "handle": "sleep-reset"
+          }
+        },
+        "tile-4": {
+          "type": "tile",
+          "settings": {
+            "lead": "Busy",
+            "accent": "mind",
+            "handle": "sleep-calm"
+          }
+        }
+      },
+      "block_order": [
+        "tile-1",
+        "tile-2",
+        "tile-3",
+        "tile-4"
+      ]
     }
   },
   "order": [
