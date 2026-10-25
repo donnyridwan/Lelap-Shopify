@@ -56,8 +56,8 @@
       {%- if shop.customer_accounts_enabled -%}
         <a href="{{ account_url }}">{% render 'icon', name: 'user', color: '#ffffff', size: 16 %}{% if customer %}{{ section.settings.account_label }}{% else %}{{ section.settings.login_label }}{% endif %}</a>
       {%- endif -%}
-      {%- if section.settings.whatsapp_link != blank -%}
-        <a href="{{ section.settings.whatsapp_link }}" target="_blank" rel="noopener">{% render 'icon', name: 'phone', color: '#ffffff', size: 16 %}{{ section.settings.whatsapp_label }}</a>
+      {%- if section.settings.whatsapp_label != blank -%}
+        <a href="{{ section.settings.whatsapp_link | default: 'https://wa.me/' }}" target="_blank" rel="noopener">{% render 'icon', name: 'phone', color: '#ffffff', size: 16 %}{{ section.settings.whatsapp_label }}</a>
       {%- endif -%}
     </div>
   </div>
@@ -146,7 +146,7 @@
     { "type": "url", "id": "shop_link", "label": "Shop link" },
     { "type": "text", "id": "login_label", "label": "Log in label", "default": "Log in" },
     { "type": "text", "id": "whatsapp_label", "label": "WhatsApp label", "default": "Chat on WhatsApp" },
-    { "type": "url", "id": "whatsapp_link", "label": "WhatsApp link", "default": "https://wa.me/" }
+    { "type": "url", "id": "whatsapp_link", "label": "WhatsApp link", "info": "e.g. https://wa.me/6281234567890" }
   ],
   "blocks": [
     {
