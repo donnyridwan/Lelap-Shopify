@@ -22,6 +22,7 @@
       lockScroll(true);
     }));
     menu.querySelectorAll('[data-menu-close], a').forEach((el) => el.addEventListener('click', close));
+    document.querySelectorAll('[data-menu-backdrop]').forEach((el) => el.addEventListener('click', close));
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-open')) close(); });
   }
 
