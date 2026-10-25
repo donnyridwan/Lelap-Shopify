@@ -1,0 +1,140 @@
+{%- comment -%}
+  Returns one product fact as plain text. Reads the product metafield `lelap.<key>` first,
+  then falls back to the content defined in the Figma design for the four lelap formulas,
+  so the theme never shows placeholder product content.
+
+  Params: product (optional product object), handle (optional string), key (string)
+  Keys: code, tagline, badge, need, card_desc, rating, reviews, dose, price_sub, price_full,
+        image (asset filename), color (hex), ingredients, best_for
+{%- endcomment -%}
+{%- liquid
+  assign h = handle
+  assign fact = blank
+  if product != blank
+    assign h = product.handle
+    assign fact = product.metafields.lelap[key].value
+  endif
+  if fact == blank
+    case h
+      when 'sleep-classic'
+        case key
+          when 'title'
+            assign fact = 'Sleep Classic'
+          when 'code'
+            assign fact = 'SL-01'
+          when 'tagline'
+            assign fact = 'For trouble falling asleep'
+          when 'badge'
+            assign fact = 'Best seller'
+          when 'card_badge'
+            assign fact = 'Best seller'
+          when 'need'
+            assign fact = 'Fall asleep'
+          when 'card_desc'
+            assign fact = 'Low-dose melatonin to help you fall asleep faster and wake up clear-headed.*'
+          when 'rating'
+            assign fact = '4.8'
+          when 'reviews'
+            assign fact = '1,240'
+          when 'dose'
+            assign fact = 'Melatonin 3 mg · 30 gummies'
+          when 'price_sub'
+            assign fact = '2800'
+          when 'price_full'
+            assign fact = '3500'
+          when 'image'
+            assign fact = 'pouch-sleep-classic.jpg'
+          when 'best_for'
+            assign fact = 'Trouble falling asleep'
+        endcase
+      when 'sleep-deep'
+        case key
+          when 'title'
+            assign fact = 'Sleep Deep'
+          when 'code'
+            assign fact = 'SL-02'
+          when 'tagline'
+            assign fact = 'For waking up at night'
+          when 'badge'
+            assign fact = 'For 3am wake-ups'
+          when 'need'
+            assign fact = 'Stay asleep'
+          when 'card_desc'
+            assign fact = 'Melatonin with magnesium glycinate for fewer wake-ups and more restful nights.*'
+          when 'rating'
+            assign fact = '4.7'
+          when 'reviews'
+            assign fact = '610'
+          when 'dose'
+            assign fact = 'Melatonin + Magnesium · 30 gummies'
+          when 'price_sub'
+            assign fact = '3400'
+          when 'price_full'
+            assign fact = '4200'
+          when 'image'
+            assign fact = 'pouch-sleep-deep.jpg'
+          when 'best_for'
+            assign fact = 'Waking up during the night'
+        endcase
+      when 'sleep-reset'
+        case key
+          when 'title'
+            assign fact = 'Sleep Reset'
+          when 'code'
+            assign fact = 'SL-03'
+          when 'tagline'
+            assign fact = 'For jet lag & shift work'
+          when 'badge'
+            assign fact = 'Travel favourite'
+          when 'need'
+            assign fact = 'Jet lag & shifts'
+          when 'card_desc'
+            assign fact = 'A gentle 1 mg dose to help your body clock adjust after travel or shift work.*'
+          when 'rating'
+            assign fact = '4.8'
+          when 'reviews'
+            assign fact = '380'
+          when 'dose'
+            assign fact = 'Melatonin 1 mg · 30 gummies'
+          when 'price_sub'
+            assign fact = '2400'
+          when 'price_full'
+            assign fact = '3000'
+          when 'image'
+            assign fact = 'pouch-sleep-reset.jpg'
+          when 'best_for'
+            assign fact = 'Jet lag and shift work'
+        endcase
+      when 'sleep-calm'
+        case key
+          when 'title'
+            assign fact = 'Sleep Calm'
+          when 'code'
+            assign fact = 'SL-04'
+          when 'tagline'
+            assign fact = 'For a busy mind at bedtime'
+          when 'badge'
+            assign fact = 'Melatonin-free'
+          when 'need'
+            assign fact = 'Busy mind'
+          when 'card_desc'
+            assign fact = 'Melatonin-free. L-theanine and chamomile to help a busy mind settle before bed.*'
+          when 'rating'
+            assign fact = '4.6'
+          when 'reviews'
+            assign fact = '290'
+          when 'dose'
+            assign fact = 'Melatonin-free · 30 gummies'
+          when 'price_sub'
+            assign fact = '2700'
+          when 'price_full'
+            assign fact = '3400'
+          when 'image'
+            assign fact = 'pouch-sleep-calm.jpg'
+          when 'best_for'
+            assign fact = 'A busy mind at bedtime'
+        endcase
+    endcase
+  endif
+  echo fact
+-%}

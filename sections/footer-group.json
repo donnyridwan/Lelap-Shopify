@@ -1,0 +1,46 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "shop": {
+          "type": "menu",
+          "settings": {
+            "title": "Shop",
+            "fallback_links": "Sleep Classic|/products/sleep-classic\nSleep Deep|/products/sleep-deep\nSleep Reset|/products/sleep-reset\nSleep Calm|/products/sleep-calm\nSleep quiz|/pages/sleep-quiz"
+          }
+        },
+        "learn": {
+          "type": "menu",
+          "settings": {
+            "title": "Learn",
+            "fallback_links": "How it works|/#how-it-works\nOur doctors|/pages/science-doctors\nIngredients|/#ingredients\nSleep library|/blogs/sleep-library"
+          }
+        },
+        "help": {
+          "type": "menu",
+          "settings": {
+            "title": "Help",
+            "fallback_links": "FAQ|/pages/help\nShipping|/pages/help#shipping\nManage subscription|/account\nContact us|/pages/help#contact"
+          }
+        }
+      },
+      "block_order": [
+        "shop",
+        "learn",
+        "help"
+      ],
+      "settings": {
+        "newsletter_heading": "Better sleep, one email a month.",
+        "newsletter_button": "Sign up",
+        "copyright": "© 2026 Lelap Health. Consultations are provided by independent licensed doctors.",
+        "wordmark": "lelap"
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

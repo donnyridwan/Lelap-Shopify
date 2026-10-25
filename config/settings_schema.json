@@ -1,0 +1,33 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Lelap",
+    "theme_version": "1.0.0",
+    "theme_author": "Gandaria Studio",
+    "theme_documentation_url": "https://github.com/donnyridwan/Lelap-Shopify",
+    "theme_support_url": "https://github.com/donnyridwan/Lelap-Shopify"
+  },
+  {
+    "name": "General",
+    "settings": [
+      { "type": "image_picker", "id": "favicon", "label": "Favicon" },
+      { "type": "url", "id": "quiz_url", "label": "Sleep quiz page", "info": "Defaults to /pages/sleep-quiz" },
+      { "type": "text", "id": "subscription_discount_label", "label": "Subscription savings label", "default": "Save 20%" },
+      { "type": "text", "id": "rating_summary", "label": "Store rating summary", "default": "4.8 from 2,300+ reviews" }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      { "type": "checkbox", "id": "cart_drawer", "label": "Open cart drawer after adding to cart", "default": true },
+      { "type": "text", "id": "cart_note", "label": "Cart footer note", "default": "Free shipping · Free doctor review · Cancel anytime" }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      { "type": "text", "id": "social_instagram_link", "label": "Instagram" },
+      { "type": "text", "id": "social_tiktok_link", "label": "TikTok" }
+    ]
+  }
+]

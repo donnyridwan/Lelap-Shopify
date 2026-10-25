@@ -1,0 +1,4 @@
+{%- comment -%} Five filled stars as in the design. Params: size ('sm' 13px | 'md' 15px | default 16px), color {%- endcomment -%}
+<span class="stars{% if size %} stars--{{ size }}{% endif %}" role="img" aria-label="5 out of 5 stars">
+  {%- for i in (1..5) -%}{% render 'icon', name: 'star', color: color %}{%- endfor -%}
+</span>

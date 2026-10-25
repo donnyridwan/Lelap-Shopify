@@ -1,0 +1,25 @@
+{%- comment -%}
+  Product image with design fallback. Uses the product's featured media when present,
+  otherwise the lelap pouch photo exported from Figma for that formula.
+  Params: product, handle, width (px for srcset max), sizes, class, loading, alt
+{%- endcomment -%}
+{%- liquid
+  assign h = handle
+  if product != blank
+    assign h = product.handle
+  endif
+  assign w = width | default: 680
+  assign img_loading = loading | default: 'lazy'
+  assign img_alt = alt
+  if img_alt == blank and product != blank
+    assign img_alt = product.title | escape
+  endif
+-%}
+{%- if product != blank and product.featured_media != blank -%}
+  {{ product.featured_media | image_url: width: w | image_tag: loading: img_loading, sizes: sizes, class: class, alt: img_alt, widths: '240, 360, 480, 680, 960, 1360' }}
+{%- else -%}
+  {%- capture file -%}{% render 'product-fact', handle: h, key: 'image' %}{%- endcapture -%}
+  {%- if file != blank -%}
+    <img src="{{ file | asset_url }}" alt="{{ img_alt | default: h | replace: '-', ' ' | capitalize }}" width="680" height="680" loading="{{ img_loading }}"{% if class %} class="{{ class }}"{% endif %}>
+  {%- endif -%}
+{%- endif -%}

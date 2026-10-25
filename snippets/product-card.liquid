@@ -1,0 +1,61 @@
+{%- comment -%}
+  lelap product card (Figma: Product Card / Product Card / Mobile).
+  Params: product (product object, optional), handle (fallback handle), show_badge (bool), heading_tag
+{%- endcomment -%}
+{%- liquid
+  assign h = handle
+  if product != blank
+    assign h = product.handle
+    assign url = product.url
+  else
+    assign url = '/products/' | append: h
+  endif
+-%}
+{%- capture p_title -%}{% if product != blank %}{{ product.title }}{% else %}{% render 'product-fact', handle: h, key: 'title' %}{% endif %}{%- endcapture -%}
+{%- capture p_code -%}{% render 'product-fact', product: product, handle: h, key: 'code' %}{%- endcapture -%}
+{%- capture p_badge -%}{% render 'product-fact', product: product, handle: h, key: 'card_badge' %}{%- endcapture -%}
+{%- capture p_desc -%}{% render 'product-fact', product: product, handle: h, key: 'card_desc' %}{%- endcapture -%}
+{%- capture p_rating -%}{% render 'product-fact', product: product, handle: h, key: 'rating' %}{%- endcapture -%}
+{%- capture p_reviews -%}{% render 'product-fact', product: product, handle: h, key: 'reviews' %}{%- endcapture -%}
+{%- if p_desc == blank and product != blank -%}{%- capture p_desc -%}{{ product.description | strip_html | truncatewords: 16 }}{%- endcapture -%}{%- endif -%}
+
+<article class="product-card">
+  <a href="{{ url }}" class="product-card__media" tabindex="-1" aria-hidden="true">
+    {% render 'product-image', product: product, handle: h, width: 480, sizes: '(min-width: 768px) 224px, 224px', class: 'product-card__img' %}
+  </a>
+  <div class="product-card__info">
+    <div class="product-card__tags">
+      {%- if p_code != blank -%}<span class="code-tag">{{ p_code }}</span>{%- endif -%}
+      {%- if p_badge != blank -%}<span class="pill-dark">{{ p_badge }}</span>{%- endif -%}
+    </div>
+    <h3 class="product-card__title"><a href="{{ url }}">{{ p_title }}</a></h3>
+    {%- if p_rating != blank -%}
+      <div class="rating">
+        {% render 'stars', size: 'sm' %}
+        <span class="rating__text">{{ p_rating }} ({{ p_reviews }} reviews)</span>
+      </div>
+    {%- endif -%}
+    <p class="product-card__desc">{{ p_desc }}</p>
+    <span class="chip">{% render 'icon', name: 'moon' %}{{ settings.subscription_discount_label | default: 'Save 20%' }}</span>
+    {% render 'product-price', product: product, handle: h %}
+    <p class="product-card__note">{{ 'products.product.per_month' | t }}</p>
+    <div class="product-card__actions">
+      <a href="{{ url }}" class="btn btn--primary">{{ 'products.product.learn_more' | t }}</a>
+      {%- if product != blank -%}
+        {%- assign v = product.selected_or_first_available_variant -%}
+        {%- form 'product', product, class: 'product-card__form', data-product-form: '' -%}
+          <input type="hidden" name="id" value="{{ v.id }}">
+          <input type="hidden" name="quantity" value="1">
+          {%- if v.selling_plan_allocations.size > 0 -%}
+            <input type="hidden" name="selling_plan" value="{{ v.selling_plan_allocations.first.selling_plan.id }}">
+          {%- endif -%}
+          <button type="submit" class="link-underline"{% unless v.available %} disabled{% endunless %}>
+            {%- if v.available -%}{{ 'products.product.add_to_cart' | t }}{%- else -%}{{ 'products.product.sold_out' | t }}{%- endif -%}
+          </button>
+        {%- endform -%}
+      {%- else -%}
+        <a href="{{ url }}" class="link-underline">{{ 'products.product.add_to_cart' | t }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</article>

@@ -1,0 +1,18 @@
+{
+  "current": {
+    "quiz_url": "/pages/sleep-quiz",
+    "subscription_discount_label": "Save 20%",
+    "rating_summary": "4.8 from 2,300+ reviews",
+    "cart_drawer": true,
+    "cart_note": "Free shipping · Free doctor review · Cancel anytime"
+  },
+  "presets": {
+    "Default": {
+      "quiz_url": "/pages/sleep-quiz",
+      "subscription_discount_label": "Save 20%",
+      "rating_summary": "4.8 from 2,300+ reviews",
+      "cart_drawer": true,
+      "cart_note": "Free shipping · Free doctor review · Cancel anytime"
+    }
+  }
+}

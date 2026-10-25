@@ -1,0 +1,65 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "blocks": {
+        "t1": {
+          "type": "item",
+          "settings": {
+            "text": "Save 20% when you subscribe",
+            "icon": "truck"
+          }
+        },
+        "t2": {
+          "type": "item",
+          "settings": {
+            "text": "Reviewed by licensed doctors",
+            "icon": "steth"
+          }
+        },
+        "t3": {
+          "type": "item",
+          "settings": {
+            "text": "100% online",
+            "icon": "phone"
+          }
+        },
+        "t4": {
+          "type": "item",
+          "settings": {
+            "text": "Personalized to your sleep",
+            "icon": "spark"
+          }
+        },
+        "t5": {
+          "type": "item",
+          "settings": {
+            "text": "Pause or cancel anytime",
+            "icon": "refresh"
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3",
+        "t4",
+        "t5"
+      ]
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "logo_text": "lelap",
+        "account_label": "Account",
+        "cta_label": "Take the quiz"
+      }
+    }
+  },
+  "order": [
+    "announcement",
+    "header"
+  ]
+}

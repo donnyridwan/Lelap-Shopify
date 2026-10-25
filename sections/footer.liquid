@@ -1,0 +1,82 @@
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div class="site-footer__top">
+      <div class="site-footer__newsletter">
+        <h2 class="site-footer__heading">{{ section.settings.newsletter_heading }}</h2>
+        {%- form 'customer', id: 'FooterNewsletter', class: 'site-footer__form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          {%- if form.posted_successfully? -%}
+            <p class="newsletter-msg" role="status">{{ 'sections.footer.newsletter_success' | t }}</p>
+          {%- else -%}
+            <div class="newsletter-field">
+              <label for="FooterEmail" class="visually-hidden">{{ 'sections.footer.email' | t }}</label>
+              <input id="FooterEmail" type="email" name="contact[email]" required autocomplete="email" placeholder="{{ 'sections.footer.email' | t }}">
+              <button type="submit" class="btn btn--light">{{ section.settings.newsletter_button }}</button>
+            </div>
+            {%- if form.errors -%}<p class="newsletter-msg" role="alert">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>{%- endif -%}
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+
+      <div class="site-footer__cols">
+        {%- for block in section.blocks -%}
+          <div class="site-footer__col" {{ block.shopify_attributes }}>
+            <p class="site-footer__col-title">{{ block.settings.title | default: block.settings.menu.title }}</p>
+            {%- if block.settings.menu.links.size > 0 -%}
+              {%- for link in block.settings.menu.links -%}
+                <a href="{{ link.url }}">{{ link.title }}</a>
+              {%- endfor -%}
+            {%- else -%}
+              {%- assign lines = block.settings.fallback_links | newline_to_br | split: '<br />' -%}
+              {%- for line in lines -%}
+                {%- assign parts = line | strip | split: '|' -%}
+                {%- if parts[0] != blank -%}<a href="{{ parts[1] | strip | default: '#' }}">{{ parts[0] | strip }}</a>{%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="site-footer__legal">
+      <p>{{ section.settings.copyright }}</p>
+      <div class="site-footer__legal-links">
+        {%- for link in section.settings.legal_menu.links -%}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {%- else -%}
+          <a href="{{ shop.terms_of_service.url | default: '/policies/terms-of-service' }}">Terms</a>
+          <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}">Privacy</a>
+          <a href="/pages/telehealth-consent">Telehealth consent</a>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="site-footer__wordmark" aria-hidden="true"><span class="wordmark">{{ section.settings.wordmark }}</span></div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "class": "section-footer",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "text", "id": "newsletter_heading", "label": "Newsletter heading", "default": "Better sleep, one email a month." },
+    { "type": "text", "id": "newsletter_button", "label": "Newsletter button", "default": "Sign up" },
+    { "type": "text", "id": "copyright", "label": "Legal text", "default": "© 2026 Lelap Health. Consultations are provided by independent licensed doctors." },
+    { "type": "link_list", "id": "legal_menu", "label": "Legal menu" },
+    { "type": "text", "id": "wordmark", "label": "Large wordmark", "default": "lelap" }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu column",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "link_list", "id": "menu", "label": "Menu" },
+        { "type": "textarea", "id": "fallback_links", "label": "Links (used when no menu is selected)", "info": "One link per line: Title|/url" }
+      ]
+    }
+  ]
+}
+{% endschema %}

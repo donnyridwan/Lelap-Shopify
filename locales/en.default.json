@@ -1,0 +1,53 @@
+{
+  "general": {
+    "password_page": { "login_form_heading": "Enter store using password", "login_password_button": "Enter using password", "login_form_password_label": "Password", "login_form_password_placeholder": "Your password", "login_form_error": "Wrong password!", "admin_link_html": "Are you the store owner? <a href=\"/admin\" class=\"link underlined-link\">Log in here</a>" },
+    "pagination": { "label": "Pagination", "page": "Page {{ number }}", "next": "Next page", "previous": "Previous page" },
+    "search": { "search": "Search", "placeholder": "Search sleep, products, articles" }
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to content",
+    "close": "Close",
+    "star_rating": "{{ rating }} out of 5 stars"
+  },
+  "sections": {
+    "announcement": { "label": "Announcements" },
+    "header": { "menu": "Main menu", "cart": "Cart", "open_menu": "Open menu", "close_menu": "Close menu" },
+    "footer": { "email": "Email address", "newsletter_success": "Thanks for subscribing — see you next month." }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out",
+      "unavailable": "Unavailable",
+      "learn_more": "Learn more",
+      "subscribe": "Subscribe & save",
+      "one_time": "One-time purchase",
+      "quantity": "Quantity",
+      "per_month": "per month with subscription. Free shipping."
+    }
+  },
+  "cart": {
+    "title": "Your cart",
+    "empty": "Your cart is empty",
+    "checkout": "Checkout",
+    "subtotal": "Subtotal",
+    "remove": "Remove",
+    "continue": "Continue shopping",
+    "added": "Added to cart",
+    "error": "Something went wrong. Please try again."
+  },
+  "customer": {
+    "login": { "title": "Sign in" },
+    "register": { "title": "Create account" },
+    "account": { "title": "Account" },
+    "orders": { "title": "Orders" },
+    "addresses": { "title": "Addresses" }
+  },
+  "blogs": {
+    "article": { "read_more": "Read article", "min_read": "{{ count }} min read" }
+  },
+  "templates": {
+    "404": { "title": "Page not found" },
+    "search": { "title": "Search results", "no_results": "No results for “{{ terms }}”" }
+  }
+}

@@ -1,0 +1,82 @@
+{%- liquid
+  assign quiz_url = settings.quiz_url | default: '/pages/sleep-quiz'
+-%}
+<header class="site-header" data-header>
+  <div class="site-header__inner">
+    <a href="{{ routes.root_url }}" class="wordmark site-header__logo" aria-label="{{ shop.name }}">
+      {%- if section.settings.logo != blank -%}
+        {{ section.settings.logo | image_url: width: 240 | image_tag: height: 36, style: 'height:36px;width:auto', alt: shop.name }}
+      {%- else -%}
+        {{ section.settings.logo_text | default: 'lelap' }}
+      {%- endif -%}
+    </a>
+
+    <nav class="site-header__nav" aria-label="{{ 'sections.header.menu' | t }}">
+      {%- for link in section.settings.menu.links -%}
+        <a href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
+      {%- else -%}
+        <a href="{{ routes.all_products_collection_url }}">Shop</a>
+        <a href="/pages/science-doctors">Science &amp; doctors</a>
+        <a href="/blogs/sleep-library">Sleep library</a>
+        <a href="/pages/about">About</a>
+        <a href="/pages/help">Help</a>
+      {%- endfor -%}
+    </nav>
+
+    <div class="site-header__actions">
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="site-header__account">
+          {{- section.settings.account_label | default: 'Account' -}}
+        </a>
+      {%- endif -%}
+      <a href="{{ quiz_url }}" class="btn btn--primary btn--sm">{{ section.settings.cta_label | default: 'Take the quiz' }}</a>
+      <a href="{{ routes.cart_url }}" class="site-header__cart" data-cart-toggle aria-label="{{ 'sections.header.cart' | t }}">
+        {% render 'icon', name: 'cart' %}
+        <span class="cart-count" data-cart-count data-count="{{ cart.item_count }}">{% if cart.item_count > 0 %}{{ cart.item_count }}{% endif %}</span>
+      </a>
+      <button type="button" class="site-header__menu-toggle" data-menu-open aria-label="{{ 'sections.header.open_menu' | t }}" aria-expanded="false" aria-controls="MobileMenu">
+        {% render 'icon', name: 'menu' %}
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="MobileMenu" data-mobile-menu aria-hidden="true">
+    <div class="mobile-menu__top">
+      <a href="{{ routes.root_url }}" class="wordmark site-header__logo">{{ section.settings.logo_text | default: 'lelap' }}</a>
+      <button type="button" class="mobile-menu__close" data-menu-close aria-label="{{ 'sections.header.close_menu' | t }}">
+        {% render 'icon', name: 'close', size: 24 %}
+      </button>
+    </div>
+    <nav class="mobile-menu__links" aria-label="{{ 'sections.header.menu' | t }}">
+      {%- for link in section.settings.menu.links -%}
+        <a href="{{ link.url }}">{{ link.title }} {% render 'icon', name: 'chevr' %}</a>
+      {%- else -%}
+        <a href="{{ routes.all_products_collection_url }}">Shop {% render 'icon', name: 'chevr' %}</a>
+        <a href="/pages/science-doctors">Science &amp; doctors {% render 'icon', name: 'chevr' %}</a>
+        <a href="/blogs/sleep-library">Sleep library {% render 'icon', name: 'chevr' %}</a>
+        <a href="/pages/about">About {% render 'icon', name: 'chevr' %}</a>
+        <a href="/pages/help">Help {% render 'icon', name: 'chevr' %}</a>
+      {%- endfor -%}
+    </nav>
+    <div class="mobile-menu__bottom">
+      <a href="{{ quiz_url }}" class="btn btn--primary btn--block">{{ section.settings.cta_label | default: 'Take the quiz' }}</a>
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="btn btn--outline btn--block">{{ section.settings.account_label | default: 'Account' }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "site-header-section",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo image", "info": "Leave empty to use the lelap wordmark (Fraunces)." },
+    { "type": "text", "id": "logo_text", "label": "Wordmark text", "default": "lelap" },
+    { "type": "link_list", "id": "menu", "label": "Menu", "info": "Leave empty to use the default lelap navigation." },
+    { "type": "text", "id": "account_label", "label": "Account label", "default": "Account" },
+    { "type": "text", "id": "cta_label", "label": "Button label", "default": "Take the quiz" }
+  ]
+}
+{% endschema %}

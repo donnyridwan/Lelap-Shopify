@@ -1,0 +1,29 @@
+{%- comment -%}
+  Outputs subscription price + crossed-out one-time price, per the design ("$28 $35").
+  Subscription price = first selling plan allocation when the product has one;
+  otherwise 80% of the variant price (Subscribe & save 20%). Falls back to design prices.
+  Params: product, handle, class
+{%- endcomment -%}
+{%- liquid
+  if product != blank
+    assign v = product.selected_or_first_available_variant
+    assign full = v.price
+    assign sub = full | times: 0.8 | round
+    if v.selling_plan_allocations.size > 0
+      assign sub = v.selling_plan_allocations.first.price
+    endif
+  else
+    capture sub_s
+      render 'product-fact', handle: handle, key: 'price_sub'
+    endcapture
+    capture full_s
+      render 'product-fact', handle: handle, key: 'price_full'
+    endcapture
+    assign sub = sub_s | plus: 0
+    assign full = full_s | plus: 0
+  endif
+-%}
+<div class="price{% if class %} {{ class }}{% endif %}">
+  <span class="price__sale">{{ sub | money_without_trailing_zeros }}</span>
+  {%- if full > sub -%}<s class="price__was">{{ full | money_without_trailing_zeros }}</s>{%- endif -%}
+</div>
