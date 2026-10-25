@@ -5,7 +5,7 @@
       assign yes = section.blocks | where: 'type', 'suits'
       assign no = section.blocks | where: 'type', 'caution'
     -%}
-    <div class="sci-suit__card">
+    <div class="sci-suit__card" data-reveal>
       <h2 class="sci-suit__title">{{ section.settings.yes_title | escape }}</h2>
       <ul class="sci-suit__list">
         {%- for block in yes -%}
@@ -13,7 +13,7 @@
         {%- endfor -%}
       </ul>
     </div>
-    <div class="sci-suit__card sci-suit__card--outline">
+    <div class="sci-suit__card sci-suit__card--outline" data-reveal style="--reveal-delay: 100ms">
       <h2 class="sci-suit__title">{{ section.settings.no_title | escape }}</h2>
       <ul class="sci-suit__list">
         {%- for block in no -%}

@@ -2,7 +2,7 @@
 {%- assign quiz_url = section.settings.quiz_url | default: settings.quiz_url | default: '/pages/sleep-quiz' -%}
 <section class="nf">
   <div class="container nf__inner">
-    <div class="nf__copy">
+    <div class="nf__copy" data-reveal>
       <span class="chip">{% render 'icon', name: 'moon' %}{{ section.settings.chip }}</span>
       <h1 class="nf__title">{{ section.settings.title_1 }}<br><span class="text-lav">{{ section.settings.title_2 }}</span></h1>
       <p class="nf__text">{{ section.settings.text }}</p>
@@ -17,13 +17,13 @@
         {%- endfor -%}
       </div>
     </div>
-    <div class="nf__visual" aria-hidden="true">
+    <div class="nf__visual" aria-hidden="true" data-reveal style="--reveal-delay: 120ms">
       <span class="nf__num">404</span>
       <span class="nf__pouch">
         {%- if section.settings.image != blank -%}
-          {{ section.settings.image | image_url: width: 500 | image_tag: loading: 'lazy', alt: '' }}
+          {{ section.settings.image | image_url: width: 500 | image_tag: alt: '' }}
         {%- else -%}
-          <img src="{{ 'pouch-sleep-classic.jpg' | asset_url }}" width="680" height="680" alt="" loading="lazy">
+          <img src="{{ 'pouch-sleep-classic.jpg' | asset_url }}" width="680" height="680" alt="">
         {%- endif -%}
       </span>
       <span class="nf__zzz">z z z</span>

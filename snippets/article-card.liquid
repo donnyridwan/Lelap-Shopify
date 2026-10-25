@@ -1,19 +1,19 @@
 {%- comment -%}
   Sleep Library article card (Figma: Article Card). Works with a real article or with fallback data.
-  Params: article (optional), title, url, tag, read, image (image object), image_asset, class, sizes, heading_tag
+  Params: item (an article, optional — not named `article` because that global exists on article pages), title, url, tag, read, image (image object), image_asset, class, sizes, heading_tag
 {%- endcomment -%}
 {%- liquid
   assign c_title = title
   assign c_url = url
   assign c_tag = tag
   assign c_read = read
-  if article != blank
-    assign c_title = article.title
-    assign c_url = article.url
-    assign c_tag = article.tags.first
-    assign c_read = article.metafields.lelap.read_time.value
+  if item != blank
+    assign c_title = item.title
+    assign c_url = item.url
+    assign c_tag = item.tags.first
+    assign c_read = item.metafields.lelap.read_time.value
     if c_read == blank
-      assign words = article.content | strip_html | split: ' ' | size
+      assign words = item.content | strip_html | split: ' ' | size
       assign mins = words | divided_by: 200 | at_least: 1
       assign c_read = 'blogs.article.min_read' | t: count: mins
     endif
@@ -23,9 +23,9 @@
 -%}
 <article class="blog-card{% if class %} {{ class }}{% endif %}" data-blog-card>
   <a href="{{ c_url }}" class="blog-card__media" tabindex="-1" aria-hidden="true">
-    {%- if article != blank and article.image != blank -%}
-      {%- assign c_alt = article.image.alt | default: c_title -%}
-      {{ article.image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: img_sizes, widths: '400, 600, 820, 1200', alt: c_alt }}
+    {%- if item != blank and item.image != blank -%}
+      {%- assign c_alt = item.image.alt | default: c_title -%}
+      {{ item.image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: img_sizes, widths: '400, 600, 820, 1200', alt: c_alt }}
     {%- elsif image != blank -%}
       {{ image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: img_sizes, widths: '400, 600, 820, 1200', alt: c_title }}
     {%- elsif image_asset != blank -%}

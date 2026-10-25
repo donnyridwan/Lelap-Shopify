@@ -1,11 +1,11 @@
 {%- comment -%} Figma: Help Center › Contact ("Still need help?"). {%- endcomment -%}
 <section class="help-contact">
   <div class="container">
-    <h2 class="help-h2">{{ section.settings.heading | escape }}</h2>
+    <h2 class="help-h2" data-reveal>{{ section.settings.heading | escape }}</h2>
     {%- if section.settings.text != blank -%}<p class="help-contact__lead">{{ section.settings.text | escape }}</p>{%- endif -%}
     <div class="help-contact__grid">
       {%- for block in section.blocks -%}
-        {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="help-channel" {{ block.shopify_attributes }}>{%- else -%}<div class="help-channel" {{ block.shopify_attributes }}>{%- endif -%}
+        {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="help-channel" data-reveal style="--reveal-delay: {{ forloop.index0 | times: 80 }}ms"{% if block.settings.link contains '://' %} target="_blank" rel="noopener"{% endif %} {{ block.shopify_attributes }}>{%- else -%}<div class="help-channel" data-reveal style="--reveal-delay: {{ forloop.index0 | times: 80 }}ms" {{ block.shopify_attributes }}>{%- endif -%}
           <span class="help-channel__icon">{% render 'icon', name: block.settings.icon, color: '#1d2142' %}</span>
           <span class="help-channel__title">{{ block.settings.title | escape }}</span>
           <span class="help-channel__value">{{ block.settings.value | escape }}</span>

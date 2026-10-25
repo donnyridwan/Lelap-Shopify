@@ -10,7 +10,7 @@
     <div class="acct__content">
       <div class="acct__head">
         <h1 class="acct__title">{{ section.settings.heading }}</h1>
-        <button type="button" class="btn btn--primary" data-address-open="AddressModal-new">{{ section.settings.add_label }}</button>
+        <button type="button" class="btn btn--primary acct__head-btn" data-address-open="AddressModal-new">{{ section.settings.add_label }}</button>
       </div>
 
       {%- if customer.addresses.size > 0 -%}
@@ -61,6 +61,8 @@
             </article>
           {%- endfor -%}
         </div>
+        {%- comment -%} Tablet + mobile: full-width add button under the cards (Figma 250:11063 / 244:2429) {%- endcomment -%}
+        <button type="button" class="btn btn--primary btn--block acct-addr__add" data-address-open="AddressModal-new">{{ section.settings.add_label }}</button>
         {%- if section.settings.note != blank -%}
           <p class="acct-info">{% render 'icon', name: 'info', color: '#1d2142', size: 16 %}{{ section.settings.note }}</p>
         {%- endif -%}

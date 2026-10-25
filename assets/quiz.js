@@ -41,21 +41,36 @@
       progress.setAttribute('aria-valuenow', Math.round(pct));
     }
 
+    let leaving = null;
     function show(step, opts) {
       if (timer) { clearTimeout(timer); timer = null; }
-      steps.forEach((s) => { if (s) { s.hidden = s !== step; s.classList.remove('is-entering'); } });
-      if (!reduceMotion) { void step.offsetWidth; step.classList.add('is-entering'); }
-      current = step;
-      const result = step === plan || step === notfit;
-      body.classList.toggle('quiz-result', result);
-      root.classList.toggle('is-result', result);
+      const prev = current;
+      const back = steps.indexOf(step) < steps.indexOf(prev);
+      // Progress moves right away so the bar animates with the click.
       if (step === intro) setProgress(2);
       else if (step.dataset.step === 'q') setProgress((parseInt(step.dataset.index, 10) / total) * 100);
       else setProgress(100);
-      if (!(opts && opts.noScroll)) window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
-      const focusEl = step.querySelector('h1, h2');
-      if (focusEl && !(opts && opts.noFocus)) { focusEl.setAttribute('tabindex', '-1'); focusEl.focus({ preventScroll: true }); }
-      save();
+      const swap = () => {
+        steps.forEach((s) => { if (s) { s.hidden = s !== step; s.classList.remove('is-entering', 'is-leaving', 'is-back'); } });
+        if (!reduceMotion) { void step.offsetWidth; step.classList.add('is-entering'); step.classList.toggle('is-back', back); }
+        current = step;
+        const result = step === plan || step === notfit;
+        body.classList.toggle('quiz-result', result);
+        root.classList.toggle('is-result', result);
+        if (!(opts && opts.noScroll)) window.scrollTo({ top: 0, behavior: 'auto' });
+        const focusEl = step.querySelector('h1, h2');
+        if (focusEl && !(opts && opts.noFocus)) { focusEl.setAttribute('tabindex', '-1'); focusEl.focus({ preventScroll: true }); }
+        save();
+      };
+      if (leaving) { clearTimeout(leaving); leaving = null; }
+      // Animate the current step out (fade + slide), then bring the next one in.
+      if (!reduceMotion && prev && prev !== step && !prev.hidden && !(opts && opts.instant)) {
+        current = step;
+        prev.classList.remove('is-entering');
+        prev.classList.add('is-leaving');
+        prev.classList.toggle('is-back', back);
+        leaving = setTimeout(() => { leaving = null; swap(); }, 180);
+      } else swap();
     }
 
     /* ---------- state ---------- */
@@ -117,6 +132,7 @@
       if (btn) btn.addEventListener('click', () => next(q));
       const back = q.querySelector('[data-quiz-back]');
       if (back) back.addEventListener('click', () => {
+        if (q !== current) return;
         const i = questions.indexOf(q);
         show(i > 0 ? questions[i - 1] : intro);
       });
@@ -124,7 +140,7 @@
     });
 
     function next(q) {
-      if (!answered(q)) return;
+      if (!answered(q) || q !== current) return;
       const stop = inputsOf(q).find((i) => i.checked && i.dataset.outcome === 'not_fit');
       if (stop) { showNotFit(stop.dataset.notfit); return; }
       const i = questions.indexOf(q);
@@ -271,7 +287,7 @@
     // Theme editor: show the step that contains the selected block.
     document.addEventListener('shopify:block:select', (e) => {
       const step = e.target.closest('[data-step]');
-      if (step && root.contains(step)) show(step, { noScroll: true, noFocus: true });
+      if (step && root.contains(step)) show(step, { noScroll: true, noFocus: true, instant: true });
     });
   }
 

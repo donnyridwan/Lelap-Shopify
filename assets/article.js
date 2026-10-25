@@ -5,12 +5,38 @@
   if (!root) return;
   const links = [...root.querySelectorAll('[data-toc-link]')];
   const heads = links.map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1)))).filter(Boolean);
-  if (heads.length && 'IntersectionObserver' in window) {
-    const setActive = (id) => links.forEach((a) => a.classList.toggle('is-active', a.hash.slice(1) === id));
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.id); });
-    }, { rootMargin: '-20% 0px -70% 0px' });
-    heads.forEach((h) => io.observe(h));
+  if (heads.length) {
+    // Active = the last heading that has scrolled past 30% of the viewport (first one before that).
+    let current = '';
+    const setActive = (id) => {
+      if (id === current) return;
+      current = id;
+      links.forEach((a) => {
+        const on = decodeURIComponent(a.hash.slice(1)) === id;
+        a.classList.toggle('is-active', on);
+        if (on) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
+      });
+    };
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const line = window.innerHeight * 0.3;
+      let id = heads[0].id;
+      heads.forEach((h) => { if (h.getBoundingClientRect().top <= line) id = h.id; });
+      setActive(id);
+    };
+    window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+    links.forEach((a) => a.addEventListener('click', (e) => {
+      const target = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+      if (!target) return;
+      e.preventDefault();
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      history.replaceState(null, '', a.hash);
+      setActive(target.id);
+    }));
   }
   const share = root.querySelector('[data-article-share]');
   if (share) {

@@ -51,8 +51,8 @@
 
     <section class="help-faq">
       <div class="container">
-        <h2 class="help-h2">{{ section.settings.faq_heading | escape }}</h2>
-        <div class="help-faq__list" data-accordion="single">
+        <h2 class="help-h2" data-reveal>{{ section.settings.faq_heading | escape }}</h2>
+        <div class="help-faq__list" data-accordion="single" data-reveal style="--reveal-delay: 80ms">
           {%- assign shown = 0 -%}
           {%- for block in faqs -%}
             {%- if block.settings.popular -%}
@@ -100,7 +100,8 @@
         <h2 class="help-results__contact-title">{{ section.settings.contact_title | escape }}</h2>
         <p class="help-results__contact-text">{{ section.settings.contact_text | escape }}</p>
         {%- if section.settings.contact_button != blank -%}
-          <a href="{{ section.settings.contact_link | default: 'https://wa.me/6281100005327' }}" class="btn btn--primary">{{ section.settings.contact_button | escape }}</a>
+          {%- assign contact_href = section.settings.contact_link | default: 'https://wa.me/6281100005327' -%}
+          <a href="{{ contact_href }}" class="btn btn--primary"{% if contact_href contains '://' %} target="_blank" rel="noopener"{% endif %}>{{ section.settings.contact_button | escape }}</a>
         {%- endif -%}
       </aside>
     </div>

@@ -75,6 +75,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 /* Icons ------------------------------------------------------------------- */
 .icon { display: inline-flex; flex-shrink: 0; line-height: 0; width: var(--icon-size, 16px); height: var(--icon-size, 16px); }
 .icon svg { width: 100%; height: 100%; }
+.icon svg * { vector-effect: non-scaling-stroke; }
 
 /* Typography ---------------------------------------------------------------- */
 .wordmark {
@@ -112,9 +113,9 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 .btn--primary:hover { background: var(--navy-2); }
 .btn--light { background: var(--white); color: var(--navy); }
 .btn--light:hover { background: var(--panel); }
-.btn--outline { background: transparent; color: var(--navy); border: 1px solid var(--navy); padding: 15px 29px; }
+.btn--outline { background: transparent; color: var(--navy); border: 1px solid var(--navy); }
 .btn--outline:hover { background: var(--navy); color: var(--white); }
-.btn--outline-light { background: transparent; color: var(--white); border: 1px solid var(--white); padding: 15px 29px; }
+.btn--outline-light { background: transparent; color: var(--white); border: 1px solid var(--white); }
 .btn--sm { padding: 11px 20px; }
 .btn--block { width: 100%; }
 .btn[disabled], .btn.is-disabled { opacity: .45; pointer-events: none; }
@@ -131,7 +132,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   display: inline-flex; align-items: center; gap: 6px;
   padding: 5px 12px 5px 10px; border-radius: var(--radius-pill);
   background: var(--moon); color: var(--navy);
-  font-size: 13px; font-weight: 600; line-height: normal; white-space: nowrap;
+  font-size: 13px; font-weight: 600; line-height: 16px; white-space: nowrap;
 }
 .chip .icon { width: 12px; height: 12px; }
 .chip--lav { background: var(--lav-light); }

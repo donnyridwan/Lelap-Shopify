@@ -27,8 +27,8 @@
       </form>
       <nav class="blog-tags" aria-label="{{ section.settings.tags_label | escape }}">
         <a href="{{ blog_url }}" class="blog-tag{% if current_tags == blank %} is-active{% endif %}"{% if current_tags == blank %} aria-current="page"{% endif %}>{{ section.settings.all_label | escape }}</a>
-        {%- for c in cats -%}
-          {%- assign c = c | strip -%}
+        {%- for c_raw in cats -%}
+          {%- assign c = c_raw | strip -%}
           {%- if c != blank -%}
             {%- assign active = false -%}
             {%- if current_tags contains c -%}{%- assign active = true -%}{%- endif -%}
@@ -54,8 +54,7 @@
         if use_fallback
           assign fb = fallbacks.first
           assign f_title = fb.settings.title
-          assign f_url = blog_url | append: '/' | append: fb.settings.title | handleize
-          assign f_url = fb.settings.url | default: f_url
+          assign f_url = fb.settings.url | default: blog_url
           assign f_meta = fb.settings.tag | append: ' · ' | append: fb.settings.read
           assign f_excerpt = fb.settings.excerpt
         else
@@ -77,7 +76,7 @@
       -%}
       <section class="blog-featured">
         <div class="container blog-featured__inner">
-          <a href="{{ f_url }}" class="blog-featured__media" tabindex="-1" aria-hidden="true">
+          <a href="{{ f_url }}" class="blog-featured__media" tabindex="-1" aria-hidden="true" data-reveal>
             {%- if use_fallback == false and featured.image != blank -%}
               {%- assign f_alt = featured.image.alt | default: f_title -%}
               {{ featured.image | image_url: width: 1440 | image_tag: loading: 'eager', sizes: '(min-width: 1200px) 720px, 100vw', widths: '400, 720, 1080, 1440', alt: f_alt }}
@@ -87,7 +86,7 @@
               <img src="{{ fb.settings.image_asset | default: 'photo-phone-feature.jpg' | asset_url }}" alt="" width="720" height="440">
             {%- endif -%}
           </a>
-          <div class="blog-featured__body">
+          <div class="blog-featured__body" data-reveal style="--reveal-delay: 120ms">
             {%- if section.settings.featured_chip != blank -%}<span class="chip">{% render 'icon', name: 'moon' %}{{ section.settings.featured_chip | escape }}</span>{%- endif -%}
             <p class="blog-featured__meta">{{ f_meta | escape }}</p>
             <h2 class="blog-featured__title"><a href="{{ f_url }}">{{ f_title | escape }}</a></h2>
@@ -110,22 +109,21 @@
 
     <section class="blog-latest">
       <div class="container">
-        <h2 class="blog-latest__title">{% if current_tags != blank %}{{ current_tags.first | escape }}{% else %}{{ section.settings.latest_heading | escape }}{% endif %}</h2>
+        <h2 class="blog-latest__title" data-reveal>{% if current_tags != blank %}{{ current_tags.first | escape }}{% else %}{{ section.settings.latest_heading | escape }}{% endif %}</h2>
         <div class="blog-grid" data-blog-grid>
           {%- if use_fallback -%}
             {%- for b in fallbacks -%}
-              {%- assign b_url = blog_url | append: '/' | append: b.settings.title | handleize -%}
-              {%- assign b_url = b.settings.url | default: b_url -%}
+              {%- assign b_url = b.settings.url | default: blog_url -%}
               {%- capture card_class -%}{% if forloop.first and show_featured %}is-featured{% endif %}{%- endcapture -%}
-              <div {{ b.shopify_attributes }} class="blog-grid__cell{% if card_class != blank %} {{ card_class }}{% endif %}">
+              <div {{ b.shopify_attributes }} class="blog-grid__cell{% if card_class != blank %} {{ card_class }}{% endif %}" data-reveal style="--reveal-delay: {{ forloop.index0 | modulo: 3 | times: 80 }}ms">
                 {% render 'article-card', title: b.settings.title, url: b_url, tag: b.settings.tag, read: b.settings.read, image: b.settings.image, image_asset: b.settings.image_asset %}
               </div>
             {%- endfor -%}
           {%- else -%}
             {%- for article in blog.articles -%}
               {%- capture card_class -%}{% if show_featured and article.id == featured.id %}is-featured{% endif %}{%- endcapture -%}
-              <div class="blog-grid__cell{% if card_class != blank %} {{ card_class }}{% endif %}">
-                {% render 'article-card', article: article %}
+              <div class="blog-grid__cell{% if card_class != blank %} {{ card_class }}{% endif %}" data-reveal style="--reveal-delay: {{ forloop.index0 | modulo: 3 | times: 80 }}ms">
+                {% render 'article-card', item: article %}
               </div>
             {%- endfor -%}
           {%- endif -%}
@@ -183,7 +181,7 @@
         { "value": "photo-ingredients-card.jpg", "label": "Ingredients" },
         { "value": "photo-morning-card.jpg", "label": "Morning stretch" }
       ] },
-      { "type": "url", "id": "url", "label": "Link" }
+      { "type": "url", "id": "url", "label": "Link", "info": "Defaults to the blog." }
     ] }
   ]
 }

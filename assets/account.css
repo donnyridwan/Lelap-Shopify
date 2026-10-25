@@ -10,6 +10,13 @@ body.template-register .site-footer,
 body.template-reset_password .site-footer,
 body.template-activate_account .site-footer { display: none; }
 
+/* Figma icon instances keep a 1.8px stroke at every size; moon is an outlined crescent above 12px. */
+.acct .icon [stroke], .auth .icon [stroke], .acct-modal .icon [stroke] { stroke-width: 1.8px; vector-effect: non-scaling-stroke; }
+.acct .icon--moon path, .auth .icon--moon path { fill: none; stroke: currentColor; stroke-width: 1.8px; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Figma outline Button: 1px stroke + 16/30 padding (53px) */
+.acct .btn--outline, .auth .btn--outline, .acct-modal .btn--outline { padding: 16px 30px; }
+
 /* Auth split ---------------------------------------------------------------- */
 .auth { display: flex; min-height: 820px; background: var(--white); }
 .auth__main { flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
@@ -198,14 +205,21 @@ body.template-activate_account .site-footer { display: none; }
 
 /* Orders table */
 .acct-orders { background: var(--white); border-radius: 20px; padding: 8px; }
-.acct-orders table { width: 100%; border-collapse: collapse; }
+/* Figma: header row, then rows 69px tall separated by 16px with a top hairline; the "View" column is clipped out of the frame. */
+.acct-orders table { width: 100%; border-collapse: separate; border-spacing: 0 16px; margin: -16px 0; table-layout: fixed; }
 .acct-orders th { text-align: left; padding: 12px 20px; font-size: 12px; font-weight: 600; color: var(--body); line-height: 20px; }
-.acct-orders td { padding: 14px 20px; border-top: 1px solid var(--line); vertical-align: middle; line-height: normal; }
+.acct-orders td { padding: 14px 20px; border-top: 1px solid var(--line); vertical-align: middle; line-height: normal; height: 69px; box-sizing: border-box; }
+.acct-orders tbody tr { position: relative; transition: background-color .2s ease; }
+.acct-orders tbody tr:hover td { background: var(--canvas); }
+.acct-orders__link { color: inherit; }
+.acct-orders__link::after { content: ''; position: absolute; inset: 0; }
+.acct-orders__link:focus-visible { outline: 2px solid var(--plum); outline-offset: 4px; }
+.acct-orders__col-view { display: none; }
 .acct-orders__col-order { width: 200px; }
 .acct-orders__col-date { width: 160px; }
 .acct-orders__col-items { width: 260px; }
 .acct-orders__col-status { width: 180px; }
-.acct-orders__col-total { width: 140px; }
+.acct-orders__col-total { width: auto; }
 .acct-orders__num { font-size: 15px; font-weight: 600; color: var(--navy); }
 .acct-orders__date { font-size: 14px; color: var(--body); }
 .acct-orders__total { font-size: 15px; font-weight: 600; color: var(--navy); }
@@ -271,6 +285,7 @@ body.template-activate_account .site-footer { display: none; }
 .acct-addr__actions button, .acct-addr__actions a { background: none; border: 0; padding: 0; font-size: 14px; font-weight: 600; color: var(--navy); text-decoration: underline; text-underline-position: from-font; }
 .acct-addr__actions .is-muted { color: var(--body); }
 .acct-addr__actions form { display: contents; }
+.acct-addr__add { display: none; }
 .acct-info { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 14px; background: var(--panel); font-size: 13px; color: var(--navy); line-height: normal; }
 .acct-info--moon { align-items: flex-start; background: rgba(239, 235, 159, .45); line-height: 1.5; padding: 12px 14px; }
 
@@ -373,31 +388,48 @@ body.template-activate_account .site-footer { display: none; }
   }
   .acct-tabs a[aria-current='page'] { background: var(--navy); border-color: var(--navy); color: var(--white); }
   .acct__title { font-size: 28px; letter-spacing: -0.42px; }
-  .acct-order-head h1 { font-size: 28px; }
+  /* Overview stacks on tablet exactly like mobile (Figma 250:9467) */
+  .acct-card--lg, .acct-card { padding: 20px; }
+  .acct-card[data-checkin] { padding: 24px; }
+  .acct__head-btn { display: none; }
+  /* Orders: card list on tablet + mobile (Figma 250:9845 / 243:2004) */
+  .acct-orders { padding: 16px; }
+  .acct-orders table { display: none; }
+  .acct-orders__mobile { display: flex; flex-direction: column; gap: 16px; }
+  .acct-orders__card { display: flex; flex-direction: column; gap: 8px; padding: 14px 4px; border-top: 1px solid var(--line); }
+  .acct-orders__card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .acct-orders__card-top .acct-orders__num { line-height: 18px; }
+  .acct-orders__card-bottom { display: flex; align-items: center; gap: 12px; }
+  .acct-orders__card-meta { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .acct-orders__card-meta .acct-orders__date { font-size: 13px; line-height: 16px; }
+  .acct-orders__card-meta .acct-orders__total { font-size: 14px; line-height: 17px; }
+  .acct-orders__card:hover .acct-orders__num { text-decoration: underline; text-underline-position: from-font; }
+  .acct-addr__add { display: flex; }
+  .acct-addr-grid { grid-template-columns: minmax(0, 1fr); }
+  .acct-card.acct-empty { padding: 48px 32px; }
+  .acct-card.acct-empty--xl { padding: 32px; }
+  .acct-empty--xl .acct-empty__text { max-width: none; }
+  .acct-empty__text { line-height: 23px; }
+  .acct-sub__top { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .acct-sub__thumb { width: 96px; height: 96px; }
+  .acct-pair { flex-direction: column; }
+  .acct-order-row__info span, .acct-link--muted { line-height: 16px; }
+  /* Order detail: mobile layout on tablet too (Figma 243:2593) */
+  .acct-order-head { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .acct-order-head h1 { font-size: 26px; letter-spacing: -0.39px; }
+  .acct-track { padding: 20px; }
+  .acct-track__steps { flex-direction: column; gap: 14px; }
+  .acct-track__step { flex-direction: row; align-items: center; gap: 10px; }
+  .acct-track__line { display: none; }
+  .acct-track__note { align-items: flex-start; }
+  .acct-track__note, .acct-track__note a { line-height: 16px; }
+  .acct-detail .acct-card { padding: 24px; }
   .acct-detail { flex-direction: column; align-items: stretch; }
   .acct-detail__side { flex: none; width: 100%; }
   .acct-care { flex-direction: column; align-items: stretch; }
   .acct-care__side { flex: none; width: 100%; }
 }
 @media (max-width: 767px) {
-  .acct-card--lg { padding: 20px; }
-  .acct-card { padding: 20px; }
-  .acct-sub__top { flex-direction: column; align-items: flex-start; gap: 20px; }
-  .acct-sub__thumb { width: 96px; height: 96px; }
-  .acct-pair { flex-direction: column; }
-  .acct-orders { padding: 8px 20px; }
-  .acct-orders table { display: none; }
-  .acct-orders__mobile { display: flex; flex-direction: column; }
-  .acct-orders__card { display: flex; flex-direction: column; gap: 10px; padding: 16px 0; border-top: 1px solid var(--line); }
-  .acct-orders__card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .acct-orders__card-bottom { display: flex; align-items: center; gap: 12px; }
-  .acct-orders__card-meta { flex: 1 1 0; display: flex; flex-direction: column; gap: 2px; line-height: normal; }
-  .acct-orders__card-meta .acct-orders__date { font-size: 13px; }
-  .acct-track { padding: 20px; }
-  .acct-track__steps { flex-direction: column; gap: 0; }
-  .acct-track__step { flex-direction: row; align-items: flex-start; gap: 12px; padding-bottom: 16px; position: relative; }
-  .acct-track__mark { flex-direction: column; align-self: stretch; }
-  .acct-track__line { width: 2px; height: auto; flex: 1 1 auto; min-height: 16px; max-width: none; margin-bottom: -16px; }
   .acct-addr-grid { grid-template-columns: minmax(0, 1fr); }
   .acct__head { flex-wrap: wrap; }
   .acct-modal { align-items: flex-end; padding: 0; }
@@ -406,5 +438,4 @@ body.template-activate_account .site-footer { display: none; }
   .acct-modal__actions .btn { flex: 1 1 0; }
   .acct-form .auth-row { flex-direction: column; }
   .acct-bubble { max-width: 88%; }
-  .acct-empty--xl { padding: 48px 20px; }
 }

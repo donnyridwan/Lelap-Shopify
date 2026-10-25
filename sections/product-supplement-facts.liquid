@@ -12,7 +12,7 @@
 -%}
 <section class="pdp-facts">
   <div class="container pdp-facts__inner">
-    <div class="pdp-facts__table">
+    <div class="pdp-facts__table" data-reveal>
       <h2 class="pdp-facts__table-title">{{ section.settings.table_title }}</h2>
       <p class="pdp-facts__serving">{{ section.settings.serving }}</p>
       <dl class="pdp-facts__rows">
@@ -24,7 +24,7 @@
       </dl>
       {%- if p_other != blank -%}<p class="pdp-facts__other">{{ p_other }}</p>{%- endif -%}
     </div>
-    <div class="pdp-facts__copy">
+    <div class="pdp-facts__copy" data-reveal style="--reveal-delay: 120ms">
       <h2 class="pdp-facts__title">{{ section.settings.title_1 }}<br><span class="text-lav">{{ section.settings.title_2 }}</span></h2>
       <p class="pdp-facts__text">{{ section.settings.text }}</p>
       <ul class="pdp-facts__chips">
@@ -36,7 +36,10 @@
         {%- if section.settings.image != blank -%}
           {{ section.settings.image | image_url: width: 1512 | image_tag: loading: 'lazy', widths: '390, 756, 1134, 1512', sizes: '(min-width: 1200px) 756px, calc(100vw - 40px)' }}
         {%- else -%}
-          <img src="{{ 'photo-ingredients-wide.jpg' | asset_url }}" width="756" height="300" loading="lazy" alt="{{ section.settings.image_alt | escape }}">
+          <picture>
+            <source media="(max-width: 767px)" srcset="{{ 'photo-ingredients.jpg' | asset_url }}" width="600" height="440">
+            <img src="{{ 'photo-ingredients-wide.jpg' | asset_url }}" width="756" height="300" loading="lazy" alt="{{ section.settings.image_alt | escape }}">
+          </picture>
         {%- endif -%}
       </div>
     </div>

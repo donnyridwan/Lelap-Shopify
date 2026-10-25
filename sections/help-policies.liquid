@@ -2,7 +2,7 @@
 <section class="help-policies">
   <div class="container help-policies__grid">
     {%- for block in section.blocks -%}
-      <div class="help-policy" {{ block.shopify_attributes }}>
+      <div class="help-policy" data-reveal style="--reveal-delay: {{ forloop.index0 | times: 80 }}ms" {{ block.shopify_attributes }}>
         <h2 class="help-policy__title">{{ block.settings.title | escape }}</h2>
         <p class="help-policy__text">{{ block.settings.text | escape }}</p>
         {%- if block.settings.link_label != blank -%}

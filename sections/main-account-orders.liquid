@@ -16,18 +16,18 @@
                   <th class="acct-orders__col-items" scope="col">{{ section.settings.col_items }}</th>
                   <th class="acct-orders__col-status" scope="col">{{ section.settings.col_status }}</th>
                   <th class="acct-orders__col-total" scope="col">{{ section.settings.col_total }}</th>
-                  <th scope="col"><span class="visually-hidden">{{ section.settings.view_label }}</span></th>
+                  <th class="acct-orders__col-view" scope="col"><span class="visually-hidden">{{ section.settings.view_label }}</span></th>
                 </tr>
               </thead>
               <tbody>
                 {%- for order in customer.orders -%}
                   <tr>
-                    <td class="acct-orders__num">{{ order.name }}</td>
+                    <td class="acct-orders__num"><a class="acct-orders__link" href="{{ order.customer_url }}">{{ order.name }}</a></td>
                     <td class="acct-orders__date">{{ order.created_at | date: '%-d %b %Y' }}</td>
                     <td><span class="acct-orders__thumbs">{% for li in order.line_items limit: 4 %}{% render 'line-item-thumb', item: li, size: 40 %}{% endfor %}</span></td>
                     <td>{% render 'order-pill', order: order %}</td>
                     <td class="acct-orders__total">{{ order.total_price | money_without_trailing_zeros }}</td>
-                    <td><a class="acct-orders__view" href="{{ order.customer_url }}">{{ section.settings.view_label }}{% render 'icon', name: 'chev', size: 14 %}<span class="visually-hidden"> {{ order.name }}</span></a></td>
+                    <td class="acct-orders__col-view"><a class="acct-orders__view" tabindex="-1" aria-hidden="true" href="{{ order.customer_url }}">{{ section.settings.view_label }}{% render 'icon', name: 'chev', size: 14 %}<span class="visually-hidden"> {{ order.name }}</span></a></td>
                   </tr>
                 {%- endfor -%}
               </tbody>

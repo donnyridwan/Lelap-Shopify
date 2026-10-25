@@ -9,17 +9,22 @@
   --reveal-distance: 28px;
 }
 
-/* Scroll reveal ----------------------------------------------------------- */
+/* Scroll reveal -----------------------------------------------------------
+   Uses the individual `translate` / `scale` properties so it never fights the
+   `transform` used by hover lifts, and lists the hover transitions too so a
+   revealed card still animates on hover without inheriting the reveal delay. */
 .reveal-ready [data-reveal] {
   opacity: 0;
-  transform: translate3d(0, var(--reveal-distance), 0);
-  transition: opacity .7s var(--ease-out), transform .7s var(--ease-out);
-  transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity, transform;
+  translate: 0 var(--reveal-distance);
+  transition:
+    opacity .7s var(--ease-out) var(--reveal-delay, 0ms),
+    translate .7s var(--ease-out) var(--reveal-delay, 0ms),
+    scale .7s var(--ease-out) var(--reveal-delay, 0ms),
+    transform .35s var(--ease-out), box-shadow .35s var(--ease-out), background-color .2s ease;
 }
-.js [data-reveal='fade'] { transform: none; }
-.js [data-reveal='scale'] { transform: scale(.96); }
-.reveal-ready [data-reveal].is-revealed { opacity: 1; transform: none; will-change: auto; }
+.reveal-ready [data-reveal='fade'] { translate: none; }
+.reveal-ready [data-reveal='scale'] { translate: none; scale: .96; }
+.reveal-ready [data-reveal].is-revealed { opacity: 1; translate: none; scale: none; }
 
 /* Hero intro ---------------------------------------------------------------- */
 @keyframes lelap-rise { from { opacity: 0; transform: translate3d(0, 24px, 0); } to { opacity: 1; transform: none; } }
@@ -61,20 +66,20 @@
 .btn:active { transform: translateY(0); box-shadow: none; }
 
 .product-card, .need-tile, .need-small, .review-card, .ingr-card, .how-step, .nav-tile,
-.pg-icon-card, .pg-num-card, .c-compare-card, .c-mini-card, .article-card, .pdp-benefits__card, .pdp-routine__card {
+.pg-icon-card, .pg-num-card, .c-compare-card, .c-mini-card, .pdp-benefits__card, .pdp-routine__card {
   transition: transform .35s var(--ease-out), box-shadow .35s var(--ease-out), background-color .2s ease;
 }
 .product-card:hover, .need-tile:hover, .need-small:hover, .review-card:hover, .ingr-card:hover, .nav-tile:hover,
-.pg-icon-card:hover, .pg-num-card:hover, .c-compare-card:hover, .c-mini-card:hover, .article-card:hover {
+.pg-icon-card:hover, .pg-num-card:hover, .c-compare-card:hover, .c-mini-card:hover {
   transform: translateY(-4px); box-shadow: 0 18px 40px rgba(29, 33, 66, .10);
 }
 .how-step:hover { transform: translateY(-4px); background: rgba(255, 255, 255, .12); }
-.product-card__img, .need-tile__img img, .need-small__thumb img, .nav-tile__img img, .final-cta__img img, .article-card img {
+.product-card__img, .need-tile__img img, .need-small__thumb img, .nav-tile__img img, .final-cta__img img {
   transition: transform .6s var(--ease-out);
 }
 .product-card:hover .product-card__img { transform: scale(1.05); }
 .need-tile:hover .need-tile__img img { transform: scale(1.2); }
-.need-small:hover .need-small__thumb img, .nav-tile:hover .nav-tile__img img, .article-card:hover img { transform: scale(1.06); }
+.need-small:hover .need-small__thumb img, .nav-tile:hover .nav-tile__img img { transform: scale(1.06); }
 .final-cta__panel:hover .final-cta__img img { transform: scale(1.04); }
 .need-tile .icon--chev, .need-small .icon--chev { transition: transform .25s var(--ease-out); }
 .need-tile:hover .icon--chev, .need-small:hover .icon--chev { transform: translateX(4px); }
@@ -117,6 +122,6 @@ details[data-animating] { overflow: hidden; }
 /* Reduced motion ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
-  .reveal-ready [data-reveal] { opacity: 1; transform: none; }
+  [data-reveal] { opacity: 1 !important; translate: none !important; scale: none !important; }
   .hero__title .text-lav { background: none; color: var(--lav); }
 }

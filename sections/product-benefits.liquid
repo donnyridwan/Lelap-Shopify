@@ -10,11 +10,11 @@
 -%}
 <section class="pdp-benefits">
   <div class="container">
-    <h2 class="pdp-benefits__title">{{ section.settings.heading | replace: '[product]', p_title }}</h2>
+    <h2 class="pdp-benefits__title" data-reveal>{{ section.settings.heading | replace: '[product]', p_title }}</h2>
     <ul class="pdp-benefits__grid">
       {%- for item in items -%}
         {%- assign pair = item | split: '::' -%}
-        <li class="pdp-benefits__card">
+        <li class="pdp-benefits__card" data-reveal style="--reveal-delay: {{ forloop.index0 | times: 80 }}ms">
           <span class="pdp-benefits__icon">{% render 'icon', name: icons[forloop.index0], color: '#1d2142', size: 18 %}</span>
           <h3 class="pdp-benefits__card-title">{{ pair[0] }}</h3>
           <p class="pdp-benefits__text">{{ pair[1] }}</p>

@@ -8,6 +8,7 @@
     assign blog = blogs['sleep-library']
   endif
   assign blog_url = blog.url | default: '/blogs/sleep-library'
+  assign terms_safe = search.terms | escape
 -%}
 <div class="srch">
   <section class="srch__head">
@@ -20,7 +21,7 @@
         {%- if section.settings.articles_only -%}<input type="hidden" name="type" value="article">{%- endif -%}
         <input type="hidden" name="options[prefix]" value="last">
         {%- if search.terms != blank -%}
-          <a href="{{ routes.search_url }}" class="srch__clear" aria-label="{{ section.settings.clear_label | escape }}">{% render 'icon', name: 'x', color: '#1d2142', size: 16 %}</a>
+          <a href="{{ routes.search_url }}" class="srch__clear" aria-label="{{ section.settings.clear_label | escape }}">{% render 'icon', name: 'close', color: '#5f6179', size: 16 %}</a>
         {%- endif -%}
       </form>
     </div>
@@ -29,9 +30,9 @@
   {%- if search.performed and search.results_count > 0 -%}
     <section class="srch__results">
       <div class="container">
-        <p class="srch__count">{{ section.settings.results_text | replace: '[count]', search.results_count | replace: '[terms]', search.terms }}</p>
+        <p class="srch__count">{{ section.settings.results_text | replace: '[count]', search.results_count | replace: '[terms]', terms_safe }}</p>
         {%- paginate search.results by 12 -%}
-          <ul class="srch__list">
+          <ul class="srch__list" data-reveal>
             {%- for item in search.results -%}
               <li>
                 {%- case item.object_type -%}
@@ -62,10 +63,10 @@
     </section>
   {%- else -%}
     <section class="srch__empty">
-      <div class="container">
+      <div class="container" data-reveal>
         <span class="srch__empty-icon">{% render 'icon', name: 'search', size: 36 %}</span>
         {%- if search.performed -%}
-          <h2 class="srch__empty-title">{{ section.settings.empty_title | replace: '[terms]', search.terms }}</h2>
+          <h2 class="srch__empty-title">{{ section.settings.empty_title | replace: '[terms]', terms_safe }}</h2>
           <p class="srch__empty-text">{{ section.settings.empty_text }}</p>
         {%- else -%}
           <h2 class="srch__empty-title">{{ section.settings.start_title }}</h2>
@@ -84,8 +85,8 @@
 
   <section class="srch__popular">
     <div class="container">
-      <h2 class="srch__popular-title">{{ section.settings.popular_title }}</h2>
-      <ul class="srch__popular-grid">
+      <h2 class="srch__popular-title" data-reveal>{{ section.settings.popular_title }}</h2>
+      <ul class="srch__popular-grid" data-reveal style="--reveal-delay: 80ms">
         {%- if blog != blank and blog.articles_count > 0 -%}
           {%- for article in blog.articles limit: 2 -%}
             <li>

@@ -47,7 +47,7 @@
       <h1 class="cart-panel__title" id="CartPageTitle">{{ settings.cart_title | default: 'Your cart' }}{% if cart.item_count > 0 %} ({{ cart.item_count }}){% endif %}</h1>
     {%- else -%}
       <h2 class="cart-panel__title" id="CartDrawerTitle">{{ settings.cart_title | default: 'Your cart' }}{% if cart.item_count > 0 %} ({{ cart.item_count }}){% endif %}</h2>
-      <button type="button" class="cart-panel__close" data-cart-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon', name: 'x', color: '#1d2142', size: 22 %}</button>
+      <button type="button" class="cart-panel__close" data-cart-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon', name: 'close', color: '#1d2142', size: 22 %}</button>
     {%- endif -%}
   </div>
 

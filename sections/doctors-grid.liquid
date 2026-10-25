@@ -1,7 +1,7 @@
 {%- comment -%} Figma: Science & Doctors › Our Doctors. {%- endcomment -%}
 <section class="pg sci-doctors">
   <div class="container">
-    <div class="sci-doctors__head">
+    <div class="sci-doctors__head" data-reveal>
       <h2 class="pg-title pg-title--stack">
         <span>{{ section.settings.heading | escape }}</span>
         {%- if section.settings.heading_accent != blank %} <span class="pg-accent">{{ section.settings.heading_accent | escape }}</span>{% endif -%}
@@ -10,7 +10,7 @@
     </div>
     <div class="sci-doctors__grid">
       {%- for block in section.blocks -%}
-        <article class="sci-doctor" {{ block.shopify_attributes }}>
+        <article class="sci-doctor" data-reveal style="--reveal-delay: {{ forloop.index0 | times: 80 }}ms" {{ block.shopify_attributes }}>
           <div class="sci-doctor__media">
             {%- if block.settings.image != blank -%}
               {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(min-width: 1200px) 384px, 100vw', widths: '400, 600, 800, 1200', alt: block.settings.name }}

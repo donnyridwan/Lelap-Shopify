@@ -2,8 +2,8 @@
 {%- assign p_title = product.title | default: 'Sleep Classic' -%}
 <section class="pdp-faq">
   <div class="container">
-    <h2 class="pdp-faq__title">{{ section.settings.heading | replace: '[product]', p_title }}</h2>
-    <div class="pdp-faq__list" data-accordion="{% if section.settings.single %}single{% else %}multi{% endif %}">
+    <h2 class="pdp-faq__title" data-reveal>{{ section.settings.heading | replace: '[product]', p_title }}</h2>
+    <div class="pdp-faq__list" data-reveal style="--reveal-delay: 80ms" data-accordion="{% if section.settings.single %}single{% else %}multi{% endif %}">
       {%- for block in section.blocks -%}
         <details class="faq-row"{% if forloop.first and section.settings.open_first %} open{% endif %} {{ block.shopify_attributes }}>
           <summary class="faq-row__q">

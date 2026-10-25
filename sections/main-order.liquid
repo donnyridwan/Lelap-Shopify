@@ -151,8 +151,8 @@
               <h2 class="acct-card__title">{{ section.settings.address_title }}</h2>
               <p class="acct-address">
                 {{ order.shipping_address.name }}<br>
-                {{ order.shipping_address.address1 }}{% if order.shipping_address.address2 != blank %}, {{ order.shipping_address.address2 }}{% endif %}<br>
-                {{ order.shipping_address.city }}{% if order.shipping_address.province != blank %}, {{ order.shipping_address.province }}{% endif %} {{ order.shipping_address.zip }}
+                {{ order.shipping_address.address1 }}<br>
+                {% if order.shipping_address.address2 != blank %}{{ order.shipping_address.address2 }}, {% endif %}{{ order.shipping_address.city }} {{ order.shipping_address.zip }}
                 {%- if order.shipping_address.phone != blank -%}<br>{{ order.shipping_address.phone }}{%- endif -%}
               </p>
             </div>

@@ -61,7 +61,7 @@
     </div>
   </header>
 
-  <div class="container article-hero">
+  <div class="container article-hero" data-reveal>
     {%- if article.image != blank -%}
       {%- assign hero_alt = article.image.alt | default: article.title -%}
       {{ article.image | image_url: width: 2560 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 1440px) 1280px, 100vw', widths: '600, 900, 1280, 1920, 2560', alt: hero_alt }}

@@ -6,8 +6,8 @@
 -%}
 <section class="c-compare">
   <div class="container">
-    <h2 class="c-h-section c-compare__heading">{{ section.settings.heading }}</h2>
-    <table class="c-compare__table">
+    <h2 class="c-h-section c-compare__heading" data-reveal>{{ section.settings.heading }}</h2>
+    <table class="c-compare__table" data-reveal style="--reveal-delay: 80ms">
       <thead>
         <tr>
           <td></td>
@@ -35,7 +35,7 @@
       </tbody>
     </table>
 
-    <div class="c-compare__cards">
+    <div class="c-compare__cards" data-reveal style="--reveal-delay: 80ms">
       {%- for h in handles -%}
         {%- assign p = all_products[h] -%}{%- unless p.id -%}{%- assign p = '' -%}{%- endunless -%}
         <div class="c-compare-card">

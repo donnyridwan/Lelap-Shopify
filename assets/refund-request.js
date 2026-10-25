@@ -8,7 +8,7 @@
   };
 
   document.querySelectorAll('[data-refund]').forEach((root) => {
-    const form = root.querySelector('[data-refund-form]');
+    const form = root.querySelector('[data-refund-form]') || root.querySelector('form');
     const refInput = root.querySelector('[data-refund-ref]');
     if (refInput) {
       // RF-0000 style reference included in the email to the care team.

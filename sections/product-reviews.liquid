@@ -18,9 +18,9 @@
 -%}
 <section class="pdp-reviews" id="reviews" data-reviews>
   <div class="container">
-    <h2 class="pdp-reviews__title">{{ section.settings.heading }}</h2>
+    <h2 class="pdp-reviews__title" data-reveal>{{ section.settings.heading }}</h2>
 
-    <div class="pdp-reviews__summary">
+    <div class="pdp-reviews__summary" data-reveal style="--reveal-delay: 80ms">
       <div class="pdp-reviews__score">
         <p class="pdp-reviews__avg">{{ p_rating }}</p>
         {% render 'stars' %}
@@ -63,14 +63,14 @@
       </div>
     {%- endif -%}
 
-    <ul class="pdp-reviews__grid">
+    <ul class="pdp-reviews__grid" data-reveal style="--reveal-delay: 120ms">
       {%- for block in section.blocks -%}
         {%- assign topics = block.settings.topics | split: ',' -%}
         <li class="review-card" data-review data-topics="{% for t in topics %}{{ t | strip | handleize }} {% endfor %}"{% if forloop.index > per_page %} hidden data-review-more{% endif %} {{ block.shopify_attributes }}>
           {% render 'stars' %}
           <h3 class="review-card__title">{{ block.settings.title }}</h3>
           <p class="review-card__body">{{ block.settings.body }}</p>
-          <p class="review-card__foot"><strong>{{ block.settings.name }}</strong>{% render 'icon', name: 'check', color: '#5f6179', size: 14 %}<span>{{ block.settings.badge }}</span></p>
+          <p class="review-card__foot"><strong>{{ block.settings.name }}</strong>{% render 'icon', name: 'check', color: '#8b87b8', size: 14 %}<span>{{ block.settings.badge }}</span></p>
         </li>
       {%- endfor -%}
     </ul>

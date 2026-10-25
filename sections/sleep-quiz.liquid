@@ -40,8 +40,8 @@
       <h1 class="quiz-intro__title">{{ section.settings.intro_heading | escape }}</h1>
       <p class="quiz-intro__text">{{ section.settings.intro_text | escape }}</p>
       <ul class="quiz-intro__list">
-        {%- for pt in intro_points -%}
-          {%- assign pt = pt | strip -%}
+        {%- for pt_raw in intro_points -%}
+          {%- assign pt = pt_raw | strip -%}
           {%- if pt != blank -%}
             {%- case forloop.index -%}{%- when 1 -%}{%- assign ic = 'clock' -%}{%- when 2 -%}{%- assign ic = 'steth' -%}{%- else -%}{%- assign ic = 'lock' -%}{%- endcase -%}
             <li><span class="quiz-intro__icon">{% render 'icon', name: ic, size: 16, color: '#1d2142' %}</span>{{ pt | escape }}</li>
@@ -95,7 +95,7 @@
             {%- endif -%}
             {%- if opt_count > 0 -%}
               {%- for opt in section.blocks offset: opt_from limit: opt_count -%}
-                <label class="quiz-option" {{ opt.shopify_attributes }}>
+                <label class="quiz-option" style="--i: {{ forloop.index0 }}" {{ opt.shopify_attributes }}>
                   <input type="{% if q_type == 'multi' %}checkbox{% else %}radio{% endif %}" name="{{ q_id }}" value="{{ opt.settings.label | escape }}" data-formula="{{ opt.settings.formula }}" data-points="{{ opt.settings.points }}" data-outcome="{{ opt.settings.outcome }}" data-notfit="{{ opt.settings.not_fit_reason | escape }}" data-reason-title="{{ opt.settings.reason_title | escape }}" data-reason-text="{{ opt.settings.reason_text | escape }}">
                   <span class="quiz-option__mark" aria-hidden="true">{% render 'icon', name: 'check', color: '#ffffff', size: 12 %}</span>
                   <span class="quiz-option__text">
@@ -125,8 +125,8 @@
       <h2 class="quiz-building__title">{{ section.settings.building_heading | escape }}</h2>
       <p class="quiz-building__text">{{ section.settings.building_text | escape }}</p>
       <ol class="quiz-building__list">
-        {%- for step in building_steps -%}
-          {%- assign step = step | strip -%}
+        {%- for step_raw in building_steps -%}
+          {%- assign step = step_raw | strip -%}
           {%- if step != blank -%}
           <li data-quiz-task>
             <span class="quiz-task__mark" aria-hidden="true">
@@ -146,7 +146,7 @@
     <header class="quiz-plan__head">
       <div class="container">
         <span class="chip">{% render 'icon', name: 'moon' %}{{ section.settings.plan_chip | escape }}</span>
-        <h1 class="quiz-plan__title"><span data-quiz-lead>{{ section.settings.plan_heading | escape }}</span> <span class="pg-accent" data-quiz-name-out></span>.</h1>
+        <h1 class="quiz-plan__title"><span data-quiz-lead>{{ section.settings.plan_heading | escape }}</span> <span class="pg-accent" data-quiz-name-out></span><span class="quiz-plan__dot">.</span></h1>
         <p class="quiz-plan__text">{{ section.settings.plan_text | escape }}</p>
       </div>
     </header>
@@ -182,8 +182,8 @@
             endif
           -%}
           {%- if has_p -%}
-            {%- capture sub_txt -%}{{ sub_txt }}{%- endcapture -%}
-            {%- capture full_txt -%}{{ full_txt }}{%- endcapture -%}
+            {%- capture sub_txt -%}{{ sub | money_without_trailing_zeros }}{%- endcapture -%}
+            {%- capture full_txt -%}{{ full | money_without_trailing_zeros }}{%- endcapture -%}
           {%- else -%}
             {%- capture sub_txt -%}{% render 'design-money', cents: sub %}{%- endcapture -%}
             {%- capture full_txt -%}{% render 'design-money', cents: full %}{%- endcapture -%}
@@ -232,8 +232,8 @@
               <div class="quiz-buy__next">
                 <h3>{{ section.settings.next_heading | escape }}</h3>
                 <ul>
-                  {%- for ns in next_steps -%}
-                    {%- assign ns = ns | strip -%}
+                  {%- for ns_raw in next_steps -%}
+                    {%- assign ns = ns_raw | strip -%}
                     {%- if ns != blank -%}
                       {%- case forloop.index -%}{%- when 1 -%}{%- assign ic = 'steth' -%}{%- when 2 -%}{%- assign ic = 'truck' -%}{%- else -%}{%- assign ic = 'refresh' -%}{%- endcase -%}
                       <li><span>{% render 'icon', name: ic, size: 16, color: '#1d2142' %}</span>{{ ns | escape }}</li>

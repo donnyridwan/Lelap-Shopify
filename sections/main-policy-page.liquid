@@ -60,6 +60,9 @@
     var sync = function () { document.querySelectorAll('[data-policy-menu]').forEach(function (d) { d.open = mq.matches; }); };
     sync();
     if (mq.addEventListener) mq.addEventListener('change', sync);
+    var closeAll = function (except) { if (mq.matches) return; document.querySelectorAll('[data-policy-menu][open]').forEach(function (d) { if (d !== except) d.open = false; }); };
+    document.addEventListener('click', function (e) { closeAll(e.target.closest ? e.target.closest('[data-policy-menu]') : null); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(null); });
   })();
 </script>
 

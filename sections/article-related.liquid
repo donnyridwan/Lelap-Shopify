@@ -10,14 +10,14 @@
 -%}
 <section class="article-related">
   <div class="container">
-    <h2 class="article-related__title">{{ section.settings.heading | escape }}</h2>
-    <div class="blog-grid article-related__grid">
+    <h2 class="article-related__title" data-reveal>{{ section.settings.heading | escape }}</h2>
+    <div class="blog-grid article-related__grid" data-reveal style="--reveal-delay: 80ms">
       {%- if blog != blank and blog.articles_count > 1 -%}
         {%- for a in blog.articles -%}
           {%- if shown < limit and a.id != article.id and topic != blank and a.tags contains topic -%}
             {%- assign shown = shown | plus: 1 -%}
             {%- assign ids = ids | append: ',' | append: a.id | append: ',' -%}
-            {% render 'article-card', article: a, heading_tag: 'h3' %}
+            {% render 'article-card', item: a, heading_tag: 'h3' %}
           {%- endif -%}
         {%- endfor -%}
         {%- for a in blog.articles -%}
@@ -25,14 +25,14 @@
           {%- if shown < limit and a.id != article.id -%}
             {%- unless ids contains needle -%}
               {%- assign shown = shown | plus: 1 -%}
-              {% render 'article-card', article: a, heading_tag: 'h3' %}
+              {% render 'article-card', item: a, heading_tag: 'h3' %}
             {%- endunless -%}
           {%- endif -%}
         {%- endfor -%}
       {%- endif -%}
       {%- if shown == 0 -%}
         {%- for block in section.blocks limit: limit -%}
-          {%- assign b_url = blog.url | default: '/blogs/sleep-library' | append: '/' | append: block.settings.title | handleize -%}
+          {%- assign b_url = block.settings.url | default: blog.url | default: '/blogs/sleep-library' -%}
           <div {{ block.shopify_attributes }}>
             {% render 'article-card', title: block.settings.title, url: b_url, tag: block.settings.tag, read: block.settings.read, image: block.settings.image, image_asset: block.settings.image_asset %}
           </div>
@@ -64,7 +64,8 @@
         { "value": "photo-bedroom-card.jpg", "label": "Bedroom at night" },
         { "value": "photo-ingredients-card.jpg", "label": "Ingredients" },
         { "value": "photo-morning-card.jpg", "label": "Morning stretch" }
-      ] }
+      ] },
+      { "type": "url", "id": "url", "label": "Link", "info": "Defaults to the blog." }
     ] }
   ],
   "presets": [{ "name": "Keep reading" }]

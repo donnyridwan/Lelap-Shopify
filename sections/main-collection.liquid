@@ -92,7 +92,12 @@
       btn.addEventListener('click', function () {
         var key = btn.dataset.need, shown = 0;
         root.querySelectorAll('.c-shop__filter').forEach(function (b) { var on = b === btn; b.classList.toggle('is-active', on); b.setAttribute('aria-pressed', on); });
-        items.forEach(function (li) { var on = key === 'all' || li.dataset.need === key; li.hidden = !on; if (on) shown++; });
+        items.forEach(function (li) {
+          var on = key === 'all' || li.dataset.need === key;
+          li.hidden = !on;
+          li.classList.remove('is-filtered-in');
+          if (on) { shown++; void li.offsetWidth; li.classList.add('is-filtered-in'); li.style.setProperty('--filter-delay', (shown - 1) * 60 + 'ms'); }
+        });
         if (empty) empty.hidden = shown > 0;
       });
     });

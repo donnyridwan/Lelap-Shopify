@@ -4,16 +4,18 @@
   Logged-in customers see their latest order; guests enter their email and order number.
 {%- endcomment -%}
 {%- liquid
-  assign order = blank
+  assign order = nil
+  assign has_order = false
   if customer and customer.orders_count > 0
     assign order = customer.orders.first
+    assign has_order = true
   endif
-  assign item = blank
+  assign item = nil
   assign order_label = ''
   assign product_title = ''
   assign card_label = ''
   assign eligible = true
-  if order != blank
+  if has_order
     assign item = order.line_items.first
     assign product_title = item.product.title | default: item.title
     assign order_label = order.name | remove: '#' | append: ' · ' | append: product_title
@@ -51,7 +53,7 @@
         <dl class="refund__summary">
           <div><dt>{{ section.settings.label_reference | escape }}</dt><dd data-refund-fill="ref">—</dd></div>
           <div><dt>{{ section.settings.label_order | escape }}</dt><dd data-refund-fill="order">{{ order_label | default: '—' }}</dd></div>
-          <div><dt>{{ section.settings.label_amount | escape }}</dt><dd data-refund-fill="amount">{% if order != blank %}{{ order.total_price | money }}{% else %}—{% endif %}</dd></div>
+          <div><dt>{{ section.settings.label_amount | escape }}</dt><dd data-refund-fill="amount">{% if has_order %}{{ order.total_price | money }}{% else %}—{% endif %}</dd></div>
           <div><dt>{{ section.settings.label_refund_to | escape }}</dt><dd data-refund-fill="method">{{ refund_to | escape }}</dd></div>
           <div><dt>{{ section.settings.label_expected | escape }}</dt><dd>{{ section.settings.method_time | escape }}</dd></div>
         </dl>
@@ -73,7 +75,7 @@
 
         <input type="hidden" name="contact[subject]" value="{{ section.settings.heading | escape }}">
         <input type="hidden" name="contact[Reference]" value="" data-refund-ref>
-        {%- if order != blank -%}
+        {%- if has_order -%}
           <input type="hidden" name="contact[email]" value="{{ customer.email | escape }}">
           <input type="hidden" name="contact[name]" value="{{ customer.name | escape }}">
           <input type="hidden" name="contact[Order]" value="{{ order_label | escape }}">
@@ -117,8 +119,9 @@
             <legend class="refund__label">{{ section.settings.q_nights | escape }}</legend>
             <div class="refund__pills">
               {%- assign nights = section.settings.nights_options | newline_to_br | split: '<br />' -%}
-              {%- for n in nights -%}
-                {%- assign n = n | strip -%}
+              {%- for n_raw in nights -%}
+                {%- assign n = n_raw | strip -%}
+                {%- if n == blank -%}{%- continue -%}{%- endif -%}
                 <label class="refund__pill"><input type="radio" name="contact[Nights taken]" value="{{ n | escape }}"{% if forloop.last %} checked{% endif %} required><span>{{ n | escape }}</span></label>
               {%- endfor -%}
             </div>
@@ -126,8 +129,9 @@
           <fieldset class="refund__group">
             <legend class="refund__label">{{ section.settings.q_reason | escape }}</legend>
             {%- assign reasons = section.settings.reason_options | newline_to_br | split: '<br />' -%}
-            {%- for r in reasons -%}
-              {%- assign r = r | strip -%}
+            {%- for r_raw in reasons -%}
+              {%- assign r = r_raw | strip -%}
+              {%- if r == blank -%}{%- continue -%}{%- endif -%}
               <label class="refund__option"><input type="radio" name="contact[Reason]" value="{{ r | escape }}"{% if forloop.first %} checked{% endif %} required><span class="refund__radio" aria-hidden="true">{% render 'icon', name: 'check', color: '#ffffff', size: 11 %}</span><span class="refund__option-text"><span class="refund__option-title">{{ r | escape }}</span></span></label>
             {%- endfor -%}
           </fieldset>
@@ -146,7 +150,7 @@
           </label>
           <button type="submit" class="btn btn--primary btn--block">{{ section.settings.submit | escape }}</button>
           <p class="refund__foot">
-            {%- if order != blank -%}{{ section.settings.amount_prefix | escape }} {{ order.total_price | money }}. {% endif -%}
+            {%- if has_order -%}{{ section.settings.amount_prefix | escape }} {{ order.total_price | money }}. {% endif -%}
             {{ section.settings.foot | escape }}
           </p>
         </div>

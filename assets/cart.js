@@ -29,7 +29,12 @@
     if (o) { o.hidden = false; requestAnimationFrame(() => o.classList.add('is-open')); }
     d.removeAttribute('inert');
     d.setAttribute('aria-hidden', 'false');
+    const gap = window.innerWidth - document.documentElement.clientWidth;
+    if (gap > 0) document.documentElement.style.paddingRight = gap + 'px'; // no layout jump when the scrollbar goes away
+    d.classList.add('is-entering');
     requestAnimationFrame(() => d.classList.add('is-open'));
+    clearTimeout(d._enterTimer);
+    d._enterTimer = setTimeout(() => d.classList.remove('is-entering'), 900);
     document.documentElement.style.overflow = 'hidden';
     document.querySelectorAll('[data-cart-toggle]').forEach((t) => t.setAttribute('aria-expanded', 'true'));
     setTimeout(() => d.focus({ preventScroll: true }), 50);
@@ -45,6 +50,7 @@
     const o = overlay();
     if (o) { o.classList.remove('is-open'); setTimeout(() => { if (!o.classList.contains('is-open')) o.hidden = true; }, 250); }
     document.documentElement.style.overflow = '';
+    document.documentElement.style.paddingRight = '';
     document.querySelectorAll('[data-cart-toggle]').forEach((t) => t.setAttribute('aria-expanded', 'false'));
     if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
   }

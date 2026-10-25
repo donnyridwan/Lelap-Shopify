@@ -1,11 +1,11 @@
 {%- comment -%} Figma: Science & Doctors › How Melatonin Works (text + "Melatonin Curve" chart). {%- endcomment -%}
 <section class="pg sci-mel">
   <div class="container sci-mel__inner">
-    <div class="sci-mel__copy">
+    <div class="sci-mel__copy" data-reveal>
       <h2 class="pg-title">{{ section.settings.heading | escape }}</h2>
       {{ section.settings.text }}
     </div>
-    <figure class="sci-mel__chart">
+    <figure class="sci-mel__chart" data-reveal style="--reveal-delay: 120ms">
       <figcaption class="sci-mel__chart-title">{{ section.settings.chart_title | escape }}</figcaption>
       <div class="sci-mel__bars" role="img" aria-label="{{ section.settings.chart_title | escape }}">
         {%- for block in section.blocks -%}
@@ -13,7 +13,7 @@
             assign h = block.settings.level | divided_by: 100.0
             assign o = block.settings.level | divided_by: 100.0 | times: 0.65 | plus: 0.35 | at_most: 1
           -%}
-          <div class="sci-mel__bar{% if block.settings.highlight %} is-hl{% endif %}" style="--h: {{ h }}; --o: {{ o | round: 2 }};" {{ block.shopify_attributes }}>
+          <div class="sci-mel__bar{% if block.settings.highlight %} is-hl{% endif %}" style="--h: {{ h }}; --o: {{ o | round: 2 }}; --i: {{ forloop.index0 }};" {{ block.shopify_attributes }}>
             <i></i><span>{{ block.settings.label | escape }}</span>
           </div>
         {%- endfor -%}

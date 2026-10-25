@@ -18,18 +18,18 @@
 -%}
 <section class="pdp-related">
   <div class="container">
-    <h2 class="pdp-related__title">{{ section.settings.heading }}</h2>
+    <h2 class="pdp-related__title" data-reveal>{{ section.settings.heading }}</h2>
     <ul class="pdp-related__grid">
       {%- if picked != blank -%}
         {%- for p in picked limit: 3 -%}
           {%- unless p.handle == current -%}
-            <li>{% render 'mini-product-card', product: p, handle: p.handle %}</li>
+            <li data-reveal style="--reveal-delay: {{ forloop.index0 | times: 80 }}ms">{% render 'mini-product-card', product: p, handle: p.handle %}</li>
           {%- endunless -%}
         {%- endfor -%}
       {%- else -%}
         {%- for hh in handles limit: 3 -%}
           {%- assign p = all_products[hh] -%}{%- unless p.id -%}{%- assign p = '' -%}{%- endunless -%}
-          <li>{% render 'mini-product-card', product: p, handle: hh %}</li>
+          <li data-reveal style="--reveal-delay: {{ forloop.index0 | times: 80 }}ms">{% render 'mini-product-card', product: p, handle: hh %}</li>
         {%- endfor -%}
       {%- endif -%}
     </ul>

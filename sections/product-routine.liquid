@@ -7,7 +7,7 @@
 -%}
 <section class="pdp-routine">
   <div class="container">
-    <h2 class="pdp-routine__title">{{ section.settings.heading }}</h2>
+    <h2 class="pdp-routine__title" data-reveal>{{ section.settings.heading }}</h2>
     <ol class="pdp-routine__grid">
       {%- for block in section.blocks -%}
         {%- liquid
@@ -16,7 +16,7 @@
             assign step_title = last_title
           endif
         -%}
-        <li class="pdp-routine__card" {{ block.shopify_attributes }}>
+        <li class="pdp-routine__card" data-reveal style="--reveal-delay: {{ forloop.index0 | times: 80 }}ms" {{ block.shopify_attributes }}>
           <div class="pdp-routine__time">
             <span class="pdp-routine__icon">{% render 'icon', name: block.settings.icon, color: '#1d2142', size: 16 %}</span>
             {{ block.settings.time }}

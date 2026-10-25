@@ -1,7 +1,7 @@
 {%- comment -%} Figma: About Us › Founder Note. {%- endcomment -%}
 <section class="pg about-founder">
   <div class="container about-founder__inner">
-    <div class="about-founder__avatar" data-reveal="scale">
+    <div class="about-founder__avatar" data-reveal>
       {%- if section.settings.image != blank -%}
         {{ section.settings.image | image_url: width: 400 | image_tag: loading: 'lazy', sizes: '200px', alt: section.settings.name }}
       {%- else -%}

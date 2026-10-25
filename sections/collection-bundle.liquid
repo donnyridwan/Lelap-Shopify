@@ -14,8 +14,8 @@
 -%}
 <section class="c-bundle">
   <div class="container">
-    <h2 class="c-h-section c-bundle__heading">{{ section.settings.heading }}</h2>
-    <div class="c-bundle__card">
+    <h2 class="c-h-section c-bundle__heading" data-reveal>{{ section.settings.heading }}</h2>
+    <div class="c-bundle__card" data-reveal style="--reveal-delay: 80ms">
       <div class="c-bundle__visual">
         <span class="c-bundle__pouch">{% render 'product-image', product: p1, handle: h1, width: 480, sizes: '220px', class: 'c-bundle__img' %}</span>
         <span class="c-bundle__pouch">{% render 'product-image', product: p2, handle: h2, width: 480, sizes: '220px', class: 'c-bundle__img' %}</span>

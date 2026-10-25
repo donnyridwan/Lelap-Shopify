@@ -62,6 +62,12 @@
       const list = results.querySelector('.help-results__list');
       scored.forEach(({ it, score }) => {
         it.el.hidden = score === 0;
+        if (it.el.classList.contains('is-open')) {
+          it.el.classList.remove('is-open');
+          it.el.querySelector('.help-result__full').hidden = true;
+          it.a.hidden = false;
+          it.el.querySelector('[data-help-more]').setAttribute('aria-expanded', 'false');
+        }
         if (score > 0) {
           shown += 1;
           list.insertBefore(it.el, empty);
