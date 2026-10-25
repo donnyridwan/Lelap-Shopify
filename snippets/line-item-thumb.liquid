@@ -1,0 +1,8 @@
+{%- comment -%} Small product thumbnail for an order line item. Params: item, class, size (px) {%- endcomment -%}
+<span class="acct-thumb {{ class }}">
+  {%- if item.image -%}
+    {{ item.image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: size, height: size }}
+  {%- else -%}
+    {% render 'product-image', handle: item.product.handle, width: 160, alt: '' %}
+  {%- endif -%}
+</span>

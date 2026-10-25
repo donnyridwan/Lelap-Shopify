@@ -71,7 +71,7 @@
         <h1 class="refund__title">{{ section.settings.heading | escape }}</h1>
         <p class="refund__lead">{{ section.settings.text | escape }}</p>
 
-        <input type="hidden" name="contact[subject]" value="{{ section.settings.subject | escape }}">
+        <input type="hidden" name="contact[subject]" value="{{ section.settings.heading | escape }}">
         <input type="hidden" name="contact[Reference]" value="" data-refund-ref>
         {%- if order != blank -%}
           <input type="hidden" name="contact[email]" value="{{ customer.email | escape }}">
@@ -166,7 +166,6 @@
     { "type": "url", "id": "back_link", "label": "Back link" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "Request a refund" },
     { "type": "textarea", "id": "text", "label": "Intro", "default": "Our 30-Night Sleep Promise: if you’re not sleeping better after giving lelap a real try, we’ll refund your first order. No need to send anything back." },
-    { "type": "text", "id": "subject", "label": "Email subject", "default": "Refund request" },
     { "type": "range", "id": "window_days", "label": "Refund window", "min": 7, "max": 90, "step": 1, "unit": "d", "default": 30 },
     { "type": "text", "id": "delivered_word", "label": "Delivered label", "default": "Delivered" },
     { "type": "text", "id": "ordered_word", "label": "Ordered label (not yet shipped)", "default": "Ordered" },

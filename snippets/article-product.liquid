@@ -1,0 +1,24 @@
+{%- comment -%}
+  Inline product card inside an article (Figma: Article Detail › Inline Product).
+  Params: product (optional), product_id (product.id, to detect a missing product), handle, text, button, link
+{%- endcomment -%}
+{%- liquid
+  assign h = handle | default: 'sleep-classic'
+  assign has_p = false
+  if product_id != nil
+    assign has_p = true
+    assign h = product.handle
+  endif
+  assign btn_link = link | default: settings.quiz_url | default: '/pages/sleep-quiz'
+-%}
+{%- capture p_title -%}{% if has_p %}{{ product.title }}{% else %}{% render 'product-fact', handle: h, key: 'title' %}{% endif %}{%- endcapture -%}
+<aside class="article-product">
+  <a href="{% if has_p %}{{ product.url }}{% else %}/products/{{ h }}{% endif %}" class="article-product__media" tabindex="-1" aria-hidden="true">
+    {% if has_p %}{% render 'product-image', product: product, width: 192, class: 'article-product__img' %}{% else %}{% render 'product-image', handle: h, width: 192, class: 'article-product__img' %}{% endif %}
+  </a>
+  <div class="article-product__info">
+    <p class="article-product__title">{{ p_title | escape }}</p>
+    {%- if text != blank -%}<p class="article-product__text">{{ text | escape }}</p>{%- endif -%}
+  </div>
+  {%- if button != blank -%}<a href="{{ btn_link }}" class="btn btn--primary article-product__btn">{{ button | escape }}</a>{%- endif -%}
+</aside>

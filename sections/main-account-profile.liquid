@@ -1,0 +1,180 @@
+{%- comment -%}
+  Page template page.account-profile — Figma: Account · Profile & health (244:2735 / 244:2962 / 250:11590).
+  Classic customer accounts can't edit profile fields from the storefront, so "Save changes" and the notification
+  switches send a request to the store through the contact form; health details are read from customer metafields
+  (namespace lelap: dob, sex, medication, conditions, pregnant, allergies, last_assessment, notifications).
+{%- endcomment -%}
+{%- liquid
+  assign quiz_url = settings.quiz_url | default: '/pages/sleep-quiz'
+  assign care_url = settings.account_care_url | default: '/pages/care-team'
+  assign m = customer.metafields.lelap
+  assign phone = customer.phone | default: customer.default_address.phone
+  assign notif = m.notifications.value | default: section.settings.notif_default | downcase
+-%}
+{%- if customer -%}
+<section class="acct">
+  <div class="container acct__layout">
+    {% render 'account-nav', active: 'profile' %}
+    <div class="acct__content">
+      <h1 class="acct__title">{{ section.settings.heading | default: page.title }}</h1>
+
+      <div class="acct-card acct-card--lg">
+        {%- form 'contact', class: 'acct-form' -%}
+          <h2 class="acct-card__title acct-card__title--lg">{{ section.settings.details_title }}</h2>
+          {%- if form.posted_successfully? -%}<p class="acct-flash" role="status">{{ section.settings.details_success }}</p>{%- endif -%}
+          <input type="hidden" name="contact[email]" value="{{ customer.email }}">
+          <input type="hidden" name="contact[Request]" value="Profile update">
+          <div class="auth-row">
+            <div class="auth-field"><label class="auth-field__label" for="PFirst">{{ section.settings.first_label }}</label><input class="auth-input" id="PFirst" name="contact[First name]" value="{{ customer.first_name }}" autocomplete="given-name"></div>
+            <div class="auth-field"><label class="auth-field__label" for="PLast">{{ section.settings.last_label }}</label><input class="auth-input" id="PLast" name="contact[Last name]" value="{{ customer.last_name }}" autocomplete="family-name"></div>
+          </div>
+          <div class="auth-row">
+            <div class="auth-field"><label class="auth-field__label" for="PEmail">{{ section.settings.email_label }}</label><input class="auth-input" id="PEmail" type="email" name="contact[New email]" value="{{ customer.email }}" autocomplete="email"></div>
+            <div class="auth-field"><label class="auth-field__label" for="PPhone">{{ section.settings.phone_label }}</label><input class="auth-input" id="PPhone" type="tel" name="contact[WhatsApp]" value="{{ phone }}" autocomplete="tel"></div>
+          </div>
+          <div class="auth-row">
+            <div class="auth-field"><label class="auth-field__label" for="PDob">{{ section.settings.dob_label }}</label><input class="auth-input" id="PDob" name="contact[Date of birth]" value="{% if m.dob.value != blank %}{{ m.dob.value | date: '%d / %m / %Y' }}{% endif %}" placeholder="DD / MM / YYYY" inputmode="numeric" autocomplete="bday"></div>
+            <div class="auth-field">
+              <label class="auth-field__label" for="PSex">{{ section.settings.sex_label }}</label>
+              <span class="acct-select">
+                <select class="auth-input" id="PSex" name="contact[Sex assigned at birth]">
+                  {%- assign sexes = section.settings.sex_options | split: ',' -%}
+                  <option value=""></option>
+                  {%- for s in sexes -%}<option{% if m.sex.value == s %} selected{% endif %}>{{ s | strip }}</option>{%- endfor -%}
+                </select>
+                {% render 'icon', name: 'chevd', size: 16 %}
+              </span>
+            </div>
+          </div>
+          <input type="hidden" name="contact[body]" value="Please update my profile details.">
+          <button type="submit" class="btn btn--primary">{{ section.settings.save_label }}</button>
+        {%- endform -%}
+      </div>
+
+      <div class="acct-card acct-card--lg">
+        <h2 class="acct-card__title acct-card__title--lg" style="display:flex;align-items:center;gap:10px">{% render 'icon', name: 'steth', color: '#1d2142', size: 18 %}{{ section.settings.health_title }}</h2>
+        <p class="acct-info acct-info--moon">{% render 'icon', name: 'info', color: '#1d2142', size: 16 %}{{ section.settings.health_note }}</p>
+        <dl style="width:100%">
+          {%- liquid
+            assign last = m.last_assessment.value
+            if last != blank
+              assign last = last | date: '%-d %b %Y'
+            endif
+          -%}
+          {%- capture rows -%}{{ section.settings.row_medication }}|{{ m.medication.value }}
+{{ section.settings.row_conditions }}|{{ m.conditions.value }}
+{{ section.settings.row_pregnant }}|{{ m.pregnant.value }}
+{{ section.settings.row_allergies }}|{{ m.allergies.value }}
+{{ section.settings.row_assessment }}|{{ last }}{%- endcapture -%}
+          {%- assign lines = rows | newline_to_br | split: '<br />' -%}
+          {%- for l in lines -%}
+            {%- assign kv = l | strip | split: '|' -%}
+            <div class="acct-kv"><dt>{{ kv[0] }}</dt><dd>{{ kv[1] | default: '—' }}<a href="{{ care_url }}" aria-label="{{ section.settings.edit_label | escape }} {{ kv[0] | escape }}">{% render 'icon', name: 'edit', size: 15 %}</a></dd></div>
+          {%- endfor -%}
+        </dl>
+        <a class="acct-link" href="{{ quiz_url }}">{{ section.settings.retake_label }}</a>
+      </div>
+
+      <div class="acct-card acct-card--lg">
+        {%- form 'contact', data-pref-form: '' -%}
+          <h2 class="acct-card__title acct-card__title--lg">{{ section.settings.notif_title }}</h2>
+          <input type="hidden" name="contact[email]" value="{{ customer.email }}">
+          <input type="hidden" name="contact[Request]" value="Notification preferences">
+          <textarea name="contact[body]" hidden data-pref-body></textarea>
+          {%- for i in (1..4) -%}
+            {%- liquid
+              case i
+                when 1
+                  assign t = section.settings.n1_title
+                  assign d = section.settings.n1_text
+                  assign k = 'orders'
+                when 2
+                  assign t = section.settings.n2_title
+                  assign d = section.settings.n2_text
+                  assign k = 'doctor'
+                when 3
+                  assign t = section.settings.n3_title
+                  assign d = section.settings.n3_text
+                  assign k = 'reminder'
+                else
+                  assign t = section.settings.n4_title
+                  assign d = section.settings.n4_text
+                  assign k = 'tips'
+              endcase
+            -%}
+            <div class="acct-toggle-row">
+              <label for="Notif-{{ k }}"><strong>{{ t }}</strong><small>{{ d }}</small></label>
+              <span class="acct-switch"><input type="checkbox" id="Notif-{{ k }}" data-label="{{ t | escape }}"{% if notif contains k %} checked{% endif %}><span></span></span>
+            </div>
+          {%- endfor -%}
+          <p class="acct-flash" data-pref-flash hidden role="status">{{ section.settings.notif_success }}</p>
+        {%- endform -%}
+      </div>
+
+      <div class="acct-card acct-card--lg">
+        {%- form 'recover_customer_password' -%}
+          <input type="hidden" name="email" value="{{ customer.email }}">
+          <div class="acct-security">
+            <div><strong>{{ section.settings.password_title }}</strong><small>{% if form.posted_successfully? %}{{ section.settings.password_sent }}{% else %}{{ section.settings.password_text }}{% endif %}</small></div>
+            <button type="submit" class="btn btn--outline">{{ section.settings.password_button }}</button>
+          </div>
+        {%- endform -%}
+        <a class="acct-link acct-link--muted" href="{{ section.settings.delete_url | default: care_url }}">{{ section.settings.delete_label }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+<script src="{{ 'account.js' | asset_url }}" defer="defer"></script>
+{%- else -%}
+  {% render 'account-guest', title: page.title %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Profile & health",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "info": "Leave empty to use the page title.", "default": "Profile & health" },
+    { "type": "header", "content": "Personal details" },
+    { "type": "text", "id": "details_title", "label": "Heading", "default": "Personal details" },
+    { "type": "text", "id": "first_label", "label": "First name label", "default": "First name" },
+    { "type": "text", "id": "last_label", "label": "Last name label", "default": "Last name" },
+    { "type": "text", "id": "email_label", "label": "Email label", "default": "Email" },
+    { "type": "text", "id": "phone_label", "label": "Phone label", "default": "WhatsApp" },
+    { "type": "text", "id": "dob_label", "label": "Date of birth label", "default": "Date of birth" },
+    { "type": "text", "id": "sex_label", "label": "Sex label", "default": "Sex assigned at birth" },
+    { "type": "text", "id": "sex_options", "label": "Sex options (comma separated)", "default": "Female, Male" },
+    { "type": "text", "id": "save_label", "label": "Save label", "default": "Save changes" },
+    { "type": "text", "id": "details_success", "label": "Saved message", "default": "Thanks — our care team will update your details shortly." },
+    { "type": "header", "content": "Health profile" },
+    { "type": "text", "id": "health_title", "label": "Heading", "default": "Health profile" },
+    { "type": "textarea", "id": "health_note", "label": "Note", "default": "Changing your health details sends your plan back to your doctor for a quick review before your next delivery." },
+    { "type": "text", "id": "row_medication", "label": "Row 1", "default": "Current medication" },
+    { "type": "text", "id": "row_conditions", "label": "Row 2", "default": "Health conditions" },
+    { "type": "text", "id": "row_pregnant", "label": "Row 3", "default": "Pregnant or breastfeeding" },
+    { "type": "text", "id": "row_allergies", "label": "Row 4", "default": "Allergies" },
+    { "type": "text", "id": "row_assessment", "label": "Row 5", "default": "Last assessment" },
+    { "type": "text", "id": "edit_label", "label": "Edit label (screen readers)", "default": "Edit" },
+    { "type": "text", "id": "retake_label", "label": "Retake link", "default": "Retake sleep assessment" },
+    { "type": "header", "content": "Notifications" },
+    { "type": "text", "id": "notif_title", "label": "Heading", "default": "Notifications" },
+    { "type": "text", "id": "notif_default", "label": "Switched on by default", "info": "Any of: orders, doctor, reminder, tips. A customer's lelap.notifications metafield overrides it.", "default": "orders,doctor,tips" },
+    { "type": "text", "id": "n1_title", "label": "Switch 1", "default": "Order and delivery updates" },
+    { "type": "text", "id": "n1_text", "label": "Switch 1 detail", "default": "WhatsApp and email" },
+    { "type": "text", "id": "n2_title", "label": "Switch 2", "default": "Messages from your doctor" },
+    { "type": "text", "id": "n2_text", "label": "Switch 2 detail", "default": "WhatsApp and email" },
+    { "type": "text", "id": "n3_title", "label": "Switch 3", "default": "Nightly reminder" },
+    { "type": "text", "id": "n3_text", "label": "Switch 3 detail", "default": "A gentle WhatsApp nudge at 21:30" },
+    { "type": "text", "id": "n4_title", "label": "Switch 4", "default": "Sleep tips and offers" },
+    { "type": "text", "id": "n4_text", "label": "Switch 4 detail", "default": "Once a month, by email" },
+    { "type": "text", "id": "notif_success", "label": "Saved message", "default": "Preferences sent — we’ll update them shortly." },
+    { "type": "header", "content": "Security" },
+    { "type": "text", "id": "password_title", "label": "Password heading", "default": "Password" },
+    { "type": "text", "id": "password_text", "label": "Password text", "default": "We’ll email you a secure link to change it." },
+    { "type": "text", "id": "password_sent", "label": "Link sent text", "default": "Check your inbox for a reset link." },
+    { "type": "text", "id": "password_button", "label": "Button", "default": "Change" },
+    { "type": "text", "id": "delete_label", "label": "Delete link label", "default": "Delete my account and health data" },
+    { "type": "url", "id": "delete_url", "label": "Delete link", "info": "Defaults to the care team page." }
+  ]
+}
+{% endschema %}

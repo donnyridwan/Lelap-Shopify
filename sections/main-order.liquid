@@ -1,0 +1,219 @@
+{%- comment -%}
+  /account/orders/:id — Figma: Account · Order Detail (243:2381), · Doctor Needs Info (257:12299), · Not Approved (257:13121).
+  States come from order tags (see snippets/order-state.liquid): doctor-needs-info, not-approved, doctor-approved, delivered.
+  Optional order metafields (namespace lelap): doctor_question, doctor_decision, approved_at, eta (dates as text or date).
+{%- endcomment -%}
+{%- liquid
+  capture state
+    render 'order-state', order: order
+  endcapture
+  assign care_url = settings.account_care_url | default: '/pages/care-team'
+  assign doc_name = customer.metafields.lelap.doctor_name.value | default: section.settings.doctor_name
+  assign doc_short = doc_name | split: ' ' | slice: 0, 2 | join: ' '
+
+  assign card = ''
+  for t in order.transactions
+    if t.kind == 'sale' or t.kind == 'capture' or t.kind == 'authorization'
+      if t.payment_details.credit_card_last_four_digits != blank
+        assign card = t.payment_details.credit_card_company | append: ' •••• ' | append: t.payment_details.credit_card_last_four_digits
+      elsif t.gateway_display_name != blank
+        assign card = t.gateway_display_name
+      endif
+    endif
+  endfor
+
+  assign tracking = ''
+  for li in order.line_items
+    if li.fulfillment and li.fulfillment.tracking_number != blank
+      assign tracking = li.fulfillment
+      break
+    endif
+  endfor
+  assign approved_at = order.metafields.lelap.approved_at.value
+  assign eta = order.metafields.lelap.eta.value
+-%}
+
+<section class="acct">
+  <div class="container acct__layout">
+    {% render 'account-nav', active: 'orders' %}
+    <div class="acct__content">
+      <a class="acct-back" href="{{ routes.account_url }}?view=orders">{% render 'icon', name: 'back', color: '#5f6179', size: 16 %}{{ section.settings.back_label }}</a>
+      <div class="acct-order-head">
+        <div>
+          <h1>{{ section.settings.order_label }} {{ order.name }}</h1>
+          <p>{{ section.settings.placed_label }} {{ order.created_at | date: '%-d %b %Y, %H:%M' }}</p>
+        </div>
+        <a class="acct-action" href="{{ order.order_status_url }}">{% render 'icon', name: 'doc', color: '#1d2142', size: 15 %}{{ section.settings.invoice_label }}</a>
+      </div>
+
+      {%- if state == 'needs-info' -%}
+        {%- assign question = order.metafields.lelap.doctor_question.value | default: section.settings.question_text -%}
+        <div class="acct-banner acct-banner--moon" role="status">
+          <p class="acct-banner__title">{% render 'icon', name: 'steth', color: '#1d2142', size: 20 %}{{ section.settings.question_title | replace: '[doctor]', doc_short }}</p>
+          <p class="acct-banner__text">{{ question }}</p>
+          <a class="btn btn--primary" href="{{ care_url }}">{{ section.settings.reply_label | replace: '[doctor]', doc_short }}</a>
+        </div>
+      {%- elsif state == 'not-approved' -%}
+        {%- liquid
+          assign refund_total = 0
+          for r in order.refunds
+            for t in r.transactions
+              assign refund_total = refund_total | plus: t.amount
+            endfor
+          endfor
+          if refund_total == 0
+            assign refund_total = order.total_price
+          endif
+          assign decision = order.metafields.lelap.doctor_decision.value | default: section.settings.declined_reason
+          assign refund_money = refund_total | money
+          assign card_label = card
+          if card_label == ''
+            assign card_label = section.settings.card_fallback
+          endif
+          assign refund_line = section.settings.declined_refund | replace: '[amount]', refund_money | replace: '[card]', card_label
+        -%}
+        <div class="acct-banner acct-banner--red" role="status">
+          <p class="acct-banner__title">{% render 'icon', name: 'alert', size: 20 %}{{ section.settings.declined_title }}</p>
+          <p class="acct-banner__text">{{ decision | replace: '[doctor]', doc_short }} {{ refund_line }}</p>
+          <a class="btn btn--primary" href="{{ care_url }}">{{ section.settings.note_label | replace: '[doctor]', doc_short }}</a>
+        </div>
+      {%- endif -%}
+
+      <div class="acct-track">
+        <ol class="acct-track__steps">
+          {%- case state -%}
+            {%- when 'needs-info' -%}
+              <li class="acct-track__step is-done"><span class="acct-track__mark"><span class="acct-track__dot">{% render 'icon', name: 'check', color: '#ffffff', size: 14 %}</span><span class="acct-track__line"></span></span><span class="acct-track__label"><strong>{{ section.settings.step_placed }}</strong><span>{{ order.created_at | date: '%-d %b' }}</span></span></li>
+              <li class="acct-track__step is-wait"><span class="acct-track__mark"><span class="acct-track__dot">{% render 'icon', name: 'clock', color: '#1d2142', size: 14 %}</span><span class="acct-track__line"></span></span><span class="acct-track__label"><strong>{{ section.settings.step_review }}</strong><span>{{ section.settings.step_waiting }}</span></span></li>
+              <li class="acct-track__step"><span class="acct-track__mark"><span class="acct-track__dot"></span><span class="acct-track__line"></span></span><span class="acct-track__label"><strong>{{ section.settings.step_ships_after }}</strong><span>—</span></span></li>
+              <li class="acct-track__step"><span class="acct-track__mark"><span class="acct-track__dot"></span><span class="acct-track__line"></span></span><span class="acct-track__label"><strong>{{ section.settings.step_delivered }}</strong><span>—</span></span></li>
+            {%- when 'not-approved' -%}
+              {%- assign closed = order.cancelled_at | default: approved_at | default: order.created_at -%}
+              <li class="acct-track__step is-done"><span class="acct-track__mark"><span class="acct-track__dot">{% render 'icon', name: 'check', color: '#ffffff', size: 14 %}</span><span class="acct-track__line"></span></span><span class="acct-track__label"><strong>{{ section.settings.step_placed }}</strong><span>{{ order.created_at | date: '%-d %b' }}</span></span></li>
+              <li class="acct-track__step is-fail"><span class="acct-track__mark"><span class="acct-track__dot">{% render 'icon', name: 'x', color: '#ffffff', size: 12 %}</span><span class="acct-track__line"></span></span><span class="acct-track__label"><strong>{{ section.settings.step_declined }}</strong><span>{{ closed | date: '%-d %b' }}</span></span></li>
+              <li class="acct-track__step is-done"><span class="acct-track__mark"><span class="acct-track__dot">{% render 'icon', name: 'undo', color: '#ffffff', size: 14 %}</span><span class="acct-track__line"></span></span><span class="acct-track__label"><strong>{{ section.settings.step_refund }}</strong><span>{{ closed | date: '%-d %b' }}</span></span></li>
+            {%- else -%}
+              {%- liquid
+                assign approved = false
+                assign shipped = false
+                assign delivered = false
+                if state == 'approved' or state == 'shipped' or state == 'delivered'
+                  assign approved = true
+                endif
+                if state == 'shipped' or state == 'delivered'
+                  assign shipped = true
+                endif
+                if state == 'delivered'
+                  assign delivered = true
+                endif
+              -%}
+              <li class="acct-track__step is-done"><span class="acct-track__mark"><span class="acct-track__dot">{% render 'icon', name: 'check', color: '#ffffff', size: 14 %}</span><span class="acct-track__line"></span></span><span class="acct-track__label"><strong>{{ section.settings.step_placed }}</strong><span>{{ order.created_at | date: '%-d %b' }}</span></span></li>
+              <li class="acct-track__step{% if approved and shipped %} is-done{% elsif approved %} is-current{% else %} is-wait{% endif %}"><span class="acct-track__mark"><span class="acct-track__dot">{% if approved %}{% render 'icon', name: 'check', color: '#ffffff', size: 14 %}{% else %}{% render 'icon', name: 'clock', color: '#1d2142', size: 14 %}{% endif %}</span><span class="acct-track__line"></span></span><span class="acct-track__label"><strong>{% if approved %}{{ section.settings.step_approved }}{% else %}{{ section.settings.step_review }}{% endif %}</strong><span>{% if approved and approved_at != blank %}{{ approved_at | date: '%-d %b' }}{% elsif approved %}✓{% else %}{{ section.settings.step_in_review }}{% endif %}</span></span></li>
+              <li class="acct-track__step{% if delivered %} is-done{% elsif shipped %} is-current{% endif %}"><span class="acct-track__mark"><span class="acct-track__dot">{% if shipped %}{% render 'icon', name: 'check', color: '#ffffff', size: 14 %}{% endif %}</span><span class="acct-track__line"></span></span><span class="acct-track__label"><strong>{{ section.settings.step_shipped }}</strong><span>{% if shipped and tracking != '' %}{{ tracking.created_at | date: '%-d %b' }}{% else %}—{% endif %}</span></span></li>
+              <li class="acct-track__step{% if delivered %} is-done{% endif %}"><span class="acct-track__mark"><span class="acct-track__dot">{% if delivered %}{% render 'icon', name: 'check', color: '#ffffff', size: 14 %}{% endif %}</span><span class="acct-track__line"></span></span><span class="acct-track__label"><strong>{{ section.settings.step_delivered }}</strong><span>{% if eta != blank %}{{ section.settings.eta_prefix }} {{ eta | date: '%-d %b' }}{% else %}—{% endif %}</span></span></li>
+          {%- endcase -%}
+        </ol>
+        {%- if tracking != '' -%}
+          <p class="acct-track__note">{% render 'icon', name: 'truck', color: '#1d2142', size: 16 %}
+            {%- if tracking.tracking_url != blank -%}<a href="{{ tracking.tracking_url }}">{%- endif -%}
+            {{ tracking.tracking_company }} · {{ section.settings.tracking_label }} {{ tracking.tracking_number }}{% if eta != blank %} · {{ section.settings.arriving_label }} {{ eta | date: '%a, %-d %b' }}{% endif %}
+            {%- if tracking.tracking_url != blank -%}</a>{%- endif -%}
+          </p>
+        {%- endif -%}
+      </div>
+
+      <div class="acct-detail">
+        <div class="acct-card acct-detail__main">
+          <h2 class="acct-card__title">{{ section.settings.items_title }}</h2>
+          {%- for li in order.line_items -%}
+            <div class="acct-line">
+              {% render 'line-item-thumb', item: li, class: 'acct-line__thumb', size: 56 %}
+              <div class="acct-line__info">
+                <strong>{{ li.product.title | default: li.title }}{% if li.quantity > 1 %} × {{ li.quantity }}{% endif %}</strong>
+                <span>{% if li.selling_plan_allocation %}{{ section.settings.subscription_label }}, {{ li.selling_plan_allocation.selling_plan.name | downcase }}{% else %}{{ 'products.product.one_time' | t }}{% endif %}</span>
+              </div>
+              <span class="acct-line__price">{{ li.final_line_price | money_without_trailing_zeros }}</span>
+            </div>
+          {%- endfor -%}
+          <dl class="acct-sum">
+            <div><dt>{{ 'cart.subtotal' | t }}</dt><dd>{{ order.line_items_subtotal_price | money_without_trailing_zeros }}</dd></div>
+            {%- for discount in order.cart_level_discount_applications -%}
+              <div><dt>{{ discount.title }}</dt><dd>−{{ discount.total_allocated_amount | money_without_trailing_zeros }}</dd></div>
+            {%- endfor -%}
+            <div><dt>{{ section.settings.shipping_label }}</dt><dd>{% if order.shipping_price == 0 %}{{ section.settings.free_label }}{% else %}{{ order.shipping_price | money_without_trailing_zeros }}{% endif %}</dd></div>
+            {%- if order.total_tax > 0 -%}<div><dt>{{ section.settings.tax_label }}</dt><dd>{{ order.total_tax | money_without_trailing_zeros }}</dd></div>{%- endif -%}
+            <div><dt>{% if state == 'not-approved' %}{{ section.settings.refunded_label }}{% else %}{{ section.settings.paid_label }}{% endif %}{% if card != '' %}{% if state == 'not-approved' %} {{ card }}{% else %} ({{ card }}){% endif %}{% endif %}</dt><dd>{{ order.total_price | money_without_trailing_zeros }}</dd></div>
+          </dl>
+        </div>
+        <div class="acct-detail__side">
+          {%- if order.shipping_address -%}
+            <div class="acct-card">
+              <h2 class="acct-card__title">{{ section.settings.address_title }}</h2>
+              <p class="acct-address">
+                {{ order.shipping_address.name }}<br>
+                {{ order.shipping_address.address1 }}{% if order.shipping_address.address2 != blank %}, {{ order.shipping_address.address2 }}{% endif %}<br>
+                {{ order.shipping_address.city }}{% if order.shipping_address.province != blank %}, {{ order.shipping_address.province }}{% endif %} {{ order.shipping_address.zip }}
+                {%- if order.shipping_address.phone != blank -%}<br>{{ order.shipping_address.phone }}{%- endif -%}
+              </p>
+            </div>
+          {%- endif -%}
+          <div class="acct-card acct-help">
+            <h2 class="acct-card__title">{{ section.settings.help_title }}</h2>
+            <p>{{ section.settings.help_text }}</p>
+            <a class="btn btn--outline" href="{{ care_url }}">{{ section.settings.help_button }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Order detail",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "back_label", "label": "Back label", "default": "All orders" },
+    { "type": "text", "id": "order_label", "label": "Order heading prefix", "default": "Order" },
+    { "type": "text", "id": "placed_label", "label": "Placed label", "default": "Placed" },
+    { "type": "text", "id": "invoice_label", "label": "Invoice label", "default": "Invoice" },
+    { "type": "text", "id": "doctor_name", "label": "Doctor name (fallback)", "default": "Dr. Ratna Wijaya" },
+    { "type": "header", "content": "Doctor needs info (tag: doctor-needs-info)" },
+    { "type": "text", "id": "question_title", "label": "Heading", "info": "[doctor] is replaced by the doctor's name.", "default": "[doctor] has a question before approving" },
+    { "type": "textarea", "id": "question_text", "label": "Question (fallback for the lelap.doctor_question order metafield)", "default": "“You mentioned you sometimes take a sleeping pill. How often, and which one? This helps me decide if Sleep Classic is safe alongside it.”" },
+    { "type": "text", "id": "reply_label", "label": "Button label", "default": "Reply to [doctor]" },
+    { "type": "header", "content": "Not approved (tag: not-approved)" },
+    { "type": "text", "id": "declined_title", "label": "Heading", "default": "Your doctor didn’t approve this plan" },
+    { "type": "textarea", "id": "declined_reason", "label": "Reason (fallback for the lelap.doctor_decision order metafield)", "default": "[doctor] decided melatonin isn’t the right fit because of the antidepressant you take." },
+    { "type": "textarea", "id": "declined_refund", "label": "Refund line", "info": "[amount] and [card] are replaced by the refund amount and payment card.", "default": "A full refund of [amount] has been sent to [card] and should appear in 3–5 business days." },
+    { "type": "text", "id": "card_fallback", "label": "Payment fallback", "default": "your original payment method" },
+    { "type": "text", "id": "note_label", "label": "Button label", "default": "Read [doctor]’s note" },
+    { "type": "header", "content": "Tracking" },
+    { "type": "text", "id": "step_placed", "label": "Placed", "default": "Placed" },
+    { "type": "text", "id": "step_review", "label": "Doctor review", "default": "Doctor review" },
+    { "type": "text", "id": "step_in_review", "label": "In review status", "default": "In review" },
+    { "type": "text", "id": "step_waiting", "label": "Waiting status", "default": "Waiting for your reply" },
+    { "type": "text", "id": "step_approved", "label": "Doctor approved", "default": "Doctor approved" },
+    { "type": "text", "id": "step_ships_after", "label": "Ships after approval", "default": "Ships after approval" },
+    { "type": "text", "id": "step_shipped", "label": "Shipped", "default": "Shipped" },
+    { "type": "text", "id": "step_delivered", "label": "Delivered", "default": "Delivered" },
+    { "type": "text", "id": "step_declined", "label": "Not approved", "default": "Not approved" },
+    { "type": "text", "id": "step_refund", "label": "Refund issued", "default": "Refund issued" },
+    { "type": "text", "id": "eta_prefix", "label": "Estimate prefix", "default": "Est." },
+    { "type": "text", "id": "tracking_label", "label": "Tracking label", "default": "Tracking no." },
+    { "type": "text", "id": "arriving_label", "label": "Arriving label", "default": "Arriving" },
+    { "type": "header", "content": "Items" },
+    { "type": "text", "id": "items_title", "label": "Items heading", "default": "Items" },
+    { "type": "text", "id": "subscription_label", "label": "Subscription label", "default": "Subscription" },
+    { "type": "text", "id": "shipping_label", "label": "Shipping label", "default": "Shipping" },
+    { "type": "text", "id": "free_label", "label": "Free label", "default": "Free" },
+    { "type": "text", "id": "tax_label", "label": "Tax label", "default": "Tax" },
+    { "type": "text", "id": "paid_label", "label": "Total paid label", "default": "Total paid" },
+    { "type": "text", "id": "refunded_label", "label": "Refunded label", "default": "Refunded to" },
+    { "type": "text", "id": "address_title", "label": "Address heading", "default": "Shipping address" },
+    { "type": "text", "id": "help_title", "label": "Help heading", "default": "Need help with this order?" },
+    { "type": "textarea", "id": "help_text", "label": "Help text", "default": "Our care team replies within a few hours, 7 days a week." },
+    { "type": "text", "id": "help_button", "label": "Help button", "default": "Contact care team" }
+  ]
+}
+{% endschema %}

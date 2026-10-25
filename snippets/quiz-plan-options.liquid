@@ -1,0 +1,18 @@
+{%- comment -%}
+  Subscription / one-time choice on the quiz result (Figma: Your Plan › Plan Selector).
+  Params: h (product handle), sub (cents), full (cents), sub_label, per_month, sub_note, onetime_label, onetime_note.
+{%- endcomment -%}
+<div class="quiz-buy__options" role="radiogroup">
+  <label class="quiz-plan-opt">
+    <input type="radio" name="purchase_{{ h }}" value="subscription" checked data-quiz-purchase>
+    <span class="quiz-plan-opt__head"><span class="quiz-plan-opt__mark" aria-hidden="true">{% render 'icon', name: 'check', color: '#ffffff', size: 11 %}</span>{{ sub_label | escape }}</span>
+    <span class="quiz-plan-opt__price"><strong>{{ sub | money_without_trailing_zeros }}</strong><span>{{ per_month | escape }}</span>{% if full > sub %}<s>{{ full | money_without_trailing_zeros }}</s>{% endif %}</span>
+    <span class="quiz-plan-opt__note">{{ sub_note | escape }}</span>
+  </label>
+  <label class="quiz-plan-opt">
+    <input type="radio" name="purchase_{{ h }}" value="onetime" data-quiz-purchase>
+    <span class="quiz-plan-opt__head"><span class="quiz-plan-opt__mark" aria-hidden="true">{% render 'icon', name: 'check', color: '#ffffff', size: 11 %}</span>{{ onetime_label | escape }}</span>
+    <span class="quiz-plan-opt__price"><strong>{{ full | money_without_trailing_zeros }}</strong></span>
+    <span class="quiz-plan-opt__note">{{ onetime_note | escape }}</span>
+  </label>
+</div>

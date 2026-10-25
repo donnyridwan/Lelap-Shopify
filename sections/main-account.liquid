@@ -1,0 +1,209 @@
+{%- comment -%}
+  /account — Figma: Account · Overview (243:1424 / 243:1626 / 250:9467) and Overview · No Subscription (257:13892).
+  The subscription card uses the most recent order line item that has a selling plan. Shopify does not expose
+  subscription contracts to Liquid, so Skip / Change date / Change formula / Pause / Cancel link to the subscription
+  app's customer portal (section setting "Subscription portal link").
+  Optional customer metafields (namespace lelap): next_delivery (date), doctor_name, doctor_photo (file), doctor_status,
+  doctor_note, care_unread (integer).
+{%- endcomment -%}
+{%- liquid
+  assign quiz_url = settings.quiz_url | default: '/pages/sleep-quiz'
+  assign care_url = settings.account_care_url | default: '/pages/care-team'
+  assign portal = section.settings.portal_url | default: care_url
+
+  assign sub_item = ''
+  assign sub_order = ''
+  for o in customer.orders
+    if o.cancelled
+      continue
+    endif
+    assign o_tags = o.tags | join: ',' | downcase
+    if o_tags contains 'not-approved'
+      continue
+    endif
+    for li in o.line_items
+      if li.selling_plan_allocation
+        assign sub_item = li
+        assign sub_order = o
+        break
+      endif
+    endfor
+    if sub_item != ''
+      break
+    endif
+  endfor
+
+  assign hour = 'now' | date: '%H' | plus: 0
+  assign greet = section.settings.greet_evening
+  if hour < 12
+    assign greet = section.settings.greet_morning
+  elsif hour < 18
+    assign greet = section.settings.greet_afternoon
+  endif
+  assign first_name = customer.first_name | default: customer.name
+-%}
+
+<section class="acct">
+  <div class="container acct__layout">
+    {% render 'account-nav', active: 'overview' %}
+    <div class="acct__content">
+      <h1 class="acct__title" data-greeting data-morning="{{ section.settings.greet_morning | escape }}" data-afternoon="{{ section.settings.greet_afternoon | escape }}" data-evening="{{ section.settings.greet_evening | escape }}"><span data-greeting-word>{{ greet }}</span>{% if first_name != blank %}, {{ first_name }}{% endif %}</h1>
+
+      {%- if sub_item != '' -%}
+        {%- liquid
+          assign h = sub_item.product.handle
+          capture dose
+            render 'product-fact', handle: h, key: 'melatonin'
+          endcapture
+          if dose == 'None'
+            assign dose = section.settings.melatonin_free
+          endif
+          assign plan_name = sub_item.selling_plan_allocation.selling_plan.name | downcase
+          assign interval = 1
+          if plan_name contains '3'
+            assign interval = 3
+          elsif plan_name contains '2'
+            assign interval = 2
+          endif
+          assign next_date = customer.metafields.lelap.next_delivery.value
+          if next_date == blank
+            assign step = interval | times: 2629800
+            assign next_ts = sub_order.created_at | date: '%s' | plus: step
+            assign now_ts = 'now' | date: '%s' | plus: 0
+            for i in (1..36)
+              if next_ts > now_ts
+                break
+              endif
+              assign next_ts = next_ts | plus: step
+            endfor
+            assign next_date = next_ts
+          endif
+        -%}
+        <div class="acct-card acct-card--lg acct-sub">
+          <div class="acct-sub__top">
+            {% render 'line-item-thumb', item: sub_item, class: 'acct-sub__thumb', size: 120 %}
+            <div class="acct-sub__info">
+              <p class="acct-sub__name"><strong>{{ sub_item.product.title }}</strong><span class="acct-pill acct-pill--green">{{ section.settings.active_label }}</span></p>
+              <p class="acct-sub__meta">{% if dose != blank %}{{ dose }} · {% endif %}{{ plan_name }} · {{ sub_item.final_price | money_without_trailing_zeros }}</p>
+              <p class="acct-sub__next">{% render 'icon', name: 'cal', size: 16 %}{{ section.settings.next_label }} {{ next_date | date: '%a, %-d %b %Y' }}</p>
+            </div>
+          </div>
+          <div class="acct-actions">
+            <a class="acct-action" href="{{ portal }}">{% render 'icon', name: 'skip', color: '#1d2142', size: 15 %}{{ section.settings.skip_label }}</a>
+            <a class="acct-action" href="{{ portal }}">{% render 'icon', name: 'cal', color: '#1d2142', size: 15 %}{{ section.settings.date_label }}</a>
+            <a class="acct-action" href="{{ portal }}">{% render 'icon', name: 'swap', color: '#1d2142', size: 15 %}{{ section.settings.formula_label }}</a>
+            <a class="acct-action" href="{{ portal }}">{% render 'icon', name: 'pause', color: '#1d2142', size: 15 %}{{ section.settings.pause_label }}</a>
+          </div>
+          <a class="acct-link acct-link--muted" href="{{ portal }}">{{ section.settings.cancel_label }}</a>
+        </div>
+
+        {%- liquid
+          assign doc_name = customer.metafields.lelap.doctor_name.value | default: section.settings.doctor_name
+          assign doc_status = customer.metafields.lelap.doctor_status.value | default: section.settings.doctor_status
+          assign doc_note = customer.metafields.lelap.doctor_note.value | default: section.settings.doctor_note
+          assign doc_photo = customer.metafields.lelap.doctor_photo.value | default: section.settings.doctor_photo
+          assign doc_short = doc_name | split: ' ' | slice: 0, 2 | join: ' '
+        -%}
+        <div class="acct-pair">
+          <div class="acct-doctor">
+            <div class="acct-doctor__who">
+              <span class="acct-avatar" style="width:48px;height:48px">
+                {%- if doc_photo != blank -%}{{ doc_photo | image_url: width: 96 | image_tag: width: 48, height: 48, alt: '' }}{%- else -%}<img src="{{ 'photo-doctor.jpg' | asset_url }}" width="48" height="48" alt="">{%- endif -%}
+              </span>
+              <div><p class="acct-doctor__name">{{ doc_name }}</p><p class="acct-doctor__sub">{{ doc_status }}</p></div>
+            </div>
+            <p class="acct-doctor__text">{{ doc_note }}</p>
+            <a class="btn btn--light" href="{{ care_url }}">{{ section.settings.message_label }} {{ doc_short }}</a>
+          </div>
+          <div class="acct-card" data-checkin>
+            <p class="acct-checkin__q">{% render 'icon', name: 'moon', size: 18 %}{{ section.settings.checkin_q }}</p>
+            <div class="acct-checkin__scale" role="group" aria-label="{{ section.settings.checkin_q | escape }}">
+              {%- assign words = section.settings.checkin_words | split: ',' -%}
+              {%- for w in words -%}
+                <button type="button" class="acct-checkin__opt" data-score="{{ forloop.index }}" aria-pressed="false"><strong>{{ forloop.index }}</strong><span>{{ w | strip }}</span></button>
+              {%- endfor -%}
+            </div>
+            <p class="acct-checkin__note">{{ section.settings.checkin_note }} <span data-streak data-template="{{ section.settings.streak_template | escape }}"></span></p>
+          </div>
+        </div>
+      {%- else -%}
+        {%- liquid
+          assign last_title = ''
+          assign last_url = routes.all_products_collection_url
+          if customer.orders.size > 0
+            assign last_li = customer.orders.first.line_items.first
+            assign last_title = last_li.product.title
+            assign last_url = last_li.product.url | default: last_url
+          endif
+        -%}
+        <div class="acct-card acct-empty">
+          <span class="acct-empty__icon">{% render 'icon', name: 'moon', size: 32 %}</span>
+          <h2 class="acct-empty__title">{{ section.settings.empty_title }}</h2>
+          <p class="acct-empty__text">{% if last_title != blank %}{{ section.settings.empty_text_bought | replace: '[product]', last_title }}{% else %}{{ section.settings.empty_text }}{% endif %}</p>
+          <a class="btn btn--primary" href="{{ last_url }}">{{ section.settings.empty_button }}</a>
+          <a class="acct-link" href="{{ quiz_url }}">{{ section.settings.empty_link }}</a>
+        </div>
+      {%- endif -%}
+
+      {%- if customer.orders.size > 0 -%}
+        {%- assign recent = customer.orders.first -%}
+        <div class="acct-card">
+          <div class="acct-card__head"><h2 class="acct-card__title">{{ section.settings.recent_title }}</h2><a class="acct-link" href="{{ routes.account_url }}?view=orders">{{ section.settings.view_all }}</a></div>
+          <a class="acct-order-row" href="{{ recent.customer_url }}">
+            {% render 'line-item-thumb', item: recent.line_items.first, class: 'acct-order-row__thumb', size: 52 %}
+            <span class="acct-order-row__info">
+              <strong>{{ recent.name }} · {{ recent.created_at | date: '%-d %b %Y' }}</strong>
+              <span>{% for li in recent.line_items %}{{ li.product.title | default: li.title }}{% unless forloop.last %}, {% endunless %}{% endfor %} · {{ recent.total_price | money_without_trailing_zeros }}</span>
+            </span>
+            {% render 'order-pill', order: recent %}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<script src="{{ 'account.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Account overview",
+  "tag": "div",
+  "class": "section-main-account",
+  "settings": [
+    { "type": "text", "id": "greet_morning", "label": "Morning greeting", "default": "Good morning" },
+    { "type": "text", "id": "greet_afternoon", "label": "Afternoon greeting", "default": "Good afternoon" },
+    { "type": "text", "id": "greet_evening", "label": "Evening greeting", "default": "Good evening" },
+    { "type": "header", "content": "Subscription" },
+    { "type": "url", "id": "portal_url", "label": "Subscription portal link", "info": "Where Skip / Change date / Change formula / Pause / Cancel go (your subscription app's customer portal). Defaults to the care team page." },
+    { "type": "text", "id": "active_label", "label": "Active badge", "default": "Active" },
+    { "type": "text", "id": "melatonin_free", "label": "Dose label for melatonin-free formulas", "default": "Melatonin-free" },
+    { "type": "text", "id": "next_label", "label": "Next delivery label", "default": "Next delivery:" },
+    { "type": "text", "id": "skip_label", "label": "Skip label", "default": "Skip next delivery" },
+    { "type": "text", "id": "date_label", "label": "Change date label", "default": "Change date" },
+    { "type": "text", "id": "formula_label", "label": "Change formula label", "default": "Change formula" },
+    { "type": "text", "id": "pause_label", "label": "Pause label", "default": "Pause" },
+    { "type": "text", "id": "cancel_label", "label": "Cancel label", "default": "Cancel subscription" },
+    { "type": "header", "content": "Doctor (fallback when the customer has no lelap.doctor_* metafields)" },
+    { "type": "text", "id": "doctor_name", "label": "Doctor name", "default": "Dr. Ratna Wijaya" },
+    { "type": "image_picker", "id": "doctor_photo", "label": "Doctor photo" },
+    { "type": "text", "id": "doctor_status", "label": "Status line", "default": "Approved your plan on 25 Oct" },
+    { "type": "textarea", "id": "doctor_note", "label": "Note", "default": "Next check-in: 22 Nov. She’ll ask how you’re sleeping and whether your dose needs to change." },
+    { "type": "text", "id": "message_label", "label": "Message button prefix", "default": "Message" },
+    { "type": "header", "content": "Sleep check-in" },
+    { "type": "text", "id": "checkin_q", "label": "Question", "default": "How did you sleep last night?" },
+    { "type": "text", "id": "checkin_words", "label": "Scale labels (comma separated)", "default": "Badly, Poorly, Okay, Well, Great" },
+    { "type": "text", "id": "checkin_note", "label": "Note", "default": "Your check-ins help your doctor fine-tune your plan." },
+    { "type": "text", "id": "streak_template", "label": "Streak text", "info": "[n] is replaced by the number of nights.", "default": "[n]-night streak." },
+    { "type": "header", "content": "No subscription" },
+    { "type": "text", "id": "empty_title", "label": "Heading", "default": "No active subscription" },
+    { "type": "textarea", "id": "empty_text_bought", "label": "Text (after a one-time order)", "info": "[product] is replaced by the product title.", "default": "You bought [product] once. Subscribe to save 20%, get free shipping and keep your doctor on hand for follow-ups." },
+    { "type": "textarea", "id": "empty_text", "label": "Text (no orders yet)", "default": "Subscribe to save 20%, get free shipping and keep your doctor on hand for follow-ups." },
+    { "type": "text", "id": "empty_button", "label": "Button label", "default": "Start a subscription" },
+    { "type": "text", "id": "empty_link", "label": "Link label", "default": "Retake the sleep quiz" },
+    { "type": "header", "content": "Recent order" },
+    { "type": "text", "id": "recent_title", "label": "Heading", "default": "Recent order" },
+    { "type": "text", "id": "view_all", "label": "View all label", "default": "View all" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,190 @@
+{%- comment -%}
+  Sleep Library (Figma: Sleep Library). Header with article search and topic filters (article tags),
+  featured article, "Latest articles" grid with load-more. When the blog has no articles yet,
+  the Figma articles (Fallback article blocks) are shown so the page is never empty.
+{%- endcomment -%}
+{%- liquid
+  assign fallbacks = section.blocks | where: 'type', 'fallback'
+  assign use_fallback = false
+  if blog.articles_count == 0
+    assign use_fallback = true
+  endif
+  assign featured = section.settings.featured_article
+  assign blog_url = blog.url | default: '/blogs/sleep-library'
+  assign cats = section.settings.categories | split: ','
+-%}
+<div class="blog" data-blog>
+  <header class="blog-head">
+    <div class="container blog-head__inner">
+      <h1 class="blog-head__title">{{ section.settings.heading | escape }}{% if section.settings.heading_accent != blank %} <span class="pg-accent">{{ section.settings.heading_accent | escape }}</span>{% endif %}</h1>
+      {%- if section.settings.text != blank -%}<p class="blog-head__text">{{ section.settings.text | escape }}</p>{%- endif -%}
+      <form action="{{ routes.search_url }}" method="get" role="search" class="blog-search">
+        <input type="hidden" name="type" value="article">
+        <input type="hidden" name="options[prefix]" value="last">
+        {% render 'icon', name: 'search', size: 18 %}
+        <label for="BlogSearch-{{ section.id }}" class="visually-hidden">{{ section.settings.search_placeholder | escape }}</label>
+        <input id="BlogSearch-{{ section.id }}" type="search" name="q" placeholder="{{ section.settings.search_placeholder | escape }}" class="blog-search__input">
+      </form>
+      <nav class="blog-tags" aria-label="{{ section.settings.tags_label | escape }}">
+        <a href="{{ blog_url }}" class="blog-tag{% if current_tags == blank %} is-active{% endif %}"{% if current_tags == blank %} aria-current="page"{% endif %}>{{ section.settings.all_label | escape }}</a>
+        {%- for c in cats -%}
+          {%- assign c = c | strip -%}
+          {%- if c != blank -%}
+            {%- assign active = false -%}
+            {%- if current_tags contains c -%}{%- assign active = true -%}{%- endif -%}
+            <a href="{{ blog_url }}/tagged/{{ c | handleize }}" class="blog-tag{% if active %} is-active{% endif %}"{% if active %} aria-current="page"{% endif %}>{{ c | escape }}</a>
+          {%- endif -%}
+        {%- endfor -%}
+      </nav>
+    </div>
+  </header>
+
+  {%- paginate blog.articles by section.settings.per_page -%}
+    {%- liquid
+      if featured == blank and use_fallback == false
+        assign featured = blog.articles.first
+      endif
+      assign show_featured = false
+      if paginate.current_page == 1 and current_tags == blank and section.settings.show_featured
+        assign show_featured = true
+      endif
+    -%}
+    {%- if show_featured -%}
+      {%- liquid
+        if use_fallback
+          assign fb = fallbacks.first
+          assign f_title = fb.settings.title
+          assign f_url = blog_url | append: '/' | append: fb.settings.title | handleize
+          assign f_url = fb.settings.url | default: f_url
+          assign f_meta = fb.settings.tag | append: ' · ' | append: fb.settings.read
+          assign f_excerpt = fb.settings.excerpt
+        else
+          assign f_title = featured.title
+          assign f_url = featured.url
+          assign f_read = featured.metafields.lelap.read_time.value
+          if f_read == blank
+            assign words = featured.content | strip_html | split: ' ' | size
+            assign mins = words | divided_by: 200 | at_least: 1
+            assign f_read = 'blogs.article.min_read' | t: count: mins
+          endif
+          assign f_meta = f_read
+          if featured.tags.size > 0
+            assign f_meta = featured.tags.first | append: ' · ' | append: f_read
+          endif
+          assign f_excerpt = featured.excerpt_or_content | strip_html | truncatewords: 30
+        endif
+        assign reviewer = featured.metafields.lelap.reviewer.value | default: section.settings.reviewer
+      -%}
+      <section class="blog-featured">
+        <div class="container blog-featured__inner">
+          <a href="{{ f_url }}" class="blog-featured__media" tabindex="-1" aria-hidden="true">
+            {%- if use_fallback == false and featured.image != blank -%}
+              {%- assign f_alt = featured.image.alt | default: f_title -%}
+              {{ featured.image | image_url: width: 1440 | image_tag: loading: 'eager', sizes: '(min-width: 1200px) 720px, 100vw', widths: '400, 720, 1080, 1440', alt: f_alt }}
+            {%- elsif use_fallback and fb.settings.image != blank -%}
+              {{ fb.settings.image | image_url: width: 1440 | image_tag: loading: 'eager', sizes: '(min-width: 1200px) 720px, 100vw', alt: f_title }}
+            {%- else -%}
+              <img src="{{ fb.settings.image_asset | default: 'photo-phone-feature.jpg' | asset_url }}" alt="" width="720" height="440">
+            {%- endif -%}
+          </a>
+          <div class="blog-featured__body">
+            {%- if section.settings.featured_chip != blank -%}<span class="chip">{% render 'icon', name: 'moon' %}{{ section.settings.featured_chip | escape }}</span>{%- endif -%}
+            <p class="blog-featured__meta">{{ f_meta | escape }}</p>
+            <h2 class="blog-featured__title"><a href="{{ f_url }}">{{ f_title | escape }}</a></h2>
+            <p class="blog-featured__excerpt">{{ f_excerpt | escape }}</p>
+            {%- if reviewer != blank -%}
+              <p class="blog-reviewer">
+                {%- if section.settings.reviewer_image != blank -%}
+                  {{ section.settings.reviewer_image | image_url: width: 64 | image_tag: width: 32, height: 32, alt: '' }}
+                {%- else -%}
+                  <img src="{{ 'photo-doctor.jpg' | asset_url }}" alt="" width="32" height="32" loading="lazy">
+                {%- endif -%}
+                <span>{{ section.settings.reviewed_by | escape }} {{ reviewer | escape }}</span>
+              </p>
+            {%- endif -%}
+            <a href="{{ f_url }}" class="btn btn--primary">{{ section.settings.read_label | escape }}</a>
+          </div>
+        </div>
+      </section>
+    {%- endif -%}
+
+    <section class="blog-latest">
+      <div class="container">
+        <h2 class="blog-latest__title">{% if current_tags != blank %}{{ current_tags.first | escape }}{% else %}{{ section.settings.latest_heading | escape }}{% endif %}</h2>
+        <div class="blog-grid" data-blog-grid>
+          {%- if use_fallback -%}
+            {%- for b in fallbacks -%}
+              {%- assign b_url = blog_url | append: '/' | append: b.settings.title | handleize -%}
+              {%- assign b_url = b.settings.url | default: b_url -%}
+              {%- capture card_class -%}{% if forloop.first and show_featured %}is-featured{% endif %}{%- endcapture -%}
+              <div {{ b.shopify_attributes }} class="blog-grid__cell{% if card_class != blank %} {{ card_class }}{% endif %}">
+                {% render 'article-card', title: b.settings.title, url: b_url, tag: b.settings.tag, read: b.settings.read, image: b.settings.image, image_asset: b.settings.image_asset %}
+              </div>
+            {%- endfor -%}
+          {%- else -%}
+            {%- for article in blog.articles -%}
+              {%- capture card_class -%}{% if show_featured and article.id == featured.id %}is-featured{% endif %}{%- endcapture -%}
+              <div class="blog-grid__cell{% if card_class != blank %} {{ card_class }}{% endif %}">
+                {% render 'article-card', article: article %}
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+        {%- if paginate.next -%}
+          <a href="{{ paginate.next.url }}" class="btn btn--outline blog-latest__more" data-blog-more>{{ section.settings.more_label | escape }}</a>
+        {%- elsif use_fallback and section.settings.more_label != blank -%}
+          <a href="{{ blog_url }}" class="btn btn--outline blog-latest__more">{{ section.settings.more_label | escape }}</a>
+        {%- endif -%}
+      </div>
+    </section>
+  {%- endpaginate -%}
+</div>
+<script src="{{ 'blog.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Sleep library",
+  "class": "section-main-blog",
+  "settings": [
+    { "type": "header", "content": "Header" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Sleep" },
+    { "type": "text", "id": "heading_accent", "label": "Heading (lavender part)", "default": "library" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Doctor-reviewed guides to falling asleep, staying asleep and waking up clear." },
+    { "type": "text", "id": "search_placeholder", "label": "Search placeholder", "default": "Search articles" },
+    { "type": "text", "id": "tags_label", "label": "Topics label (screen readers)", "default": "Topics" },
+    { "type": "text", "id": "all_label", "label": "All label", "default": "All" },
+    { "type": "text", "id": "categories", "label": "Topics (article tags, comma separated)", "default": "Falling asleep, Staying asleep, Travel & shifts, Stress & mind, Melatonin 101" },
+    { "type": "header", "content": "Featured article" },
+    { "type": "checkbox", "id": "show_featured", "label": "Show featured article", "default": true },
+    { "type": "article", "id": "featured_article", "label": "Featured article", "info": "Defaults to the newest article." },
+    { "type": "text", "id": "featured_chip", "label": "Chip", "default": "Editor’s pick" },
+    { "type": "text", "id": "reviewed_by", "label": "Reviewed by label", "default": "Reviewed by" },
+    { "type": "text", "id": "reviewer", "label": "Reviewer", "info": "Article metafield lelap.reviewer overrides this.", "default": "Dr. Ratna Wijaya" },
+    { "type": "image_picker", "id": "reviewer_image", "label": "Reviewer photo" },
+    { "type": "text", "id": "read_label", "label": "Button label", "default": "Read article" },
+    { "type": "header", "content": "Latest articles" },
+    { "type": "text", "id": "latest_heading", "label": "Heading", "default": "Latest articles" },
+    { "type": "range", "id": "per_page", "label": "Articles per page", "min": 3, "max": 24, "step": 3, "default": 6 },
+    { "type": "text", "id": "more_label", "label": "Load more label", "default": "Load more articles" }
+  ],
+  "blocks": [
+    { "type": "fallback", "name": "Fallback article", "settings": [
+      { "type": "paragraph", "content": "Shown only while the blog has no articles. The first one is the featured article." },
+      { "type": "text", "id": "title", "label": "Title", "default": "7 small changes that help melatonin work better" },
+      { "type": "text", "id": "tag", "label": "Topic", "default": "Falling asleep" },
+      { "type": "text", "id": "read", "label": "Read time", "default": "6 min read" },
+      { "type": "textarea", "id": "excerpt", "label": "Excerpt (featured)", "default": "Timing, light and what you eat after 8pm all change how well a low dose works. Here’s what our doctors tell patients first." },
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "select", "id": "image_asset", "label": "Design image", "default": "photo-phone-feature.jpg", "options": [
+        { "value": "photo-phone-feature.jpg", "label": "Bedside lamp" },
+        { "value": "photo-plane.jpg", "label": "Plane window" },
+        { "value": "photo-tea-card.jpg", "label": "Tea in bed" },
+        { "value": "photo-bedroom-card.jpg", "label": "Bedroom at night" },
+        { "value": "photo-ingredients-card.jpg", "label": "Ingredients" },
+        { "value": "photo-morning-card.jpg", "label": "Morning stretch" }
+      ] },
+      { "type": "url", "id": "url", "label": "Link" }
+    ] }
+  ]
+}
+{% endschema %}

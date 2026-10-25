@@ -24,7 +24,8 @@
 
     <div class="hero__lineup">
       {%- if section.settings.image != blank -%}
-        {{ section.settings.image | image_url: width: 2784 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 1440px) 1392px, calc(100vw - 24px)', widths: '700, 1000, 1392, 2000, 2784', class: 'hero__lineup-img', alt: section.settings.image.alt | default: section.settings.image_alt }}
+        {%- assign hero_alt = section.settings.image.alt | default: section.settings.image_alt -%}
+        {{ section.settings.image | image_url: width: 2784 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 1440px) 1392px, calc(100vw - 24px)', widths: '700, 1000, 1392, 2000, 2784', class: 'hero__lineup-img', alt: hero_alt }}
       {%- else -%}
         <img src="{{ 'lineup.jpg' | asset_url }}" class="hero__lineup-img" width="1392" height="600" alt="{{ section.settings.image_alt | escape }}" fetchpriority="high">
       {%- endif -%}

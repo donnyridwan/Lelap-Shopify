@@ -1,0 +1,220 @@
+{%- comment -%}
+  /account/addresses — Figma: Account · Addresses (244:2277), Addresses · Empty (257:14985), Add Address Modal (244:2548).
+  The Home / Office / Other label and the delivery notes are stored in the address "company" field as "Office · notes".
+{%- endcomment -%}
+{%- assign default_country = section.settings.default_country | default: shop.address.country -%}
+
+<section class="acct">
+  <div class="container acct__layout">
+    {% render 'account-nav', active: 'addresses' %}
+    <div class="acct__content">
+      <div class="acct__head">
+        <h1 class="acct__title">{{ section.settings.heading }}</h1>
+        <button type="button" class="btn btn--primary" data-address-open="AddressModal-new">{{ section.settings.add_label }}</button>
+      </div>
+
+      {%- if customer.addresses.size > 0 -%}
+        <div class="acct-addr-grid">
+          {%- for address in customer.addresses -%}
+            {%- liquid
+              assign parts = address.company | split: ' · '
+              assign a_label = parts.first | default: section.settings.label_default
+              assign a_notes = parts | slice: 1, 9 | join: ' · '
+              assign is_default = false
+              if address.id == customer.default_address.id
+                assign is_default = true
+              endif
+            -%}
+            <article class="acct-addr{% if is_default %} acct-addr--default{% endif %}">
+              <p class="acct-addr__label">{% if a_label == section.settings.label_1 %}{% render 'icon', name: 'home', size: 16 %}{% else %}{% render 'icon', name: 'pin', size: 16 %}{% endif %}{{ a_label }}{% if is_default %}<span class="acct-addr__tag">{{ section.settings.default_tag }}</span>{% endif %}</p>
+              <p class="acct-addr__name">{{ address.name }}</p>
+              <p class="acct-address">
+                {{ address.address1 }}<br>
+                {% if address.address2 != blank %}{{ address.address2 }}, {% endif %}{{ address.city }}<br>
+                {{ address.province }} {{ address.zip }}
+                {%- if address.phone != blank -%}<br>{{ address.phone }}{%- endif -%}
+                {%- if a_notes != blank -%}<br><em>{{ a_notes }}</em>{%- endif -%}
+              </p>
+              <div class="acct-addr__actions">
+                <button type="button" data-address-open="AddressModal-{{ address.id }}">{{ section.settings.edit_label }}</button>
+                {%- unless is_default -%}
+                  {%- form 'customer_address', address -%}
+                    <input type="hidden" name="address[first_name]" value="{{ address.first_name }}">
+                    <input type="hidden" name="address[last_name]" value="{{ address.last_name }}">
+                    <input type="hidden" name="address[company]" value="{{ address.company }}">
+                    <input type="hidden" name="address[address1]" value="{{ address.address1 }}">
+                    <input type="hidden" name="address[address2]" value="{{ address.address2 }}">
+                    <input type="hidden" name="address[city]" value="{{ address.city }}">
+                    <input type="hidden" name="address[country]" value="{{ address.country }}">
+                    <input type="hidden" name="address[province]" value="{{ address.province }}">
+                    <input type="hidden" name="address[zip]" value="{{ address.zip }}">
+                    <input type="hidden" name="address[phone]" value="{{ address.phone }}">
+                    <input type="hidden" name="address[default]" value="1">
+                    <button type="submit">{{ section.settings.make_default_label }}</button>
+                  {%- endform -%}
+                {%- endunless -%}
+                <form method="post" action="{{ address.url }}" onsubmit="return confirm({{ section.settings.remove_confirm | json | escape }});">
+                  <input type="hidden" name="_method" value="delete">
+                  <button type="submit" class="is-muted">{{ section.settings.remove_label }}</button>
+                </form>
+              </div>
+            </article>
+          {%- endfor -%}
+        </div>
+        {%- if section.settings.note != blank -%}
+          <p class="acct-info">{% render 'icon', name: 'info', color: '#1d2142', size: 16 %}{{ section.settings.note }}</p>
+        {%- endif -%}
+      {%- else -%}
+        <div class="acct-card acct-empty">
+          <span class="acct-empty__icon">{% render 'icon', name: 'pin', color: '#1d2142', size: 32 %}</span>
+          <h2 class="acct-empty__title">{{ section.settings.empty_title }}</h2>
+          <p class="acct-empty__text">{{ section.settings.empty_text }}</p>
+          <button type="button" class="btn btn--primary" data-address-open="AddressModal-new">{{ section.settings.add_label }}</button>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{%- comment -%} Modals: one for a new address + one per saved address {%- endcomment -%}
+{%- for i in (0..customer.addresses.size) -%}
+  {%- liquid
+    if forloop.first
+      assign addr = customer.new_address
+      assign mid = 'new'
+      assign title = section.settings.add_label
+    else
+      assign idx = forloop.index0 | minus: 1
+      assign addr = customer.addresses[idx]
+      assign mid = addr.id
+      assign title = section.settings.edit_title
+    endif
+    assign parts = addr.company | split: ' · '
+    assign a_label = parts.first | default: section.settings.label_1
+    assign a_notes = parts | slice: 1, 9 | join: ' · '
+    assign full_name = addr.first_name | append: ' ' | append: addr.last_name | strip
+  -%}
+  <div class="acct-modal" id="AddressModal-{{ mid }}" data-address-modal hidden>
+    <div class="acct-modal__overlay" data-address-close></div>
+    <div class="acct-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="AddressTitle-{{ mid }}">
+      {%- form 'customer_address', addr -%}
+        {%- if form.errors -%}<script>document.currentScript.closest('[data-address-modal]').setAttribute('data-open-on-load', '');</script>{%- endif -%}
+        <div class="acct-modal__head">
+          <h2 id="AddressTitle-{{ mid }}">{{ title }}</h2>
+          <button type="button" class="acct-modal__close" data-address-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon', name: 'x', color: '#1d2142', size: 22 %}</button>
+        </div>
+        {%- if form.errors -%}
+          <div class="auth-alert" role="alert">{% render 'icon', name: 'alert', size: 18 %}<div class="auth-alert__text">{{ form.errors | default_errors }}</div></div>
+        {%- endif -%}
+        <div class="acct-chips" role="radiogroup" aria-label="{{ section.settings.label_group | escape }}">
+          {%- assign opts = section.settings.label_1 | append: '|' | append: section.settings.label_2 | append: '|' | append: section.settings.label_3 | split: '|' -%}
+          {%- for o in opts -%}
+            <label class="acct-chip"><input type="radio" name="address_label" value="{{ o | escape }}"{% if o == a_label %} checked{% endif %}><span>{{ o }}</span></label>
+          {%- endfor -%}
+        </div>
+        <input type="hidden" name="address[company]" value="{{ addr.company }}" data-address-company>
+        <div class="auth-row">
+          <div class="auth-field">
+            <label class="auth-field__label" for="AddrName-{{ mid }}">{{ section.settings.name_label }}</label>
+            <input class="auth-input" id="AddrName-{{ mid }}" type="text" name="address[first_name]" value="{{ full_name }}" autocomplete="name" required>
+            <input type="hidden" name="address[last_name]" value="">
+          </div>
+          <div class="auth-field">
+            <label class="auth-field__label" for="AddrPhone-{{ mid }}">{{ section.settings.phone_label }}</label>
+            <input class="auth-input" id="AddrPhone-{{ mid }}" type="tel" name="address[phone]" value="{{ addr.phone }}" autocomplete="tel">
+          </div>
+        </div>
+        <div class="auth-field">
+          <label class="auth-field__label" for="AddrStreet-{{ mid }}">{{ section.settings.street_label }}</label>
+          <input class="auth-input" id="AddrStreet-{{ mid }}" type="text" name="address[address1]" value="{{ addr.address1 }}" autocomplete="address-line1" required>
+        </div>
+        <div class="auth-field{% unless section.settings.show_country %} visually-hidden{% endunless %}">
+          <label class="auth-field__label" for="AddrCountry-{{ mid }}">{{ section.settings.country_label }}</label>
+          <span class="acct-select">
+            <select class="auth-input" id="AddrCountry-{{ mid }}" name="address[country]" data-country data-default="{{ addr.country | default: default_country | escape }}" autocomplete="country">{{ all_country_option_tags }}</select>
+            {% render 'icon', name: 'chevd', size: 16 %}
+          </span>
+        </div>
+        <div class="auth-row">
+          <div class="auth-field">
+            <label class="auth-field__label" for="AddrProvince-{{ mid }}">{{ section.settings.province_label }}</label>
+            <span class="acct-select">
+              <select class="auth-input" id="AddrProvince-{{ mid }}" name="address[province]" data-province data-default="{{ addr.province | escape }}" autocomplete="address-level1"></select>
+              {% render 'icon', name: 'chevd', size: 16 %}
+            </span>
+          </div>
+          <div class="auth-field">
+            <label class="auth-field__label" for="AddrCity-{{ mid }}">{{ section.settings.city_label }}</label>
+            <input class="auth-input" id="AddrCity-{{ mid }}" type="text" name="address[city]" value="{{ addr.city }}" autocomplete="address-level2" required>
+          </div>
+        </div>
+        <div class="auth-row">
+          <div class="auth-field">
+            <label class="auth-field__label" for="AddrDistrict-{{ mid }}">{{ section.settings.district_label }}</label>
+            <input class="auth-input" id="AddrDistrict-{{ mid }}" type="text" name="address[address2]" value="{{ addr.address2 }}" autocomplete="address-line2">
+          </div>
+          <div class="auth-field">
+            <label class="auth-field__label" for="AddrZip-{{ mid }}">{{ section.settings.zip_label }}</label>
+            <input class="auth-input" id="AddrZip-{{ mid }}" type="text" name="address[zip]" value="{{ addr.zip }}" autocomplete="postal-code" inputmode="numeric">
+          </div>
+        </div>
+        <div class="auth-field">
+          <label class="auth-field__label" for="AddrNotes-{{ mid }}">{{ section.settings.notes_label }}</label>
+          <input class="auth-input" id="AddrNotes-{{ mid }}" type="text" value="{{ a_notes }}" placeholder="{{ section.settings.notes_placeholder | escape }}" data-address-notes>
+        </div>
+        <label class="auth-check">
+          <input type="checkbox" name="address[default]" value="1"{% if addr.id != blank and addr.id == customer.default_address.id %} checked{% endif %}>
+          <span class="auth-check__box" aria-hidden="true">{% render 'icon', name: 'check', color: '#ffffff', size: 12 %}</span>
+          {{ section.settings.default_label }}
+        </label>
+        <div class="acct-modal__actions">
+          <button type="button" class="btn btn--outline" data-address-close>{{ section.settings.cancel_label }}</button>
+          <button type="submit" class="btn btn--primary">{{ section.settings.save_label }}</button>
+        </div>
+      {%- endform -%}
+    </div>
+  </div>
+{%- endfor -%}
+
+<script src="{{ 'account.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Addresses",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Addresses" },
+    { "type": "text", "id": "add_label", "label": "Add button", "default": "Add new address" },
+    { "type": "text", "id": "edit_title", "label": "Edit modal heading", "default": "Edit address" },
+    { "type": "text", "id": "default_tag", "label": "Default badge", "default": "Default" },
+    { "type": "text", "id": "edit_label", "label": "Edit label", "default": "Edit" },
+    { "type": "text", "id": "make_default_label", "label": "Set default label", "default": "Set as default" },
+    { "type": "text", "id": "remove_label", "label": "Remove label", "default": "Remove" },
+    { "type": "text", "id": "remove_confirm", "label": "Remove confirmation", "default": "Remove this address?" },
+    { "type": "text", "id": "note", "label": "Info note", "default": "Changes apply to your next subscription delivery." },
+    { "type": "text", "id": "empty_title", "label": "Empty heading", "default": "No saved addresses yet" },
+    { "type": "textarea", "id": "empty_text", "label": "Empty text", "default": "Add an address to speed up checkout and make sure your monthly pouch arrives on time." },
+    { "type": "header", "content": "Address form" },
+    { "type": "text", "id": "label_group", "label": "Label group name (screen readers)", "default": "Address label" },
+    { "type": "text", "id": "label_1", "label": "Label 1", "default": "Home" },
+    { "type": "text", "id": "label_2", "label": "Label 2", "default": "Office" },
+    { "type": "text", "id": "label_3", "label": "Label 3", "default": "Other" },
+    { "type": "text", "id": "label_default", "label": "Label for addresses without one", "default": "Address" },
+    { "type": "text", "id": "name_label", "label": "Recipient label", "default": "Recipient name" },
+    { "type": "text", "id": "phone_label", "label": "Phone label", "default": "Phone number" },
+    { "type": "text", "id": "street_label", "label": "Street label", "default": "Street address" },
+    { "type": "checkbox", "id": "show_country", "label": "Show country field", "default": false },
+    { "type": "text", "id": "default_country", "label": "Default country", "info": "Defaults to the store's country.", "default": "Indonesia" },
+    { "type": "text", "id": "country_label", "label": "Country label", "default": "Country" },
+    { "type": "text", "id": "province_label", "label": "Province label", "default": "Province" },
+    { "type": "text", "id": "city_label", "label": "City label", "default": "City / regency" },
+    { "type": "text", "id": "district_label", "label": "District label", "default": "District" },
+    { "type": "text", "id": "zip_label", "label": "Postal code label", "default": "Postal code" },
+    { "type": "text", "id": "notes_label", "label": "Notes label", "default": "Delivery notes (optional)" },
+    { "type": "text", "id": "notes_placeholder", "label": "Notes placeholder", "default": "e.g. leave at reception" },
+    { "type": "text", "id": "default_label", "label": "Default checkbox label", "default": "Set as default address" },
+    { "type": "text", "id": "cancel_label", "label": "Cancel label", "default": "Cancel" },
+    { "type": "text", "id": "save_label", "label": "Save label", "default": "Save address" }
+  ]
+}
+{% endschema %}

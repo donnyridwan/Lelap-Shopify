@@ -1,0 +1,15 @@
+{%- comment -%} Auth image side with testimonial (Figma: Account · Sign In → Image Side 242:1246). Params: image, quote, cite {%- endcomment -%}
+<div class="auth__aside" aria-hidden="true">
+  {%- if image != blank -%}
+    {{ image | image_url: width: 1280 | image_tag: loading: 'lazy', sizes: '640px', widths: '640, 960, 1280', alt: '' }}
+  {%- else -%}
+    <img src="{{ 'photo-auth.jpg' | asset_url }}" width="640" height="820" alt="" loading="lazy">
+  {%- endif -%}
+  {%- if quote != blank -%}
+    <figure class="auth-quote">
+      {% render 'stars', color: '#1d2142' %}
+      <blockquote class="auth-quote__text">{{ quote }}</blockquote>
+      <figcaption class="auth-quote__cite">{{ cite }}</figcaption>
+    </figure>
+  {%- endif -%}
+</div>

@@ -1,0 +1,24 @@
+{%- comment -%}
+  Echoes one state key for an order, driven by order tags set by the telehealth workflow:
+  needs-info (tag doctor-needs-info) | not-approved (tag not-approved) | cancelled | delivered (tag delivered)
+  | shipped (fulfilled / partially fulfilled) | approved (tag doctor-approved) | review (default)
+  Params: order
+{%- endcomment -%}
+{%- liquid
+  assign tags = order.tags | join: ',' | downcase
+  if tags contains 'doctor-needs-info'
+    echo 'needs-info'
+  elsif tags contains 'not-approved'
+    echo 'not-approved'
+  elsif order.cancelled
+    echo 'cancelled'
+  elsif tags contains 'delivered'
+    echo 'delivered'
+  elsif order.fulfillment_status == 'fulfilled' or order.fulfillment_status == 'partial'
+    echo 'shipped'
+  elsif tags contains 'doctor-approved'
+    echo 'approved'
+  else
+    echo 'review'
+  endif
+-%}

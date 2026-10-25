@@ -1,0 +1,754 @@
+{%- comment -%}
+  Sleep quiz flow (Figma: Sleep Quiz · Intro / Question / Health Screening / Building Your Plan / Your Plan,
+  Quiz Outcome · Not a Fit). Questions and answer options are blocks: each "Question" block is followed by
+  its "Answer option" blocks. Options carry the scoring (formula + points), the reasons shown in
+  "Why this fits you", and health-screening outcomes (follow-up field / not a fit / exclusive "None of these").
+  The global header/footer are hidden on this template while the quiz runs (see assets/quiz.css).
+{%- endcomment -%}
+{{ 'quiz.css' | asset_url | stylesheet_tag }}
+{%- liquid
+  assign questions = section.blocks | where: 'type', 'question'
+  assign total = questions.size
+  assign quiz_home = routes.root_url
+  assign intro_points = section.settings.intro_points | newline_to_br | split: '<br />'
+  assign building_steps = section.settings.building_steps | newline_to_br | split: '<br />'
+  assign next_steps = section.settings.next_steps | newline_to_br | split: '<br />'
+  assign suggestions = section.settings.suggestions | newline_to_br | split: '<br />'
+  assign formula_texts = section.settings.formula_texts | newline_to_br | split: '<br />'
+  assign notfit_reason = ''
+  for b in section.blocks
+    if b.type == 'option' and b.settings.outcome == 'not_fit' and b.settings.not_fit_reason != blank
+      assign notfit_reason = b.settings.not_fit_reason
+      break
+    endif
+  endfor
+  assign formulas = 'sleep-classic,sleep-deep,sleep-reset,sleep-calm' | split: ','
+-%}
+<script>document.body.classList.add('quiz-running');</script>
+<div class="quiz" data-quiz data-total="{{ total }}" data-building-ms="{{ section.settings.building_ms }}" id="Quiz-{{ section.id }}">
+  <header class="quiz-head" data-quiz-head>
+    <a href="{{ routes.root_url }}" class="wordmark quiz-head__logo">lelap</a>
+    <p class="quiz-head__title">{{ section.settings.header_title | escape }}</p>
+    <button type="button" class="quiz-head__exit" data-quiz-exit data-href="{{ quiz_home }}">{% render 'icon', name: 'lock', size: 14, color: '#1d2142' %}<span>{{ section.settings.exit_label | escape }}</span></button>
+  </header>
+  <div class="quiz-progress" data-quiz-progress role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="2" aria-label="{{ section.settings.header_title | escape }}"><span data-quiz-bar></span></div>
+
+  <div class="quiz-stage" data-quiz-stage>
+    {%- comment -%} Intro {%- endcomment -%}
+    <section class="quiz-step quiz-col" data-step="intro">
+      <p class="quiz-eyebrow">{{ section.settings.intro_eyebrow | escape }}</p>
+      <h1 class="quiz-intro__title">{{ section.settings.intro_heading | escape }}</h1>
+      <p class="quiz-intro__text">{{ section.settings.intro_text | escape }}</p>
+      <ul class="quiz-intro__list">
+        {%- for pt in intro_points -%}
+          {%- assign pt = pt | strip -%}
+          {%- if pt != blank -%}
+            {%- case forloop.index -%}{%- when 1 -%}{%- assign ic = 'clock' -%}{%- when 2 -%}{%- assign ic = 'steth' -%}{%- else -%}{%- assign ic = 'lock' -%}{%- endcase -%}
+            <li><span class="quiz-intro__icon">{% render 'icon', name: ic, size: 16, color: '#1d2142' %}</span>{{ pt | escape }}</li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+      <button type="button" class="btn btn--primary btn--block" data-quiz-start>{{ section.settings.start_label | escape }}</button>
+      <button type="button" class="quiz-intro__resume" data-quiz-resume>{{ section.settings.resume_label | escape }}</button>
+    </section>
+
+    {%- comment -%} Questions {%- endcomment -%}
+    <form class="quiz-form" data-quiz-form novalidate onsubmit="return false">
+      {%- liquid
+        assign q_starts = ''
+        for b in section.blocks
+          if b.type == 'question'
+            assign q_starts = q_starts | append: forloop.index0 | append: ','
+          endif
+        endfor
+        assign q_starts = q_starts | split: ','
+        assign block_count = section.blocks.size
+      -%}
+      {%- for qs in q_starts -%}
+        {%- liquid
+          assign q_pos = qs | plus: 0
+          assign block = section.blocks[q_pos]
+          assign q_index = forloop.index
+          assign q_id = 'q' | append: q_index
+          assign opt_from = q_pos | plus: 1
+          if forloop.last
+            assign opt_count = block_count | minus: opt_from
+          else
+            assign next_pos = q_starts[forloop.index] | plus: 0
+            assign opt_count = next_pos | minus: opt_from
+          endif
+          assign eyebrow = section.settings.question_label | replace: '[n]', q_index | replace: '[total]', total
+          if block.settings.section != blank
+            assign eyebrow = eyebrow | append: ' · ' | append: block.settings.section
+          endif
+          assign q_type = block.settings.type
+        -%}
+        <div class="quiz-step quiz-col quiz-q quiz-q--{{ q_type }}" data-step="q" data-index="{{ q_index }}" data-type="{{ q_type }}" data-name="{{ q_id }}" data-question="{{ block.settings.question | escape }}" role="group" aria-labelledby="QuizQ-{{ q_id }}" hidden {{ block.shopify_attributes }}>
+          <button type="button" class="quiz-back" data-quiz-back>{% render 'icon', name: 'back', size: 16, color: '#5f6179' %}<span>{{ section.settings.back_label | escape }}</span></button>
+          <p class="quiz-eyebrow">{{ eyebrow | escape }}</p>
+          <h2 class="quiz-q__title" id="QuizQ-{{ q_id }}">{{ block.settings.question | escape }}</h2>
+          {%- if block.settings.help != blank -%}<p class="quiz-q__help">{{ block.settings.help | escape }}</p>{%- endif -%}
+          <div class="quiz-options">
+            {%- if q_type == 'text' -%}
+              <label class="visually-hidden" for="QuizText-{{ q_id }}">{{ block.settings.question | escape }}</label>
+              <input class="quiz-input quiz-input--lg" id="QuizText-{{ q_id }}" type="text" name="{{ q_id }}" placeholder="{{ block.settings.placeholder | escape }}" autocomplete="{% if block.settings.is_name %}given-name{% else %}off{% endif %}"{% if block.settings.is_name %} data-quiz-name{% endif %} maxlength="60">
+            {%- endif -%}
+            {%- if opt_count > 0 -%}
+              {%- for opt in section.blocks offset: opt_from limit: opt_count -%}
+                <label class="quiz-option" {{ opt.shopify_attributes }}>
+                  <input type="{% if q_type == 'multi' %}checkbox{% else %}radio{% endif %}" name="{{ q_id }}" value="{{ opt.settings.label | escape }}" data-formula="{{ opt.settings.formula }}" data-points="{{ opt.settings.points }}" data-outcome="{{ opt.settings.outcome }}" data-notfit="{{ opt.settings.not_fit_reason | escape }}" data-reason-title="{{ opt.settings.reason_title | escape }}" data-reason-text="{{ opt.settings.reason_text | escape }}">
+                  <span class="quiz-option__mark" aria-hidden="true">{% render 'icon', name: 'check', color: '#ffffff', size: 12 %}</span>
+                  <span class="quiz-option__text">
+                    <span class="quiz-option__label">{{ opt.settings.label | escape }}</span>
+                    {%- if opt.settings.sub != blank -%}<span class="quiz-option__sub">{{ opt.settings.sub | escape }}</span>{%- endif -%}
+                  </span>
+                </label>
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+          {%- if block.settings.followup_label != blank -%}
+            <div class="quiz-follow" data-quiz-follow hidden>
+              <label class="quiz-follow__label" for="QuizFollow-{{ q_id }}">{{ block.settings.followup_label | escape }}</label>
+              <input class="quiz-input" id="QuizFollow-{{ q_id }}" type="text" name="{{ q_id }}_detail" placeholder="{{ block.settings.followup_placeholder | escape }}" data-quiz-detail>
+            </div>
+          {%- endif -%}
+          {%- if block.settings.why != blank -%}<p class="quiz-why">{% render 'icon', name: 'info', size: 18, color: '#1d2142' %}<span>{{ block.settings.why | escape }}</span></p>{%- endif -%}
+          <button type="button" class="btn btn--primary btn--block quiz-next" data-quiz-next disabled>{{ section.settings.continue_label | escape }}</button>
+          <p class="quiz-private">{% render 'icon', name: 'lock', size: 13, color: '#5f6179' %}<span>{{ section.settings.private_note | escape }}</span></p>
+        </div>
+      {%- endfor -%}
+    </form>
+
+    {%- comment -%} Building your plan {%- endcomment -%}
+    <section class="quiz-step quiz-col quiz-building" data-step="building" hidden aria-live="polite">
+      <svg class="quiz-spinner" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="31" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-dasharray="146 49"/></svg>
+      <h2 class="quiz-building__title">{{ section.settings.building_heading | escape }}</h2>
+      <p class="quiz-building__text">{{ section.settings.building_text | escape }}</p>
+      <ol class="quiz-building__list">
+        {%- for step in building_steps -%}
+          {%- assign step = step | strip -%}
+          {%- if step != blank -%}
+          <li data-quiz-task>
+            <span class="quiz-task__mark" aria-hidden="true">
+              <span class="quiz-task__done">{% render 'icon', name: 'check', color: '#ffffff', size: 12 %}</span>
+              <span class="quiz-task__busy">{% render 'icon', name: 'clock', color: '#1d2142', size: 13 %}</span>
+            </span>
+            <span>{{ step | escape }}</span>
+          </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ol>
+    </section>
+  </div>
+
+  {%- comment -%} Your plan (one panel per formula; quiz.js shows the recommended one) {%- endcomment -%}
+  <section class="quiz-step quiz-plan" data-step="plan" hidden>
+    <header class="quiz-plan__head">
+      <div class="container">
+        <span class="chip">{% render 'icon', name: 'moon' %}{{ section.settings.plan_chip | escape }}</span>
+        <h1 class="quiz-plan__title"><span data-quiz-lead>{{ section.settings.plan_heading | escape }}</span> <span class="pg-accent" data-quiz-name-out></span>.</h1>
+        <p class="quiz-plan__text">{{ section.settings.plan_text | escape }}</p>
+      </div>
+    </header>
+    <div class="quiz-plan__body">
+      <div class="container">
+        {%- for h in formulas -%}
+          {%- liquid
+            assign p = all_products[h]
+            assign has_p = false
+            if p.id != nil
+              assign has_p = true
+            endif
+            assign f_line = formula_texts[forloop.index0] | split: '|'
+            assign f_desc = f_line[0] | strip
+            if has_p
+              assign v = p.selected_or_first_available_variant
+              assign full = v.price
+              assign sub = full | times: 0.8 | round
+              assign plan_id = ''
+              if v.selling_plan_allocations.size > 0
+                assign sub = v.selling_plan_allocations.first.price
+                assign plan_id = v.selling_plan_allocations.first.selling_plan.id
+              endif
+            else
+              capture sub_s
+                render 'product-fact', handle: h, key: 'price_sub'
+              endcapture
+              capture full_s
+                render 'product-fact', handle: h, key: 'price_full'
+              endcapture
+              assign sub = sub_s | plus: 0
+              assign full = full_s | plus: 0
+            endif
+          -%}
+          {%- capture p_title -%}{% if has_p %}{{ p.title }}{% else %}{% render 'product-fact', handle: h, key: 'title' %}{% endif %}{%- endcapture -%}
+          {%- capture p_rating -%}{% if has_p %}{% render 'product-fact', product: p, key: 'rating' %}{% else %}{% render 'product-fact', handle: h, key: 'rating' %}{% endif %}{%- endcapture -%}
+          {%- capture p_reviews -%}{% if has_p %}{% render 'product-fact', product: p, key: 'reviews' %}{% else %}{% render 'product-fact', handle: h, key: 'reviews' %}{% endif %}{%- endcapture -%}
+          <div class="quiz-plan__grid" data-plan-for="{{ h }}" hidden>
+            <article class="quiz-rec">
+              <div class="quiz-rec__top">
+                <div class="quiz-rec__media">{% if has_p %}{% render 'product-image', product: p, width: 480, sizes: '240px', class: 'quiz-rec__img' %}{% else %}{% render 'product-image', handle: h, width: 480, sizes: '240px', class: 'quiz-rec__img' %}{% endif %}</div>
+                <div class="quiz-rec__info">
+                  <span class="chip">{% render 'icon', name: 'moon' %}{{ section.settings.rec_chip | escape }}</span>
+                  <h2 class="quiz-rec__name">{{ p_title | escape }}</h2>
+                  <p class="quiz-rec__desc">{{ f_desc | escape }}</p>
+                  {%- if p_rating != blank -%}
+                    <div class="rating">{% render 'stars', size: 'sm' %}<span class="rating__text">{{ p_rating }} ({{ p_reviews }} reviews)</span></div>
+                  {%- endif -%}
+                </div>
+              </div>
+              <div class="quiz-rec__why">
+                <h3 class="quiz-rec__why-title">{{ section.settings.why_heading | escape }}</h3>
+                <ul class="quiz-rec__reasons" data-quiz-reasons></ul>
+              </div>
+            </article>
+            <aside class="quiz-buy">
+              <h2 class="quiz-buy__title">{{ section.settings.choose_heading | escape }}</h2>
+              {%- if has_p -%}
+                {%- form 'product', p, class: 'quiz-buy__form', data-product-form: '', data-quiz-buy: '' -%}
+                  <input type="hidden" name="id" value="{{ v.id }}">
+                  <input type="hidden" name="quantity" value="1">
+                  <input type="hidden" name="properties[_Sleep assessment]" value="" data-quiz-summary>
+                  {%- if plan_id != blank -%}<input type="hidden" name="selling_plan" value="{{ plan_id }}" data-quiz-plan-input>{%- endif -%}
+                  {%- render 'quiz-plan-options', h: h, sub: sub, full: full, sub_label: section.settings.sub_label, per_month: section.settings.per_month, sub_note: section.settings.sub_note, onetime_label: section.settings.onetime_label, onetime_note: section.settings.onetime_note -%}
+                  <button type="submit" class="btn btn--primary btn--block" data-quiz-cta data-sub-label="{{ section.settings.add_label | escape }} {{ sub | money_without_trailing_zeros }}" data-full-label="{{ section.settings.add_label | escape }} {{ full | money_without_trailing_zeros }}"{% unless v.available %} disabled{% endunless %}>
+                    {%- if v.available -%}{{ section.settings.add_label | escape }} {{ sub | money_without_trailing_zeros }}{%- else -%}{{ 'products.product.sold_out' | t }}{%- endif -%}
+                  </button>
+                {%- endform -%}
+              {%- else -%}
+                <div class="quiz-buy__form" data-quiz-buy>
+                  {%- render 'quiz-plan-options', h: h, sub: sub, full: full, sub_label: section.settings.sub_label, per_month: section.settings.per_month, sub_note: section.settings.sub_note, onetime_label: section.settings.onetime_label, onetime_note: section.settings.onetime_note -%}
+                  <a href="/products/{{ h }}" class="btn btn--primary btn--block" data-quiz-cta data-sub-label="{{ section.settings.add_label | escape }} {{ sub | money_without_trailing_zeros }}" data-full-label="{{ section.settings.add_label | escape }} {{ full | money_without_trailing_zeros }}">{{ section.settings.add_label | escape }} {{ sub | money_without_trailing_zeros }}</a>
+                </div>
+              {%- endif -%}
+              <p class="quiz-buy__promise">{% render 'icon', name: 'shield', size: 18, color: '#1d2142' %}<span>{{ section.settings.refund_note | escape }}</span></p>
+              <div class="quiz-buy__next">
+                <h3>{{ section.settings.next_heading | escape }}</h3>
+                <ul>
+                  {%- for ns in next_steps -%}
+                    {%- assign ns = ns | strip -%}
+                    {%- if ns != blank -%}
+                      {%- case forloop.index -%}{%- when 1 -%}{%- assign ic = 'steth' -%}{%- when 2 -%}{%- assign ic = 'truck' -%}{%- else -%}{%- assign ic = 'refresh' -%}{%- endcase -%}
+                      <li><span>{% render 'icon', name: ic, size: 16, color: '#1d2142' %}</span>{{ ns | escape }}</li>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </ul>
+              </div>
+            </aside>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+    <div class="quiz-alts">
+      <div class="container">
+        <h2 class="quiz-alts__title">{{ section.settings.alts_heading | escape }}</h2>
+        <div class="quiz-alts__grid">
+          {%- for h in formulas -%}
+            {%- liquid
+              assign p = all_products[h]
+              assign has_p = false
+              if p.id != nil
+                assign has_p = true
+              endif
+              assign f_line = formula_texts[forloop.index0] | split: '|'
+              assign f_alt = f_line[1] | strip
+            -%}
+            {%- capture a_title -%}{% if has_p %}{{ p.title }}{% else %}{% render 'product-fact', handle: h, key: 'title' %}{% endif %}{%- endcapture -%}
+            <a href="{% if has_p %}{{ p.url }}{% else %}/products/{{ h }}{% endif %}" class="quiz-alt" data-alt-for="{{ h }}" hidden>
+              <span class="quiz-alt__media">{% if has_p %}{% render 'product-image', product: p, width: 192, sizes: '96px', class: 'quiz-alt__img' %}{% else %}{% render 'product-image', handle: h, width: 192, sizes: '96px', class: 'quiz-alt__img' %}{% endif %}</span>
+              <span class="quiz-alt__info">
+                <span class="quiz-alt__name">{{ a_title | escape }}</span>
+                <span class="quiz-alt__desc">{{ f_alt | escape }}</span>
+                <span class="quiz-alt__price">{% if has_p %}{% render 'product-price', product: p, class: 'quiz-alt__price-inner' %}{% else %}{% render 'product-price', handle: h, class: 'quiz-alt__price-inner' %}{% endif %}</span>
+              </span>
+            </a>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} Not a fit {%- endcomment -%}
+  <section class="quiz-step quiz-notfit" data-step="notfit" hidden>
+    <div class="container quiz-notfit__inner">
+      <span class="quiz-notfit__icon">{% render 'icon', name: 'steth', size: 34, color: '#1d2142' %}</span>
+      <h1 class="quiz-notfit__title"><span data-quiz-lead>{{ section.settings.notfit_heading | escape }}</span> <span data-quiz-name-out></span>.</h1>
+      <p class="quiz-notfit__text" data-quiz-notfit-text data-template="{{ section.settings.notfit_text | escape }}">{{ section.settings.notfit_text | replace: '[reason]', notfit_reason | escape }}</p>
+      <div class="quiz-notfit__card">
+        <h2>{{ section.settings.suggest_heading | escape }}</h2>
+        <ul>
+          {%- for sg in suggestions -%}
+            {%- assign parts = sg | split: '|' -%}
+            {%- assign sg_title = parts[0] | strip -%}
+            {%- if sg_title != blank -%}
+              {%- case forloop.index -%}{%- when 1 -%}{%- assign ic = 'chat' -%}{%- when 2 -%}{%- assign ic = 'moon' -%}{%- else -%}{%- assign ic = 'undo' -%}{%- endcase -%}
+              <li><span class="quiz-notfit__mini">{% render 'icon', name: ic, size: 16, color: '#1d2142' %}</span><span><strong>{{ sg_title | escape }}</strong>{% if parts[1] != blank %}<small>{{ parts[1] | strip | escape }}</small>{% endif %}</span></li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+      <div class="quiz-notfit__actions">
+        <a href="{{ section.settings.notfit_button_link | default: '/blogs/sleep-library' }}" class="btn btn--primary">{{ section.settings.notfit_button | escape }}</a>
+        <a href="{{ routes.root_url }}" class="btn btn--outline">{{ section.settings.notfit_button2 | escape }}</a>
+      </div>
+    </div>
+  </section>
+</div>
+<script src="{{ 'quiz.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Sleep quiz",
+  "class": "section-sleep-quiz",
+  "max_blocks": 50,
+  "enabled_on": {
+    "templates": [
+      "page"
+    ]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Quiz header"
+    },
+    {
+      "type": "text",
+      "id": "header_title",
+      "label": "Title",
+      "default": "Sleep assessment"
+    },
+    {
+      "type": "text",
+      "id": "exit_label",
+      "label": "Save & exit label",
+      "info": "Answers are kept on this device so the customer can resume later.",
+      "default": "Save & exit"
+    },
+    {
+      "type": "header",
+      "content": "Intro"
+    },
+    {
+      "type": "text",
+      "id": "intro_eyebrow",
+      "label": "Eyebrow",
+      "default": "Free sleep assessment"
+    },
+    {
+      "type": "text",
+      "id": "intro_heading",
+      "label": "Heading",
+      "default": "Let’s find what helps you sleep."
+    },
+    {
+      "type": "textarea",
+      "id": "intro_text",
+      "label": "Text",
+      "default": "Answer 10 short questions about your sleep, routine and health. A licensed doctor reviews them and recommends the right formula and dose."
+    },
+    {
+      "type": "textarea",
+      "id": "intro_points",
+      "label": "Points (one per line: clock, doctor, lock)",
+      "default": "About 2 minutes\nReviewed by a licensed doctor within 24 hours\nPrivate and encrypted. Only your doctor sees your answers"
+    },
+    {
+      "type": "text",
+      "id": "start_label",
+      "label": "Start button",
+      "default": "Start assessment"
+    },
+    {
+      "type": "text",
+      "id": "resume_label",
+      "label": "Resume link",
+      "default": "Already started? Resume where you left off"
+    },
+    {
+      "type": "header",
+      "content": "Questions"
+    },
+    {
+      "type": "text",
+      "id": "question_label",
+      "label": "Question counter",
+      "info": "[n] = number, [total] = number of questions",
+      "default": "Question [n] of [total]"
+    },
+    {
+      "type": "text",
+      "id": "back_label",
+      "label": "Back label",
+      "default": "Back"
+    },
+    {
+      "type": "text",
+      "id": "continue_label",
+      "label": "Continue label",
+      "default": "Continue"
+    },
+    {
+      "type": "text",
+      "id": "private_note",
+      "label": "Privacy note",
+      "default": "Private and encrypted. Only your doctor sees your answers."
+    },
+    {
+      "type": "header",
+      "content": "Building your plan"
+    },
+    {
+      "type": "text",
+      "id": "building_heading",
+      "label": "Heading",
+      "default": "Building your sleep plan…"
+    },
+    {
+      "type": "text",
+      "id": "building_text",
+      "label": "Text",
+      "default": "This takes a few seconds. Please don’t close this page."
+    },
+    {
+      "type": "textarea",
+      "id": "building_steps",
+      "label": "Steps (one per line)",
+      "default": "Analysing your sleep pattern\nChecking your health answers\nMatching you to a formula\nPreparing your doctor’s review"
+    },
+    {
+      "type": "range",
+      "id": "building_ms",
+      "label": "Duration",
+      "min": 2000,
+      "max": 8000,
+      "step": 500,
+      "unit": "ms",
+      "default": 4000
+    },
+    {
+      "type": "header",
+      "content": "Your plan"
+    },
+    {
+      "type": "text",
+      "id": "plan_chip",
+      "label": "Chip",
+      "default": "Assessment complete"
+    },
+    {
+      "type": "text",
+      "id": "plan_heading",
+      "label": "Heading",
+      "info": "Followed by the first name from the name question.",
+      "default": "Your sleep plan,"
+    },
+    {
+      "type": "textarea",
+      "id": "plan_text",
+      "label": "Text",
+      "default": "Based on your answers, a doctor will review this recommendation within 24 hours before anything ships."
+    },
+    {
+      "type": "text",
+      "id": "rec_chip",
+      "label": "Recommendation chip",
+      "default": "Recommended for you"
+    },
+    {
+      "type": "textarea",
+      "id": "formula_texts",
+      "label": "Formula texts",
+      "info": "One line per formula in this order: Sleep Classic, Sleep Deep, Sleep Reset, Sleep Calm. Format: description | text under “Also worth asking your doctor about”.",
+      "default": "3 mg melatonin with chamomile and L-theanine | If falling asleep is the main struggle\nMelatonin with magnesium glycinate for fewer wake-ups | If you also wake up during the night\nA gentle 1 mg dose to help your body clock adjust | If you travel or work night shifts\nMelatonin-free, with L-theanine and chamomile | A melatonin-free option for a busy mind"
+    },
+    {
+      "type": "text",
+      "id": "why_heading",
+      "label": "Reasons heading",
+      "default": "Why this fits you"
+    },
+    {
+      "type": "text",
+      "id": "choose_heading",
+      "label": "Plan heading",
+      "default": "Choose your plan"
+    },
+    {
+      "type": "text",
+      "id": "sub_label",
+      "label": "Subscription label",
+      "default": "Monthly subscription"
+    },
+    {
+      "type": "text",
+      "id": "per_month",
+      "label": "Per month label",
+      "default": "/ month"
+    },
+    {
+      "type": "text",
+      "id": "sub_note",
+      "label": "Subscription note",
+      "default": "Save 20%. Free doctor follow-ups. Cancel anytime."
+    },
+    {
+      "type": "text",
+      "id": "onetime_label",
+      "label": "One-time label",
+      "default": "One-time purchase"
+    },
+    {
+      "type": "text",
+      "id": "onetime_note",
+      "label": "One-time note",
+      "default": "One pouch, 30 gummies. Doctor review included."
+    },
+    {
+      "type": "text",
+      "id": "add_label",
+      "label": "Add to cart label",
+      "default": "Add to cart,"
+    },
+    {
+      "type": "text",
+      "id": "refund_note",
+      "label": "Refund note",
+      "default": "If your doctor decides melatonin isn’t right for you, you get a full refund."
+    },
+    {
+      "type": "text",
+      "id": "next_heading",
+      "label": "Next steps heading",
+      "default": "What happens next"
+    },
+    {
+      "type": "textarea",
+      "id": "next_steps",
+      "label": "Next steps (one per line: doctor, truck, refresh)",
+      "default": "A licensed doctor reviews your answers within 24 hours.\nYour first pouch ships free once approved.\nYour doctor checks in after 4 weeks to adjust your dose."
+    },
+    {
+      "type": "text",
+      "id": "alts_heading",
+      "label": "Alternatives heading",
+      "default": "Also worth asking your doctor about"
+    },
+    {
+      "type": "header",
+      "content": "Not a fit"
+    },
+    {
+      "type": "text",
+      "id": "notfit_heading",
+      "label": "Heading",
+      "default": "Thanks for being honest,"
+    },
+    {
+      "type": "textarea",
+      "id": "notfit_text",
+      "label": "Text",
+      "info": "[reason] = the answer’s “Not a fit reason”",
+      "default": "Because you mentioned [reason], melatonin isn’t recommended for you right now. We won’t charge you anything."
+    },
+    {
+      "type": "text",
+      "id": "suggest_heading",
+      "label": "Suggestions heading",
+      "default": "What we suggest instead"
+    },
+    {
+      "type": "textarea",
+      "id": "suggestions",
+      "label": "Suggestions",
+      "info": "One per line (chat, moon, undo icons). Format: title | text",
+      "default": "Talk to your own doctor or midwife | They can suggest sleep support that’s safe during pregnancy.\nTry a calmer wind-down | Our free guide covers routines that help without supplements.\nCome back anytime | If your situation changes, you can retake the assessment."
+    },
+    {
+      "type": "text",
+      "id": "notfit_button",
+      "label": "Primary button",
+      "default": "Read the wind-down guide"
+    },
+    {
+      "type": "url",
+      "id": "notfit_button_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "notfit_button2",
+      "label": "Outline button",
+      "default": "Back to home"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "section",
+          "label": "Topic",
+          "default": "Your sleep"
+        },
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How long does it usually take you to fall asleep?"
+        },
+        {
+          "type": "text",
+          "id": "help",
+          "label": "Help text",
+          "default": "Think about a typical weeknight over the past month."
+        },
+        {
+          "type": "select",
+          "id": "type",
+          "label": "Answer type",
+          "default": "single",
+          "options": [
+            {
+              "value": "single",
+              "label": "Choose one"
+            },
+            {
+              "value": "multi",
+              "label": "Choose several (health screening)"
+            },
+            {
+              "value": "text",
+              "label": "Text"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Text placeholder"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_name",
+          "label": "This is the customer’s first name",
+          "default": false
+        },
+        {
+          "type": "textarea",
+          "id": "why",
+          "label": "“Why we ask” note"
+        },
+        {
+          "type": "text",
+          "id": "followup_label",
+          "label": "Follow-up field label"
+        },
+        {
+          "type": "text",
+          "id": "followup_placeholder",
+          "label": "Follow-up field placeholder"
+        },
+        {
+          "type": "paragraph",
+          "content": "Add Answer option blocks directly below this question."
+        }
+      ]
+    },
+    {
+      "type": "option",
+      "name": "Answer option",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Answer",
+          "default": "Under 15 minutes"
+        },
+        {
+          "type": "text",
+          "id": "sub",
+          "label": "Detail"
+        },
+        {
+          "type": "select",
+          "id": "formula",
+          "label": "Points towards",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "sleep-classic",
+              "label": "Sleep Classic"
+            },
+            {
+              "value": "sleep-deep",
+              "label": "Sleep Deep"
+            },
+            {
+              "value": "sleep-reset",
+              "label": "Sleep Reset"
+            },
+            {
+              "value": "sleep-calm",
+              "label": "Sleep Calm"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "points",
+          "label": "Points",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "default": 1
+        },
+        {
+          "type": "select",
+          "id": "outcome",
+          "label": "Health outcome",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "followup",
+              "label": "Show follow-up field"
+            },
+            {
+              "value": "not_fit",
+              "label": "Not a fit (stop the quiz)"
+            },
+            {
+              "value": "exclusive",
+              "label": "“None of these” (clears the others)"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "not_fit_reason",
+          "label": "Not a fit reason"
+        },
+        {
+          "type": "text",
+          "id": "reason_title",
+          "label": "“Why this fits you” title"
+        },
+        {
+          "type": "text",
+          "id": "reason_text",
+          "label": "“Why this fits you” text"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

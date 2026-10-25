@@ -12,7 +12,7 @@
         <tr>
           <td></td>
           {%- for h in handles -%}
-            {%- assign p = all_products[h] -%}{%- unless p.id -%}{%- assign p = nil -%}{%- endunless -%}
+            {%- assign p = all_products[h] -%}{%- unless p.id -%}{%- assign p = '' -%}{%- endunless -%}
             <th scope="col">
               <a href="{% if p != blank %}{{ p.url }}{% else %}/products/{{ h }}{% endif %}" class="c-compare__product">
                 <span class="c-compare__thumb">{% render 'product-image', product: p, handle: h, width: 120, sizes: '56px', class: 'c-compare__img' %}</span>
@@ -27,7 +27,7 @@
           <tr>
             <th scope="row">{{ labels[forloop.index0] }}</th>
             {%- for h in handles -%}
-              {%- assign p = all_products[h] -%}{%- unless p.id -%}{%- assign p = nil -%}{%- endunless -%}
+              {%- assign p = all_products[h] -%}{%- unless p.id -%}{%- assign p = '' -%}{%- endunless -%}
               <td>{% render 'product-fact', product: p, handle: h, key: k %}</td>
             {%- endfor -%}
           </tr>
@@ -37,7 +37,7 @@
 
     <div class="c-compare__cards">
       {%- for h in handles -%}
-        {%- assign p = all_products[h] -%}{%- unless p.id -%}{%- assign p = nil -%}{%- endunless -%}
+        {%- assign p = all_products[h] -%}{%- unless p.id -%}{%- assign p = '' -%}{%- endunless -%}
         <div class="c-compare-card">
           <a href="{% if p != blank %}{{ p.url }}{% else %}/products/{{ h }}{% endif %}" class="c-compare-card__head">
             <span class="c-compare-card__thumb">{% render 'product-image', product: p, handle: h, width: 120, sizes: '48px', class: 'c-compare__img' %}</span>

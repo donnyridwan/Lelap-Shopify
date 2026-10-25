@@ -1,0 +1,50 @@
+{%- comment -%}
+  Account sidebar (desktop) + pill tabs (tablet/mobile). Figma: Account · * → Sidebar / Account Tabs.
+  Params: active ('overview' | 'orders' | 'care' | 'addresses' | 'profile')
+  Profile & health and Care team are pages (templates page.account-profile / page.account-care-team);
+  their URLs default to /pages/profile-health and /pages/care-team (theme settings account_profile_url / account_care_url override).
+{%- endcomment -%}
+{%- liquid
+  assign care_url = settings.account_care_url | default: '/pages/care-team'
+  assign profile_url = settings.account_profile_url | default: '/pages/profile-health'
+  assign orders_url = routes.account_url | append: '?view=orders'
+  assign unread = customer.metafields.lelap.care_unread.value | default: 0
+  assign i1 = customer.first_name | slice: 0
+  assign i2 = customer.last_name | slice: 0
+  assign initials = i1 | append: i2
+  if initials == blank
+    assign initials = customer.email | slice: 0, 2
+  endif
+-%}
+{%- capture links -%}
+  overview|{{ routes.account_url }}|home|Overview
+  orders|{{ orders_url }}|box|Orders
+  care|{{ care_url }}|chat|Care team
+  addresses|{{ routes.account_addresses_url }}|pin|Addresses
+  profile|{{ profile_url }}|user|Profile &amp; health
+{%- endcapture -%}
+{%- assign rows = links | strip | newline_to_br | split: '<br />' -%}
+<nav class="acct-nav" aria-label="Account">
+  <div class="acct-nav__me">
+    <span class="acct-nav__avatar" aria-hidden="true">{{ initials }}</span>
+    <div>
+      <p class="acct-nav__name">{{ customer.name | default: customer.email }}</p>
+      <p class="acct-nav__since">Member since {{ customer.created_at | date: '%b %Y' }}</p>
+    </div>
+  </div>
+  {%- for row in rows -%}
+    {%- assign r = row | strip | split: '|' -%}
+    <a class="acct-nav__link" href="{{ r[1] }}"{% if active == r[0] %} aria-current="page"{% endif %}>
+      {% render 'icon', name: r[2], color: 'currentColor', size: 18 %}{{ r[3] }}
+      {%- if r[0] == 'care' and unread > 0 -%}<span class="acct-nav__badge">{{ unread }}</span>{%- endif -%}
+    </a>
+  {%- endfor -%}
+  <a class="acct-nav__link acct-nav__out" href="{{ routes.account_logout_url }}">{% render 'icon', name: 'out', color: 'currentColor', size: 18 %}Log out</a>
+</nav>
+<nav class="acct-tabs" aria-label="Account">
+  {%- for row in rows -%}
+    {%- assign r = row | strip | split: '|' -%}
+    <a href="{{ r[1] }}"{% if active == r[0] %} aria-current="page"{% endif %}>{% render 'icon', name: r[2], color: 'currentColor', size: 14 %}{{ r[3] }}</a>
+  {%- endfor -%}
+  <a href="{{ routes.account_logout_url }}">{% render 'icon', name: 'out', color: 'currentColor', size: 14 %}Log out</a>
+</nav>

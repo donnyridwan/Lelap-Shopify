@@ -1,0 +1,169 @@
+{%- comment -%}
+  /account/login — Figma: Account · Sign In (242:1164), Sign In · Error (256:12469), Forgot Password (242:1492),
+  Reset Link Sent (242:1612) and Password Updated (256:12182, shown after a password reset via ?password_updated=1).
+{%- endcomment -%}
+{%- liquid
+  assign care_url = settings.account_care_url | default: '/pages/care-team'
+  assign start = 'login'
+-%}
+
+{%- capture recover_markup -%}
+  {%- form 'recover_customer_password', data-recover-form: '' -%}
+    {%- if form.posted_successfully? -%}
+      {%- assign start = 'sent' -%}
+    {%- elsif form.errors -%}
+      {%- assign start = 'recover' -%}
+    {%- endif -%}
+    <button type="button" class="auth-back" data-auth-show="login">{% render 'icon', name: 'back', color: '#5f6179', size: 16 %}{{ section.settings.back_label }}</button>
+    <span class="auth-badge">{% render 'icon', name: 'lock', color: '#1d2142', size: 24 %}</span>
+    <h1 class="auth__title" tabindex="-1">{{ section.settings.recover_title }}</h1>
+    <p class="auth__lead auth__lead--relaxed">{{ section.settings.recover_text }}</p>
+    {%- if form.errors -%}
+      <div class="auth-alert" role="alert">
+        {% render 'icon', name: 'alert', size: 18 %}
+        <div><p class="auth-alert__title">{{ section.settings.recover_error }}</p><div class="auth-alert__text">{{ form.errors | default_errors }}</div></div>
+      </div>
+    {%- endif -%}
+    <div class="auth-field{% if form.errors %} auth-field--error{% endif %}">
+      <label class="auth-field__label" for="RecoverEmail">{{ section.settings.email_label }}</label>
+      <input class="auth-input" type="email" id="RecoverEmail" name="email" autocomplete="email" autocapitalize="off" required>
+    </div>
+    <button type="submit" class="btn btn--primary btn--block">{{ section.settings.recover_button }}</button>
+  {%- endform -%}
+{%- endcapture -%}
+
+<div class="auth">
+  <div class="auth__main">
+    <div class="auth__form" data-auth-initial="{{ start }}">
+
+      {%- comment -%} Sign in {%- endcomment -%}
+      <div class="auth__panel" data-auth-panel="login"{% unless start == 'login' %} hidden{% endunless %}>
+        {%- form 'customer_login', novalidate: 'novalidate' -%}
+          <h1 class="auth__title" tabindex="-1">{{ section.settings.title }}</h1>
+          <p class="auth__lead">{{ section.settings.text }}</p>
+          {%- if section.settings.social_url != blank -%}
+            <a href="{{ section.settings.social_url }}" class="auth-social"><span class="auth-social__g" aria-hidden="true">G</span>{{ section.settings.social_label }}</a>
+            <p class="auth-or">{{ section.settings.or_label }}</p>
+          {%- endif -%}
+          {%- if form.errors -%}
+            <div class="auth-alert" role="alert">
+              {% render 'icon', name: 'alert', size: 18 %}
+              <div>
+                <p class="auth-alert__title">{{ section.settings.error_title }}</p>
+                <p class="auth-alert__text">{{ section.settings.error_text }}</p>
+              </div>
+            </div>
+          {%- endif -%}
+          <div class="auth-field">
+            <div class="auth-field__top"><label class="auth-field__label" for="LoginEmail">{{ section.settings.email_label }}</label></div>
+            <input class="auth-input" type="email" id="LoginEmail" name="customer[email]" autocomplete="email" autocapitalize="off" required>
+          </div>
+          <div class="auth-field{% if form.errors %} auth-field--error{% endif %}">
+            <div class="auth-field__top">
+              <label class="auth-field__label" for="LoginPassword">{{ section.settings.password_label }}</label>
+              <a href="#recover" class="auth-field__link" data-auth-show="recover">{{ section.settings.forgot_label }}</a>
+            </div>
+            <div class="auth-field__control">
+              <input class="auth-input" type="password" id="LoginPassword" name="customer[password]" autocomplete="current-password" required{% if form.errors %} aria-invalid="true" aria-describedby="LoginPasswordError"{% endif %}>
+              <button type="button" class="auth-eye" data-eye aria-pressed="false" aria-label="{{ section.settings.show_password | escape }}">{% render 'icon', name: 'eye', color: 'currentColor', size: 18 %}</button>
+            </div>
+            {%- if form.errors -%}
+              <p class="auth-field__error" id="LoginPasswordError">{% render 'icon', name: 'alert', size: 14 %}{{ section.settings.field_error }}</p>
+            {%- endif -%}
+          </div>
+          <label class="auth-check">
+            <input type="checkbox" name="remember" value="1" checked>
+            <span class="auth-check__box" aria-hidden="true">{% render 'icon', name: 'check', color: '#ffffff', size: 12 %}</span>
+            {{ section.settings.remember_label }}
+          </label>
+          <button type="submit" class="btn btn--primary btn--block">{{ section.settings.button }}</button>
+          <p class="auth-switch">{{ section.settings.new_text }} <a href="{{ routes.account_register_url }}">{{ section.settings.new_link }}</a></p>
+        {%- endform -%}
+        {%- if shop.checkout.guest_login -%}
+          {%- form 'guest_login' -%}
+            <button type="submit" class="auth-small-link">{{ section.settings.guest_label }}</button>
+          {%- endform -%}
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Forgot password + Reset link sent (same Shopify form) {%- endcomment -%}
+      <div class="auth__panel" data-auth-panel="recover"{% unless start == 'recover' %} hidden{% endunless %}>
+        {{ recover_markup }}
+      </div>
+
+      <div class="auth__panel" data-auth-panel="sent"{% unless start == 'sent' %} hidden{% endunless %}>
+        <span class="auth-badge auth-badge--ok">{% render 'icon', name: 'mail', size: 28 %}</span>
+        <h1 class="auth__title" tabindex="-1">{{ section.settings.sent_title }}</h1>
+        <p class="auth__lead auth__lead--relaxed">{{ section.settings.sent_text_before }} <span data-recover-email>{{ section.settings.sent_fallback_email }}</span>{{ section.settings.sent_text_after }}</p>
+        <a href="{{ section.settings.mail_url | default: 'mailto:' }}" class="btn btn--primary btn--block">{{ section.settings.mail_button }}</a>
+        <p class="auth-resend">{{ section.settings.resend_text }} <button type="button" data-resend="45" data-label="{{ section.settings.resend_label | escape }}">{{ section.settings.resend_label }}</button></p>
+        <div class="auth-tips"><strong>{{ section.settings.tips_title }}</strong><p>{{ section.settings.tips_text }}</p></div>
+      </div>
+
+      <div class="auth__panel" data-auth-panel="updated" hidden>
+        <span class="auth-badge auth-badge--ok">{% render 'icon', name: 'shield', color: '#2f8f5b', size: 28 %}</span>
+        <h1 class="auth__title" tabindex="-1">{{ section.settings.updated_title }}</h1>
+        <p class="auth__lead auth__lead--relaxed">{{ section.settings.updated_text }}</p>
+        <button type="button" class="btn btn--primary btn--block" data-auth-show="login">{{ section.settings.button }}</button>
+        <a href="{{ care_url }}" class="auth-small-link">{{ section.settings.updated_link }}</a>
+      </div>
+    </div>
+  </div>
+  {% render 'account-auth-aside', image: section.settings.image, quote: section.settings.quote, cite: section.settings.cite %}
+</div>
+
+<script src="{{ 'account.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Sign in",
+  "tag": "section",
+  "class": "section-main-login",
+  "settings": [
+    { "type": "header", "content": "Sign in" },
+    { "type": "text", "id": "title", "label": "Heading", "default": "Welcome back" },
+    { "type": "text", "id": "text", "label": "Text", "default": "Log in to manage your subscription and message your doctor." },
+    { "type": "url", "id": "social_url", "label": "Social login link", "info": "Shown as “Continue with Google” when set (requires a social login app)." },
+    { "type": "text", "id": "social_label", "label": "Social login label", "default": "Continue with Google" },
+    { "type": "text", "id": "or_label", "label": "Divider label", "default": "or" },
+    { "type": "text", "id": "email_label", "label": "Email label", "default": "Email" },
+    { "type": "text", "id": "password_label", "label": "Password label", "default": "Password" },
+    { "type": "text", "id": "show_password", "label": "Show password label (screen readers)", "default": "Show password" },
+    { "type": "text", "id": "forgot_label", "label": "Forgot password label", "default": "Forgot password?" },
+    { "type": "text", "id": "remember_label", "label": "Remember me label", "default": "Keep me logged in" },
+    { "type": "text", "id": "button", "label": "Button label", "default": "Log in" },
+    { "type": "text", "id": "new_text", "label": "Register prompt", "default": "New to lelap?" },
+    { "type": "text", "id": "new_link", "label": "Register link label", "default": "Create an account" },
+    { "type": "text", "id": "guest_label", "label": "Guest checkout label", "default": "Continue as a guest" },
+    { "type": "header", "content": "Sign in error" },
+    { "type": "text", "id": "error_title", "label": "Error title", "default": "We couldn’t log you in" },
+    { "type": "textarea", "id": "error_text", "label": "Error text", "default": "The email or password is incorrect. After several failed attempts your account is locked for 15 minutes." },
+    { "type": "text", "id": "field_error", "label": "Field error", "default": "Incorrect password" },
+    { "type": "header", "content": "Forgot password" },
+    { "type": "text", "id": "back_label", "label": "Back label", "default": "Back to log in" },
+    { "type": "text", "id": "recover_title", "label": "Heading", "default": "Reset your password" },
+    { "type": "textarea", "id": "recover_text", "label": "Text", "default": "Enter the email you used to sign up. We’ll send you a link to choose a new password." },
+    { "type": "text", "id": "recover_button", "label": "Button label", "default": "Send reset link" },
+    { "type": "text", "id": "recover_error", "label": "Error title", "default": "We couldn’t send a reset link" },
+    { "type": "header", "content": "Reset link sent" },
+    { "type": "text", "id": "sent_title", "label": "Heading", "default": "Check your inbox" },
+    { "type": "text", "id": "sent_text_before", "label": "Text before email", "default": "We sent a password reset link to" },
+    { "type": "text", "id": "sent_fallback_email", "label": "Fallback for the email address", "default": "your email" },
+    { "type": "text", "id": "sent_text_after", "label": "Text after email", "default": ". It expires in 30 minutes." },
+    { "type": "text", "id": "mail_button", "label": "Button label", "default": "Open email app" },
+    { "type": "text", "id": "mail_url", "label": "Button link", "default": "mailto:" },
+    { "type": "text", "id": "resend_text", "label": "Resend prompt", "default": "Didn’t get it?" },
+    { "type": "text", "id": "resend_label", "label": "Resend label", "default": "Resend" },
+    { "type": "text", "id": "tips_title", "label": "Tips title", "default": "Tips" },
+    { "type": "textarea", "id": "tips_text", "label": "Tips text", "default": "Check your spam or promotions folder, or make sure you used the same email as your order." },
+    { "type": "header", "content": "Password updated" },
+    { "type": "text", "id": "updated_title", "label": "Heading", "default": "Password updated" },
+    { "type": "textarea", "id": "updated_text", "label": "Text", "default": "You can now log in with your new password. For your security, we’ve signed you out of all other devices." },
+    { "type": "text", "id": "updated_link", "label": "Help link label", "default": "Didn’t make this change? Contact our care team" },
+    { "type": "header", "content": "Image side" },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "textarea", "id": "quote", "label": "Quote", "default": "“Waking up without that heavy, foggy feeling is the best part.”" },
+    { "type": "text", "id": "cite", "label": "Quote author", "default": "Ayu S., Bandung, subscriber since 2025" }
+  ]
+}
+{% endschema %}

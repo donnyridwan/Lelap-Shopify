@@ -55,7 +55,7 @@
             <li class="c-shop__item" data-need="{{ need | handleize }}">{% render 'product-card', product: product %}</li>
           {%- else -%}
             {%- for h in fallback -%}
-              {%- assign p = all_products[h] -%}{%- unless p.id -%}{%- assign p = nil -%}{%- endunless -%}
+              {%- assign p = all_products[h] -%}{%- unless p.id -%}{%- assign p = '' -%}{%- endunless -%}
               {%- capture need -%}{% render 'product-fact', handle: h, key: 'need' %}{%- endcapture -%}
               <li class="c-shop__item" data-need="{{ need | handleize }}">
                 {%- if p != blank -%}{% render 'product-card', product: p %}{%- else -%}{% render 'product-card', handle: h %}{%- endif -%}

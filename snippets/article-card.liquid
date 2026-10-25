@@ -1,6 +1,6 @@
 {%- comment -%}
   Sleep Library article card (Figma: Article Card). Works with a real article or with fallback data.
-  Params: article (optional), title, url, tag, read, image_asset, class, sizes, heading_tag
+  Params: article (optional), title, url, tag, read, image (image object), image_asset, class, sizes, heading_tag
 {%- endcomment -%}
 {%- liquid
   assign c_title = title
@@ -19,11 +19,15 @@
     endif
   endif
   assign tag_name = heading_tag | default: 'h3'
+  assign img_sizes = sizes | default: '(min-width: 1200px) 411px, 100vw'
 -%}
 <article class="blog-card{% if class %} {{ class }}{% endif %}" data-blog-card>
   <a href="{{ c_url }}" class="blog-card__media" tabindex="-1" aria-hidden="true">
     {%- if article != blank and article.image != blank -%}
-      {{ article.image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: sizes | default: '(min-width: 1200px) 411px, 100vw', widths: '400, 600, 820, 1200', alt: article.image.alt | default: c_title }}
+      {%- assign c_alt = article.image.alt | default: c_title -%}
+      {{ article.image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: img_sizes, widths: '400, 600, 820, 1200', alt: c_alt }}
+    {%- elsif image != blank -%}
+      {{ image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: img_sizes, widths: '400, 600, 820, 1200', alt: c_title }}
     {%- elsif image_asset != blank -%}
       <img src="{{ image_asset | asset_url }}" alt="" width="411" height="240" loading="lazy">
     {%- endif -%}

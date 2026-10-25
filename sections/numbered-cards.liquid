@@ -1,8 +1,8 @@
 {%- comment -%} Figma: About Us › Why We Exist (01 / 02 / 03 cards). {%- endcomment -%}
-<section class="pg num-cards-section">
+<section class="pg pg-num-section">
   <div class="container">
     {%- if section.settings.heading != blank -%}<h2 class="pg-title icon-cards__head">{{ section.settings.heading | escape }}</h2>{%- endif -%}
-    <div class="num-cards" style="--cols: {{ section.blocks.size | at_least: 1 | at_most: 4 }};">
+    <div class="pg-num-cards" style="--cols: {{ section.blocks.size | at_least: 1 | at_most: 4 }};">
       {%- for block in section.blocks -%}
         <div class="pg-num-card" {{ block.shopify_attributes }}>
           <span class="pg-num-card__num">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>

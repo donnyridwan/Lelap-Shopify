@@ -5,6 +5,10 @@
 {%- endcomment -%}
 {%- liquid
   assign h = handle
+  if handle != blank and product.handle != handle
+    # ignore the global `product` leaking in from a product page
+    assign product = ''
+  endif
   if product != blank
     assign h = product.handle
   endif

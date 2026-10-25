@@ -1,0 +1,148 @@
+{%- comment -%}
+  Article Detail (Figma: Article Detail). Header, hero image, sticky "In this article" list built from the
+  article's h2 headings, article body (blockquotes render as the "Doctor’s tip" card), an inline product
+  card inserted before a chosen heading, and the medical disclaimer.
+{%- endcomment -%}
+{%- liquid
+  assign body = article.content
+  if body == blank
+    assign body = section.settings.fallback_content
+  endif
+  assign reviewer = article.metafields.lelap.reviewer.value | default: section.settings.reviewer
+  assign reviewer_role = article.metafields.lelap.reviewer_role.value | default: section.settings.reviewer_role
+  assign read = article.metafields.lelap.read_time.value
+  if read == blank
+    assign words = body | strip_html | split: ' ' | size
+    assign mins = words | divided_by: 200 | at_least: 1
+    assign read = 'blogs.article.min_read' | t: count: mins
+  endif
+  assign topic = article.tags.first
+  assign updated = article.updated_at | default: article.published_at
+
+  assign p = section.settings.product
+  if p == blank
+    assign p = all_products[section.settings.product_handle]
+  endif
+
+  capture tip_icon
+    render 'icon', name: 'steth', color: '#ffffff', size: 18
+  endcapture
+  capture tip_open
+    echo '<blockquote class="article-tip"><span class="article-tip__icon">'
+    echo tip_icon
+    echo '</span><div class="article-tip__body"><p class="article-tip__label">'
+    echo section.settings.tip_label | escape
+    echo '</p>'
+  endcapture
+  assign body = body | replace: '<blockquote>', tip_open | replace: '</blockquote>', '</div></blockquote>'
+  assign parts = body | split: '<h2'
+-%}
+<article class="article" data-article>
+  <header class="article-head">
+    <div class="container article-head__inner">
+      <p class="article-head__crumbs">
+        <a href="{{ blog.url | default: '/blogs/sleep-library' }}">{{ blog.title | default: 'Sleep library' | escape }}</a>
+        {%- if topic != blank -%}<span aria-hidden="true">/</span><a href="{{ blog.url }}/tagged/{{ topic | handleize }}">{{ topic | escape }}</a>{%- endif -%}
+      </p>
+      <h1 class="article-head__title">{{ article.title | escape }}</h1>
+      <div class="article-head__meta">
+        {%- if reviewer != blank -%}
+          <div class="article-head__reviewer">
+            {%- if section.settings.reviewer_image != blank -%}
+              {{ section.settings.reviewer_image | image_url: width: 72 | image_tag: width: 36, height: 36, alt: '' }}
+            {%- else -%}
+              <img src="{{ 'photo-doctor.jpg' | asset_url }}" alt="" width="36" height="36">
+            {%- endif -%}
+            <span><strong>{{ section.settings.reviewed_label | escape }} {{ reviewer | escape }}</strong>{% if reviewer_role != blank %}<small>{{ reviewer_role | escape }}</small>{% endif %}</span>
+          </div>
+        {%- endif -%}
+        <p class="article-head__date">{{ section.settings.updated_label | escape }} {{ updated | date: '%-d %b %Y' }} · {{ read | escape }}</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container article-hero">
+    {%- if article.image != blank -%}
+      {%- assign hero_alt = article.image.alt | default: article.title -%}
+      {{ article.image | image_url: width: 2560 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 1440px) 1280px, 100vw', widths: '600, 900, 1280, 1920, 2560', alt: hero_alt }}
+    {%- else -%}
+      <img src="{{ section.settings.fallback_image | default: 'photo-phone.jpg' | asset_url }}" alt="" width="1280" height="560" fetchpriority="high">
+    {%- endif -%}
+  </div>
+
+  <div class="container article-body">
+    {%- if parts.size > 1 -%}
+      <aside class="article-toc" aria-label="{{ section.settings.toc_label | escape }}">
+        <p class="article-toc__title">{{ section.settings.toc_label | escape }}</p>
+        <ol class="article-toc__list">
+          {%- for part in parts offset: 1 -%}
+            {%- assign h_html = part | split: '</h2>' | first | prepend: '<h2' | append: '</h2>' -%}
+            {%- assign h_text = h_html | strip_html | strip -%}
+            <li><a href="#{{ h_text | handleize }}" data-toc-link>{{ h_text }}</a></li>
+          {%- endfor -%}
+        </ol>
+        <button type="button" class="article-toc__share" data-article-share data-copied="{{ section.settings.copied_label | escape }}">
+          {% render 'icon', name: 'share', size: 16 %}<span>{{ section.settings.share_label | escape }}</span>
+        </button>
+      </aside>
+    {%- endif -%}
+
+    <div class="article-content">
+      {%- for part in parts -%}
+        {%- if forloop.first -%}
+          {{ part }}
+        {%- else -%}
+          {%- assign h_html = part | split: '</h2>' | first | prepend: '<h2' | append: '</h2>' -%}
+          {%- assign h_text = h_html | strip_html | strip -%}
+          {%- assign head_raw = part | split: '</h2>' | first | append: '</h2>' -%}
+          {%- if forloop.index0 == section.settings.product_before and section.settings.show_product -%}
+            {%- render 'article-product', product: p, product_id: p.id, handle: section.settings.product_handle, text: section.settings.product_text, button: section.settings.product_button, link: section.settings.product_link -%}
+          {%- endif -%}
+          <h2 id="{{ h_text | handleize }}">{{ h_text }}</h2>
+          {{ part | remove_first: head_raw }}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if parts.size <= section.settings.product_before and section.settings.show_product -%}
+        {%- render 'article-product', product: p, product_id: p.id, handle: section.settings.product_handle, text: section.settings.product_text, button: section.settings.product_button, link: section.settings.product_link -%}
+      {%- endif -%}
+      {%- if section.settings.disclaimer != blank -%}
+        <p class="article-note">{% render 'icon', name: 'info', size: 16, color: '#5f6179' %}<span>{{ section.settings.disclaimer | escape }}</span></p>
+      {%- endif -%}
+    </div>
+  </div>
+</article>
+<script src="{{ 'article.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Article",
+  "class": "section-main-article",
+  "settings": [
+    { "type": "text", "id": "reviewed_label", "label": "Reviewed by label", "default": "Medically reviewed by" },
+    { "type": "text", "id": "reviewer", "label": "Reviewer", "info": "Article metafield lelap.reviewer overrides this.", "default": "Dr. Ratna Wijaya" },
+    { "type": "text", "id": "reviewer_role", "label": "Reviewer role", "info": "Article metafield lelap.reviewer_role overrides this.", "default": "General practitioner" },
+    { "type": "image_picker", "id": "reviewer_image", "label": "Reviewer photo" },
+    { "type": "text", "id": "updated_label", "label": "Updated label", "default": "Updated" },
+    { "type": "select", "id": "fallback_image", "label": "Image when the article has none", "default": "photo-phone.jpg", "options": [
+      { "value": "photo-phone.jpg", "label": "Bedside lamp" },
+      { "value": "photo-morning.jpg", "label": "Morning stretch" },
+      { "value": "photo-ingredients-wide.jpg", "label": "Ingredients" }
+    ] },
+    { "type": "text", "id": "toc_label", "label": "Contents title", "default": "In this article" },
+    { "type": "text", "id": "share_label", "label": "Share label", "default": "Share" },
+    { "type": "text", "id": "copied_label", "label": "Link copied label", "default": "Link copied" },
+    { "type": "text", "id": "tip_label", "label": "Quote label", "info": "Quotes (blockquote) in the article are shown as this tip card.", "default": "Doctor’s tip" },
+    { "type": "header", "content": "Inline product" },
+    { "type": "checkbox", "id": "show_product", "label": "Show product card", "default": true },
+    { "type": "range", "id": "product_before", "label": "Insert before heading number", "min": 1, "max": 12, "step": 1, "default": 5 },
+    { "type": "product", "id": "product", "label": "Product" },
+    { "type": "text", "id": "product_handle", "label": "Fallback product handle", "default": "sleep-classic" },
+    { "type": "text", "id": "product_text", "label": "Product text", "default": "3 mg melatonin, chamomile and L-theanine. Dose set by a doctor." },
+    { "type": "text", "id": "product_button", "label": "Button label", "default": "Take the quiz" },
+    { "type": "url", "id": "product_link", "label": "Button link", "info": "Defaults to the sleep quiz." },
+    { "type": "header", "content": "Disclaimer" },
+    { "type": "textarea", "id": "disclaimer", "label": "Disclaimer", "default": "This article is for general information and doesn’t replace advice from your own doctor. Sources reviewed by our medical team are listed below the article." },
+    { "type": "html", "id": "fallback_content", "label": "Text shown when the article is empty", "default": "<p>Melatonin isn\u2019t a sleeping pill. It\u2019s a signal. A low dose tells your body clock that night has started, and how well that signal lands depends a lot on what else you do in the evening.</p><h2>Why timing matters</h2><p>Your body starts releasing melatonin about two hours before your usual bedtime. Taking a gummy right as you get into bed means it\u2019s working against the clock instead of with it.</p><blockquote><p>\u201cIf you can only change one thing, change the timing. Most patients who say melatonin doesn\u2019t work are taking it too late.\u201d</p></blockquote><h2>1. Take it 45 minutes early</h2><p>Set a reminder for 45 minutes before you want to be asleep. If your bedtime is 22:30, take it around 21:45.</p><h2>2. Dim the lights at 9pm</h2><p>Bright overhead light, especially cool white LEDs, slows your natural melatonin. Switch to lamps and warm bulbs for the last hour.</p><h2>3. Keep your phone out of bed</h2><p>Charge it across the room. Scrolling keeps your brain alert long after the screen goes dark.</p><h2>4. Eat dinner earlier</h2><p>A heavy meal late at night keeps your body busy digesting. Aim to finish eating at least three hours before bed.</p><h2>5. Keep the room cool</h2><p>Your body temperature drops as you fall asleep. A cool, dark room (around 24\u00b0C with the AC) makes that easier.</p><h2>6. Same bedtime, even on weekends</h2><p>Shifting bedtime by two hours on Saturday is like flying to another time zone. Keep it within an hour if you can.</p><h2>7. Know when to ask for help</h2><p>If you\u2019ve had trouble sleeping for more than three weeks, or you snore loudly and wake up exhausted, talk to a doctor in person. These can be signs of conditions melatonin won\u2019t fix.</p>" }
+  ]
+}
+{% endschema %}

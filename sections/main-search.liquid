@@ -1,0 +1,153 @@
+{%- comment -%}
+  Search — Figma: Empty State · Search No Results (248:1667 / 248:1676 / 248:1694).
+  Results reuse the "Popular right now" article row; products use the related-formula card.
+{%- endcomment -%}
+{%- liquid
+  assign blog = blogs[section.settings.blog]
+  if blog == blank or blog.articles_count == 0
+    assign blog = blogs['sleep-library']
+  endif
+  assign blog_url = blog.url | default: '/blogs/sleep-library'
+-%}
+<div class="srch">
+  <section class="srch__head">
+    <div class="container">
+      <h1 class="srch__title">{{ section.settings.heading }}</h1>
+      <form action="{{ routes.search_url }}" method="get" role="search" class="srch__form">
+        <label for="SearchInput" class="visually-hidden">{{ 'general.search.search' | t }}</label>
+        {% render 'icon', name: 'search', size: 18 %}
+        <input type="search" id="SearchInput" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'general.search.placeholder' | t }}" autocomplete="off">
+        {%- if section.settings.articles_only -%}<input type="hidden" name="type" value="article">{%- endif -%}
+        <input type="hidden" name="options[prefix]" value="last">
+        {%- if search.terms != blank -%}
+          <a href="{{ routes.search_url }}" class="srch__clear" aria-label="{{ section.settings.clear_label | escape }}">{% render 'icon', name: 'x', color: '#1d2142', size: 16 %}</a>
+        {%- endif -%}
+      </form>
+    </div>
+  </section>
+
+  {%- if search.performed and search.results_count > 0 -%}
+    <section class="srch__results">
+      <div class="container">
+        <p class="srch__count">{{ section.settings.results_text | replace: '[count]', search.results_count | replace: '[terms]', search.terms }}</p>
+        {%- paginate search.results by 12 -%}
+          <ul class="srch__list">
+            {%- for item in search.results -%}
+              <li>
+                {%- case item.object_type -%}
+                  {%- when 'product' -%}
+                    {% render 'mini-product-card', product: item, handle: item.handle %}
+                  {%- when 'article' -%}
+                    <a class="srch-row" href="{{ item.url }}">
+                      <span class="srch-row__media">{% if item.image %}{{ item.image | image_url: width: 400 | image_tag: loading: 'lazy', sizes: '200px', widths: '200, 400', alt: '' }}{% endif %}</span>
+                      <span class="srch-row__info"><span class="srch-row__tag">{{ item.tags.first | default: item.blog.title }}</span><span class="srch-row__title">{{ item.title }}</span></span>
+                    </a>
+                  {%- else -%}
+                    <a class="srch-row srch-row--plain" href="{{ item.url }}">
+                      <span class="srch-row__info"><span class="srch-row__tag">{{ section.settings.page_label }}</span><span class="srch-row__title">{{ item.title }}</span></span>
+                    </a>
+                {%- endcase -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+          {%- if paginate.pages > 1 -%}
+            <nav class="c-pagination" aria-label="{{ 'general.pagination.label' | t }}">
+              {%- for part in paginate.parts -%}
+                {%- if part.is_link -%}<a class="c-pill-toggle" href="{{ part.url }}">{{ part.title }}</a>{%- else -%}<span class="c-pill-toggle{% if part.title == paginate.current_page %} is-active{% endif %}">{{ part.title }}</span>{%- endif -%}
+              {%- endfor -%}
+            </nav>
+          {%- endif -%}
+        {%- endpaginate -%}
+      </div>
+    </section>
+  {%- else -%}
+    <section class="srch__empty">
+      <div class="container">
+        <span class="srch__empty-icon">{% render 'icon', name: 'search', size: 36 %}</span>
+        {%- if search.performed -%}
+          <h2 class="srch__empty-title">{{ section.settings.empty_title | replace: '[terms]', search.terms }}</h2>
+          <p class="srch__empty-text">{{ section.settings.empty_text }}</p>
+        {%- else -%}
+          <h2 class="srch__empty-title">{{ section.settings.start_title }}</h2>
+          <p class="srch__empty-text">{{ section.settings.start_text }}</p>
+        {%- endif -%}
+        <ul class="srch__topics">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'topic' -%}
+              <li {{ block.shopify_attributes }}><a href="{% if block.settings.url != blank %}{{ block.settings.url }}{% else %}{{ blog_url }}/tagged/{{ block.settings.label | handleize }}{% endif %}">{{ block.settings.label }}</a></li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    </section>
+  {%- endif -%}
+
+  <section class="srch__popular">
+    <div class="container">
+      <h2 class="srch__popular-title">{{ section.settings.popular_title }}</h2>
+      <ul class="srch__popular-grid">
+        {%- if blog != blank and blog.articles_count > 0 -%}
+          {%- for article in blog.articles limit: 2 -%}
+            <li>
+              <a class="srch-row" href="{{ article.url }}">
+                <span class="srch-row__media">{% if article.image %}{{ article.image | image_url: width: 400 | image_tag: loading: 'lazy', sizes: '(min-width: 1200px) 200px, calc(100vw - 40px)', widths: '200, 400, 700', alt: '' }}{% endif %}</span>
+                <span class="srch-row__info"><span class="srch-row__tag">{{ article.tags.first }}</span><span class="srch-row__title">{{ article.title }}</span></span>
+              </a>
+            </li>
+          {%- endfor -%}
+        {%- else -%}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'popular' -%}
+              <li {{ block.shopify_attributes }}>
+                <a class="srch-row" href="{{ block.settings.url | default: blog_url }}">
+                  <span class="srch-row__media">
+                    {%- if block.settings.image != blank -%}
+                      {{ block.settings.image | image_url: width: 400 | image_tag: loading: 'lazy', alt: '' }}
+                    {%- else -%}
+                      <img src="{{ block.settings.fallback | asset_url }}" alt="" loading="lazy" width="400" height="280">
+                    {%- endif -%}
+                  </span>
+                  <span class="srch-row__info"><span class="srch-row__tag">{{ block.settings.tag }}</span><span class="srch-row__title">{{ block.settings.title }}</span></span>
+                </a>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+      </ul>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Search",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Sleep library" },
+    { "type": "checkbox", "id": "articles_only", "label": "Search articles only", "default": false },
+    { "type": "text", "id": "clear_label", "label": "Clear label (screen readers)", "default": "Clear search" },
+    { "type": "text", "id": "results_text", "label": "Results line", "info": "[count] and [terms] are replaced.", "default": "[count] results for “[terms]”" },
+    { "type": "text", "id": "page_label", "label": "Page result label", "default": "Page" },
+    { "type": "text", "id": "empty_title", "label": "No results heading", "info": "[terms] is replaced by the search terms.", "default": "No articles for “[terms]”" },
+    { "type": "textarea", "id": "empty_text", "label": "No results text", "default": "Lelap is for adults 18 and over. For a child’s sleep, please talk to your paediatrician. Try a different search, or browse a topic below." },
+    { "type": "text", "id": "start_title", "label": "Before searching heading", "default": "Search the sleep library" },
+    { "type": "textarea", "id": "start_text", "label": "Before searching text", "default": "Try a different search, or browse a topic below." },
+    { "type": "blog", "id": "blog", "label": "Blog for topics and popular articles", "info": "Defaults to the sleep-library blog." },
+    { "type": "text", "id": "popular_title", "label": "Popular heading", "default": "Popular right now" }
+  ],
+  "blocks": [
+    { "type": "topic", "name": "Topic", "settings": [
+      { "type": "text", "id": "label", "label": "Label", "default": "Falling asleep" },
+      { "type": "url", "id": "url", "label": "Link", "info": "Defaults to the blog tag with the same name." }
+    ] },
+    { "type": "popular", "name": "Popular article (fallback)", "limit": 2, "settings": [
+      { "type": "paragraph", "content": "Shown when the blog has no articles yet." },
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "select", "id": "fallback", "label": "Design image", "options": [ { "value": "photo-phone.jpg", "label": "Lamp and phone" }, { "value": "photo-tea.jpg", "label": "Tea and journal" } ], "default": "photo-phone.jpg" },
+      { "type": "text", "id": "tag", "label": "Topic", "default": "Falling asleep" },
+      { "type": "text", "id": "title", "label": "Title", "default": "7 small changes that help melatonin work better" },
+      { "type": "url", "id": "url", "label": "Link" }
+    ] }
+  ]
+}
+{% endschema %}

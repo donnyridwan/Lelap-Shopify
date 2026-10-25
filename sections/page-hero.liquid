@@ -27,7 +27,8 @@
     </div>
     <div class="pg-hero__media">
       {%- if section.settings.image != blank -%}
-        {{ section.settings.image | image_url: width: 2560 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: img_sizes, widths: '600, 900, 1280, 1920, 2560', alt: section.settings.image.alt | default: section.settings.heading }}
+        {%- assign hero_alt = section.settings.image.alt | default: section.settings.heading -%}
+        {{ section.settings.image | image_url: width: 2560 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: img_sizes, widths: '600, 900, 1280, 1920, 2560', alt: hero_alt }}
       {%- elsif section.settings.fallback_image != blank -%}
         <img src="{{ section.settings.fallback_image | asset_url }}" alt="" width="1280" height="520" fetchpriority="high">
       {%- endif -%}

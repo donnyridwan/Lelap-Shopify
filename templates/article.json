@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-article",
+      "settings": {
+        "reviewer": "Dr. Ratna Wijaya",
+        "reviewer_role": "General practitioner",
+        "product_before": 5,
+        "product_handle": "sleep-classic",
+        "product_text": "3 mg melatonin, chamomile and L-theanine. Dose set by a doctor.",
+        "product_button": "Take the quiz"
+      }
+    },
+    "related": {
+      "type": "article-related",
+      "settings": { "heading": "Keep reading", "limit": 3 },
+      "blocks": {
+        "r1": { "type": "fallback", "settings": { "title": "How to beat jet lag on a Jakarta to Tokyo flight", "tag": "Travel & shifts", "read": "8 min read", "image_asset": "photo-plane.jpg" } },
+        "r2": { "type": "fallback", "settings": { "title": "Why your brain gets loud at bedtime, and what helps", "tag": "Stress & mind", "read": "5 min read", "image_asset": "photo-tea-card.jpg" } },
+        "r3": { "type": "fallback", "settings": { "title": "Waking up at 3am? Here’s what’s usually behind it", "tag": "Staying asleep", "read": "7 min read", "image_asset": "photo-bedroom-card.jpg" } }
+      },
+      "block_order": ["r1", "r2", "r3"]
+    }
+  },
+  "order": ["main", "related"]
+}

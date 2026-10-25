@@ -1,0 +1,4 @@
+{
+  "sections": { "main": { "type": "main-account-profile", "settings": {} } },
+  "order": ["main"]
+}

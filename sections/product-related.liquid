@@ -28,7 +28,7 @@
         {%- endfor -%}
       {%- else -%}
         {%- for hh in handles limit: 3 -%}
-          {%- assign p = all_products[hh] -%}{%- unless p.id -%}{%- assign p = nil -%}{%- endunless -%}
+          {%- assign p = all_products[hh] -%}{%- unless p.id -%}{%- assign p = '' -%}{%- endunless -%}
           <li>{% render 'mini-product-card', product: p, handle: hh %}</li>
         {%- endfor -%}
       {%- endif -%}

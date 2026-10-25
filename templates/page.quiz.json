@@ -1,0 +1,555 @@
+{
+  "sections": {
+    "quiz": {
+      "type": "sleep-quiz",
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "section": "About you",
+            "question": "First, what should we call you?",
+            "help": "Your doctor will see this name with your answers.",
+            "type": "text",
+            "why": "",
+            "placeholder": "First name",
+            "is_name": true
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "section": "Your sleep",
+            "question": "What would you most like help with?",
+            "help": "Pick the one that bothers you most.",
+            "type": "single",
+            "why": "Why we ask: each lelap formula is made for a different kind of night, so this is where your doctor starts."
+          }
+        },
+        "q2o1": {
+          "type": "option",
+          "settings": {
+            "label": "Falling asleep",
+            "sub": "I lie awake when I go to bed",
+            "formula": "sleep-classic",
+            "points": 3,
+            "outcome": "none"
+          }
+        },
+        "q2o2": {
+          "type": "option",
+          "settings": {
+            "label": "Staying asleep",
+            "sub": "I wake up during the night, often around 3am",
+            "formula": "sleep-deep",
+            "points": 3,
+            "outcome": "none"
+          }
+        },
+        "q2o3": {
+          "type": "option",
+          "settings": {
+            "label": "Jet lag or shift work",
+            "sub": "My sleep times keep changing",
+            "formula": "sleep-reset",
+            "points": 3,
+            "outcome": "none"
+          }
+        },
+        "q2o4": {
+          "type": "option",
+          "settings": {
+            "label": "A busy mind at bedtime",
+            "sub": "I can’t switch off my thoughts",
+            "formula": "sleep-calm",
+            "points": 3,
+            "outcome": "none"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "section": "Your sleep",
+            "question": "How long does it usually take you to fall asleep?",
+            "help": "Think about a typical weeknight over the past month.",
+            "type": "single",
+            "why": "Why we ask: how long it takes you to fall asleep helps your doctor choose between Sleep Classic (3 mg) and a gentler 1 mg dose."
+          }
+        },
+        "q3o1": {
+          "type": "option",
+          "settings": {
+            "label": "Under 15 minutes",
+            "sub": "I usually drift off quickly",
+            "formula": "sleep-deep",
+            "points": 1,
+            "outcome": "none"
+          }
+        },
+        "q3o2": {
+          "type": "option",
+          "settings": {
+            "label": "15 to 30 minutes",
+            "sub": "Sometimes it takes a while",
+            "formula": "sleep-classic",
+            "points": 1,
+            "outcome": "none"
+          }
+        },
+        "q3o3": {
+          "type": "option",
+          "settings": {
+            "label": "30 to 60 minutes",
+            "sub": "I often lie awake for a bit",
+            "formula": "sleep-classic",
+            "points": 2,
+            "outcome": "none",
+            "reason_title": "You take 30 to 60 minutes to fall asleep",
+            "reason_text": "A 3 mg dose taken 45 minutes before bed helps shift your body toward sleep."
+          }
+        },
+        "q3o4": {
+          "type": "option",
+          "settings": {
+            "label": "More than an hour",
+            "sub": "Falling asleep is a real struggle",
+            "formula": "sleep-classic",
+            "points": 2,
+            "outcome": "none",
+            "reason_title": "You take more than an hour to fall asleep",
+            "reason_text": "A 3 mg dose taken 45 minutes before bed helps shift your body toward sleep."
+          }
+        },
+        "q4": {
+          "type": "question",
+          "settings": {
+            "section": "Your sleep",
+            "question": "How often do you wake up during the night?",
+            "help": "On a typical night over the past month.",
+            "type": "single",
+            "why": "Why we ask: waking up at night is a different problem from falling asleep, and needs a different formula."
+          }
+        },
+        "q4o1": {
+          "type": "option",
+          "settings": {
+            "label": "Rarely",
+            "sub": "I usually sleep through",
+            "formula": "none",
+            "points": 0,
+            "outcome": "none"
+          }
+        },
+        "q4o2": {
+          "type": "option",
+          "settings": {
+            "label": "Once",
+            "sub": "But I fall back asleep easily",
+            "formula": "none",
+            "points": 0,
+            "outcome": "none"
+          }
+        },
+        "q4o3": {
+          "type": "option",
+          "settings": {
+            "label": "Two or three times",
+            "sub": "It takes a while to drift off again",
+            "formula": "sleep-deep",
+            "points": 2,
+            "outcome": "none",
+            "reason_title": "You wake up during the night",
+            "reason_text": "Melatonin with magnesium glycinate for fewer wake-ups and more restful nights."
+          }
+        },
+        "q4o4": {
+          "type": "option",
+          "settings": {
+            "label": "Most nights, for a long time",
+            "sub": "I’m often wide awake at 3am",
+            "formula": "sleep-deep",
+            "points": 3,
+            "outcome": "none",
+            "reason_title": "You wake up during the night",
+            "reason_text": "Melatonin with magnesium glycinate for fewer wake-ups and more restful nights."
+          }
+        },
+        "q5": {
+          "type": "question",
+          "settings": {
+            "section": "Your sleep",
+            "question": "How do you usually feel when you wake up?",
+            "help": "Think about a normal weekday morning.",
+            "type": "single",
+            "why": ""
+          }
+        },
+        "q5o1": {
+          "type": "option",
+          "settings": {
+            "label": "Rested",
+            "sub": "I’m ready for the day",
+            "formula": "none",
+            "points": 0,
+            "outcome": "none"
+          }
+        },
+        "q5o2": {
+          "type": "option",
+          "settings": {
+            "label": "A little groggy",
+            "sub": "It takes me a while to get going",
+            "formula": "sleep-classic",
+            "points": 1,
+            "outcome": "none",
+            "reason_title": "You wake up feeling groggy",
+            "reason_text": "Our low, steady dose is designed to wear off by morning."
+          }
+        },
+        "q5o3": {
+          "type": "option",
+          "settings": {
+            "label": "Groggy most mornings",
+            "sub": "I feel like I barely slept",
+            "formula": "sleep-classic",
+            "points": 1,
+            "outcome": "none",
+            "reason_title": "You wake up feeling groggy",
+            "reason_text": "Our low, steady dose is designed to wear off by morning."
+          }
+        },
+        "q5o4": {
+          "type": "option",
+          "settings": {
+            "label": "It depends on my schedule",
+            "sub": "Travel or shifts throw me off",
+            "formula": "sleep-reset",
+            "points": 2,
+            "outcome": "none",
+            "reason_title": "Your sleep times keep changing",
+            "reason_text": "A gentle 1 mg dose helps your body clock adjust after travel or shift work."
+          }
+        },
+        "q6": {
+          "type": "question",
+          "settings": {
+            "section": "Your routine",
+            "question": "What usually keeps you up at night?",
+            "help": "Choose the closest match.",
+            "type": "single",
+            "why": ""
+          }
+        },
+        "q6o1": {
+          "type": "option",
+          "settings": {
+            "label": "A racing mind",
+            "sub": "Thoughts, worries or planning tomorrow",
+            "formula": "sleep-calm",
+            "points": 1,
+            "outcome": "none",
+            "reason_title": "You mentioned a racing mind at night",
+            "reason_text": "L-theanine and chamomile support a calmer wind-down."
+          }
+        },
+        "q6o2": {
+          "type": "option",
+          "settings": {
+            "label": "Screens before bed",
+            "sub": "Phone, laptop or TV in the last hour",
+            "formula": "sleep-classic",
+            "points": 1,
+            "outcome": "none"
+          }
+        },
+        "q6o3": {
+          "type": "option",
+          "settings": {
+            "label": "Travel or night shifts",
+            "sub": "Different time zones or working hours",
+            "formula": "sleep-reset",
+            "points": 2,
+            "outcome": "none"
+          }
+        },
+        "q6o4": {
+          "type": "option",
+          "settings": {
+            "label": "Nothing in particular",
+            "sub": "I just can’t fall asleep",
+            "formula": "sleep-classic",
+            "points": 1,
+            "outcome": "none"
+          }
+        },
+        "q7": {
+          "type": "question",
+          "settings": {
+            "section": "Your health",
+            "question": "Do any of these apply to you?",
+            "help": "Select all that apply. This helps your doctor keep you safe.",
+            "type": "multi",
+            "why": "",
+            "followup_label": "Which one? (optional)",
+            "followup_placeholder": "e.g. sertraline 50 mg"
+          }
+        },
+        "q7o1": {
+          "type": "option",
+          "settings": {
+            "label": "I’m pregnant or breastfeeding",
+            "sub": "",
+            "formula": "none",
+            "points": 0,
+            "outcome": "not_fit",
+            "not_fit_reason": "you’re currently pregnant"
+          }
+        },
+        "q7o2": {
+          "type": "option",
+          "settings": {
+            "label": "I take blood thinners",
+            "sub": "",
+            "formula": "none",
+            "points": 0,
+            "outcome": "followup"
+          }
+        },
+        "q7o3": {
+          "type": "option",
+          "settings": {
+            "label": "I take antidepressants or other sleep medication",
+            "sub": "",
+            "formula": "none",
+            "points": 0,
+            "outcome": "followup"
+          }
+        },
+        "q7o4": {
+          "type": "option",
+          "settings": {
+            "label": "I have an autoimmune condition",
+            "sub": "",
+            "formula": "none",
+            "points": 0,
+            "outcome": "followup"
+          }
+        },
+        "q7o5": {
+          "type": "option",
+          "settings": {
+            "label": "I have epilepsy or seizures",
+            "sub": "",
+            "formula": "none",
+            "points": 0,
+            "outcome": "not_fit",
+            "not_fit_reason": "you have epilepsy or seizures"
+          }
+        },
+        "q7o6": {
+          "type": "option",
+          "settings": {
+            "label": "None of these",
+            "sub": "",
+            "formula": "none",
+            "points": 0,
+            "outcome": "exclusive"
+          }
+        },
+        "q8": {
+          "type": "question",
+          "settings": {
+            "section": "Your health",
+            "question": "How old are you?",
+            "help": "lelap is for adults 18 and over.",
+            "type": "single",
+            "why": ""
+          }
+        },
+        "q8o1": {
+          "type": "option",
+          "settings": {
+            "label": "Under 18",
+            "sub": "",
+            "formula": "none",
+            "points": 0,
+            "outcome": "not_fit",
+            "not_fit_reason": "you’re under 18"
+          }
+        },
+        "q8o2": {
+          "type": "option",
+          "settings": {
+            "label": "18 to 34",
+            "sub": "",
+            "formula": "none",
+            "points": 0,
+            "outcome": "none"
+          }
+        },
+        "q8o3": {
+          "type": "option",
+          "settings": {
+            "label": "35 to 54",
+            "sub": "",
+            "formula": "none",
+            "points": 0,
+            "outcome": "none"
+          }
+        },
+        "q8o4": {
+          "type": "option",
+          "settings": {
+            "label": "55 or older",
+            "sub": "",
+            "formula": "none",
+            "points": 0,
+            "outcome": "none"
+          }
+        },
+        "q9": {
+          "type": "question",
+          "settings": {
+            "section": "Your health",
+            "question": "How long have you had trouble sleeping?",
+            "help": "Roughly is fine.",
+            "type": "single",
+            "why": "Why we ask: if you’ve had trouble sleeping for more than three weeks, your doctor may also suggest an in-person check."
+          }
+        },
+        "q9o1": {
+          "type": "option",
+          "settings": {
+            "label": "Less than 3 weeks",
+            "sub": "It’s fairly new",
+            "formula": "none",
+            "points": 0,
+            "outcome": "none"
+          }
+        },
+        "q9o2": {
+          "type": "option",
+          "settings": {
+            "label": "3 weeks to 3 months",
+            "sub": "It’s been a while",
+            "formula": "none",
+            "points": 0,
+            "outcome": "none"
+          }
+        },
+        "q9o3": {
+          "type": "option",
+          "settings": {
+            "label": "More than 3 months",
+            "sub": "It’s a long-term problem",
+            "formula": "none",
+            "points": 0,
+            "outcome": "none"
+          }
+        },
+        "q10": {
+          "type": "question",
+          "settings": {
+            "section": "Your routine",
+            "question": "When do you usually go to bed?",
+            "help": "On a typical weeknight.",
+            "type": "single",
+            "why": "Why we ask: your doctor uses your bedtime to tell you when to take your gummy, usually 45 minutes before."
+          }
+        },
+        "q10o1": {
+          "type": "option",
+          "settings": {
+            "label": "Before 22:00",
+            "sub": "",
+            "formula": "none",
+            "points": 0,
+            "outcome": "none"
+          }
+        },
+        "q10o2": {
+          "type": "option",
+          "settings": {
+            "label": "22:00 to 23:00",
+            "sub": "",
+            "formula": "none",
+            "points": 0,
+            "outcome": "none"
+          }
+        },
+        "q10o3": {
+          "type": "option",
+          "settings": {
+            "label": "After 23:00",
+            "sub": "",
+            "formula": "none",
+            "points": 0,
+            "outcome": "none"
+          }
+        },
+        "q10o4": {
+          "type": "option",
+          "settings": {
+            "label": "It changes a lot",
+            "sub": "Shifts, travel or late nights",
+            "formula": "sleep-reset",
+            "points": 1,
+            "outcome": "none"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q2o1",
+        "q2o2",
+        "q2o3",
+        "q2o4",
+        "q3",
+        "q3o1",
+        "q3o2",
+        "q3o3",
+        "q3o4",
+        "q4",
+        "q4o1",
+        "q4o2",
+        "q4o3",
+        "q4o4",
+        "q5",
+        "q5o1",
+        "q5o2",
+        "q5o3",
+        "q5o4",
+        "q6",
+        "q6o1",
+        "q6o2",
+        "q6o3",
+        "q6o4",
+        "q7",
+        "q7o1",
+        "q7o2",
+        "q7o3",
+        "q7o4",
+        "q7o5",
+        "q7o6",
+        "q8",
+        "q8o1",
+        "q8o2",
+        "q8o3",
+        "q8o4",
+        "q9",
+        "q9o1",
+        "q9o2",
+        "q9o3",
+        "q10",
+        "q10o1",
+        "q10o2",
+        "q10o3",
+        "q10o4"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "quiz"
+  ]
+}

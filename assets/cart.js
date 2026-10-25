@@ -32,7 +32,7 @@
     requestAnimationFrame(() => d.classList.add('is-open'));
     document.documentElement.style.overflow = 'hidden';
     document.querySelectorAll('[data-cart-toggle]').forEach((t) => t.setAttribute('aria-expanded', 'true'));
-    setTimeout(() => { const c = d.querySelector('[data-cart-close]') || d; c.focus(); }, 50);
+    setTimeout(() => d.focus({ preventScroll: true }), 50);
     return true;
   }
 

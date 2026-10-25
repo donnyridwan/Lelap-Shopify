@@ -37,7 +37,7 @@
             assign star = 6 | minus: forloop.index
             assign n_label = n
             if n >= 1000
-              assign th = n | divided_by: 1000
+              assign th = n | divided_by: 1000 | floor
               assign rest = n | modulo: 1000 | prepend: '00' | slice: -3, 3
               assign n_label = th | append: ',' | append: rest
             endif

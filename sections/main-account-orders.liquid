@@ -1,0 +1,85 @@
+{%- comment -%} /account?view=orders — Figma: Account · Orders (243:1792) and Orders (Empty) (243:2153). {%- endcomment -%}
+{%- assign quiz_url = settings.quiz_url | default: '/pages/sleep-quiz' -%}
+<section class="acct">
+  <div class="container acct__layout">
+    {% render 'account-nav', active: 'orders' %}
+    <div class="acct__content">
+      <h1 class="acct__title">{{ section.settings.heading }}</h1>
+      {%- paginate customer.orders by 20 -%}
+        {%- if customer.orders.size > 0 -%}
+          <div class="acct-orders">
+            <table>
+              <thead>
+                <tr>
+                  <th class="acct-orders__col-order" scope="col">{{ section.settings.col_order }}</th>
+                  <th class="acct-orders__col-date" scope="col">{{ section.settings.col_date }}</th>
+                  <th class="acct-orders__col-items" scope="col">{{ section.settings.col_items }}</th>
+                  <th class="acct-orders__col-status" scope="col">{{ section.settings.col_status }}</th>
+                  <th class="acct-orders__col-total" scope="col">{{ section.settings.col_total }}</th>
+                  <th scope="col"><span class="visually-hidden">{{ section.settings.view_label }}</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                {%- for order in customer.orders -%}
+                  <tr>
+                    <td class="acct-orders__num">{{ order.name }}</td>
+                    <td class="acct-orders__date">{{ order.created_at | date: '%-d %b %Y' }}</td>
+                    <td><span class="acct-orders__thumbs">{% for li in order.line_items limit: 4 %}{% render 'line-item-thumb', item: li, size: 40 %}{% endfor %}</span></td>
+                    <td>{% render 'order-pill', order: order %}</td>
+                    <td class="acct-orders__total">{{ order.total_price | money_without_trailing_zeros }}</td>
+                    <td><a class="acct-orders__view" href="{{ order.customer_url }}">{{ section.settings.view_label }}{% render 'icon', name: 'chev', size: 14 %}<span class="visually-hidden"> {{ order.name }}</span></a></td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+            {%- for order in customer.orders -%}
+              <a class="acct-orders__card" href="{{ order.customer_url }}">
+                <span class="acct-orders__card-top"><span class="acct-orders__num">{{ order.name }}</span>{% render 'order-pill', order: order %}</span>
+                <span class="acct-orders__card-bottom">
+                  <span class="acct-orders__thumbs">{% for li in order.line_items limit: 4 %}{% render 'line-item-thumb', item: li, size: 40 %}{% endfor %}</span>
+                  <span class="acct-orders__date">{{ order.created_at | date: '%-d %b %Y' }}</span>
+                  <span class="acct-orders__total">{{ order.total_price | money_without_trailing_zeros }}</span>
+                </span>
+              </a>
+            {%- endfor -%}
+          </div>
+          {%- if paginate.pages > 1 -%}
+            <nav class="c-pagination" aria-label="{{ 'general.pagination.label' | t }}">
+              {%- for part in paginate.parts -%}
+                {%- if part.is_link -%}<a class="c-pill-toggle" href="{{ part.url }}">{{ part.title }}</a>{%- else -%}<span class="c-pill-toggle{% if part.title == paginate.current_page %} is-active{% endif %}">{{ part.title }}</span>{%- endif -%}
+              {%- endfor -%}
+            </nav>
+          {%- endif -%}
+        {%- else -%}
+          <div class="acct-card acct-empty acct-empty--xl">
+            <span class="acct-empty__icon acct-empty__icon--lg">{% render 'icon', name: 'bag', size: 36 %}</span>
+            <h2 class="acct-empty__title">{{ section.settings.empty_title }}</h2>
+            <p class="acct-empty__text">{{ section.settings.empty_text }}</p>
+            <a class="btn btn--primary" href="{{ quiz_url }}">{{ section.settings.empty_button }}</a>
+            <a class="acct-link" href="{{ routes.all_products_collection_url }}">{{ section.settings.empty_link }}</a>
+          </div>
+        {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Account orders",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Orders" },
+    { "type": "text", "id": "col_order", "label": "Order column", "default": "Order" },
+    { "type": "text", "id": "col_date", "label": "Date column", "default": "Date" },
+    { "type": "text", "id": "col_items", "label": "Items column", "default": "Items" },
+    { "type": "text", "id": "col_status", "label": "Status column", "default": "Status" },
+    { "type": "text", "id": "col_total", "label": "Total column", "default": "Total" },
+    { "type": "text", "id": "view_label", "label": "View label", "default": "View" },
+    { "type": "text", "id": "empty_title", "label": "Empty heading", "default": "No orders yet" },
+    { "type": "textarea", "id": "empty_text", "label": "Empty text", "default": "When you place an order, you’ll be able to track it and see your doctor’s review here." },
+    { "type": "text", "id": "empty_button", "label": "Empty button", "default": "Take the sleep quiz" },
+    { "type": "text", "id": "empty_link", "label": "Empty link", "default": "Browse formulas" }
+  ]
+}
+{% endschema %}

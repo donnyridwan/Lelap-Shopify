@@ -4,6 +4,9 @@
 {%- endcomment -%}
 {%- liquid
   assign h = handle
+  if handle != blank and product.handle != handle
+    assign product = ''
+  endif
   if product != blank
     assign h = product.handle
     assign url = product.url

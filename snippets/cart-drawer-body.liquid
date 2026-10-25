@@ -26,7 +26,7 @@
     assign in_cart = in_cart | append: ' ' | append: item.product.handle
   endfor
   assign in_cart = in_cart | append: ' '
-  assign upsell = nil
+  assign upsell = ''
   assign upsell_order = 'sleep-calm,sleep-deep,sleep-reset,sleep-classic' | split: ','
   for uh in upsell_order
     assign needle = ' ' | append: uh | append: ' '
@@ -184,7 +184,7 @@
         assign pop_h = settings.cart_popular_handle | default: 'sleep-classic'
         assign pop = all_products[pop_h]
         unless pop.id
-          assign pop = nil
+          assign pop = ''
         endunless
         if pop != blank
           assign pv = pop.selected_or_first_available_variant

@@ -1,0 +1,11 @@
+{%- comment -%} Status pill for an order (Figma: Orders → Shipped / Delivered). Params: order {%- endcomment -%}
+{%- capture st -%}{% render 'order-state', order: order %}{%- endcapture -%}
+{%- case st -%}
+  {%- when 'delivered' -%}<span class="acct-pill acct-pill--green">Delivered</span>
+  {%- when 'shipped' -%}<span class="acct-pill acct-pill--plum">Shipped</span>
+  {%- when 'approved' -%}<span class="acct-pill acct-pill--green">Doctor approved</span>
+  {%- when 'needs-info' -%}<span class="acct-pill acct-pill--moon">Needs your reply</span>
+  {%- when 'not-approved' -%}<span class="acct-pill acct-pill--red">Not approved</span>
+  {%- when 'cancelled' -%}<span class="acct-pill acct-pill--grey">Cancelled</span>
+  {%- else -%}<span class="acct-pill acct-pill--moon">Doctor review</span>
+{%- endcase -%}

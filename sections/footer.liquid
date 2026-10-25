@@ -44,7 +44,7 @@
         {%- for link in section.settings.legal_menu.links -%}
           <a href="{{ link.url }}">{{ link.title }}</a>
         {%- else -%}
-          <a href="{{ shop.terms_of_service.url | default: '/policies/terms-of-service' }}">Terms</a>
+          <a href="/pages/terms-of-service">Terms</a>
           <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}">Privacy</a>
           <a href="/pages/telehealth-consent">Telehealth consent</a>
         {%- endfor -%}

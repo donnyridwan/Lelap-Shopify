@@ -1,0 +1,57 @@
+{%- comment -%} Figma: 404 · Page Not Found (248:1284 / 248:1379). {%- endcomment -%}
+{%- assign quiz_url = section.settings.quiz_url | default: settings.quiz_url | default: '/pages/sleep-quiz' -%}
+<section class="nf">
+  <div class="container nf__inner">
+    <div class="nf__copy">
+      <span class="chip">{% render 'icon', name: 'moon' %}{{ section.settings.chip }}</span>
+      <h1 class="nf__title">{{ section.settings.title_1 }}<br><span class="text-lav">{{ section.settings.title_2 }}</span></h1>
+      <p class="nf__text">{{ section.settings.text }}</p>
+      <div class="nf__actions">
+        <a href="{{ routes.root_url }}" class="btn btn--primary">{{ section.settings.primary_label }}</a>
+        <a href="{{ quiz_url }}" class="btn btn--outline">{{ section.settings.secondary_label }}</a>
+      </div>
+      <div class="nf__links">
+        <p class="nf__links-title">{{ section.settings.links_title }}</p>
+        {%- for block in section.blocks -%}
+          <a href="{{ block.settings.url | default: '#' }}" class="nf__link" {{ block.shopify_attributes }}>{{ block.settings.label }}{% render 'icon', name: 'chev', size: 14 %}</a>
+        {%- endfor -%}
+      </div>
+    </div>
+    <div class="nf__visual" aria-hidden="true">
+      <span class="nf__num">404</span>
+      <span class="nf__pouch">
+        {%- if section.settings.image != blank -%}
+          {{ section.settings.image | image_url: width: 500 | image_tag: loading: 'lazy', alt: '' }}
+        {%- else -%}
+          <img src="{{ 'pouch-sleep-classic.jpg' | asset_url }}" width="680" height="680" alt="" loading="lazy">
+        {%- endif -%}
+      </span>
+      <span class="nf__zzz">z z z</span>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "404 page",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "chip", "label": "Badge", "default": "Error 404" },
+    { "type": "text", "id": "title_1", "label": "Heading line 1", "default": "This page is" },
+    { "type": "text", "id": "title_2", "label": "Heading line 2 (lavender)", "default": "fast asleep." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "We couldn’t find what you were looking for. It may have moved, or the link might be out of date." },
+    { "type": "text", "id": "primary_label", "label": "Home button label", "default": "Back to home" },
+    { "type": "text", "id": "secondary_label", "label": "Quiz button label", "default": "Take the sleep quiz" },
+    { "type": "url", "id": "quiz_url", "label": "Quiz button link" },
+    { "type": "text", "id": "links_title", "label": "Links title", "default": "Or try one of these" },
+    { "type": "image_picker", "id": "image", "label": "Pouch image", "info": "Defaults to the Sleep Classic pouch." }
+  ],
+  "blocks": [
+    { "type": "link", "name": "Link", "settings": [
+      { "type": "text", "id": "label", "label": "Label", "default": "Shop all formulas" },
+      { "type": "url", "id": "url", "label": "Link" }
+    ] }
+  ],
+  "presets": [{ "name": "404 page" }]
+}
+{% endschema %}

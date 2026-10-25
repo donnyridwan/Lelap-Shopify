@@ -1,0 +1,163 @@
+{%- comment -%}
+  Page template page.account-care-team — Figma: Account · Care team (244:1970) and Care team · Empty (257:14488).
+  Messages come from the customer metafield lelap.care_messages (JSON list of {"from": "doctor"|"you", "text", "date", "time"})
+  written by the telehealth integration. New messages are sent to the store through the contact form.
+  Plan card: customer metafields lelap.plan_formula, plan_when, plan_approved, plan_next_checkin (falls back to the
+  latest subscription order and the formula's "when to take" fact).
+{%- endcomment -%}
+{%- liquid
+  assign m = customer.metafields.lelap
+  assign doc_name = m.doctor_name.value | default: section.settings.doctor_name
+  assign doc_photo = m.doctor_photo.value | default: section.settings.doctor_photo
+  assign doc_short = doc_name | split: ' ' | slice: 0, 2 | join: ' '
+  assign messages = m.care_messages.value
+
+  assign sub_item = ''
+  for o in customer.orders
+    for li in o.line_items
+      if li.selling_plan_allocation
+        assign sub_item = li
+        break
+      endif
+    endfor
+    if sub_item != ''
+      break
+    endif
+  endfor
+  if sub_item == '' and customer.orders.size > 0
+    assign sub_item = customer.orders.first.line_items.first
+  endif
+
+  assign plan_formula = m.plan_formula.value
+  assign plan_when = m.plan_when.value
+  if sub_item != ''
+    assign h = sub_item.product.handle
+    if plan_formula == blank
+      capture dose
+        render 'product-fact', handle: h, key: 'melatonin'
+      endcapture
+      assign plan_formula = sub_item.product.title
+      if dose != blank and dose != 'None'
+        assign plan_formula = plan_formula | append: ', ' | append: dose
+      endif
+    endif
+    if plan_when == blank
+      capture plan_when
+        render 'product-fact', handle: h, key: 'when_to_take'
+      endcapture
+    endif
+  endif
+  assign plan_approved = m.plan_approved.value
+  if plan_approved != blank
+    assign plan_approved = plan_approved | date: '%-d %b %Y'
+  endif
+  assign plan_next = m.plan_next_checkin.value
+  if plan_next != blank
+    assign plan_next = plan_next | date: '%-d %b %Y'
+  endif
+-%}
+{%- if customer -%}
+<section class="acct">
+  <div class="container acct__layout">
+    {% render 'account-nav', active: 'care' %}
+    <div class="acct__content">
+      <h1 class="acct__title">{{ section.settings.heading | default: page.title }}</h1>
+      <div class="acct-care">
+        <div class="acct-thread">
+          <div class="acct-thread__head">
+            <span class="acct-avatar" style="width:40px;height:40px">
+              {%- if doc_photo != blank -%}{{ doc_photo | image_url: width: 80 | image_tag: width: 40, height: 40, alt: '' }}{%- else -%}<img src="{{ 'photo-doctor.jpg' | asset_url }}" width="40" height="40" alt="">{%- endif -%}
+            </span>
+            <div><p class="acct-thread__name">{{ doc_name }}</p><p class="acct-thread__status">{{ section.settings.reply_time }}</p></div>
+          </div>
+
+          <div class="acct-thread__msgs" data-care-messages data-you="{{ section.settings.you_label | escape }}"{% if messages == blank or messages.size == 0 %} hidden{% endif %}>
+            {%- assign last_date = '' -%}
+            {%- for msg in messages -%}
+              {%- if msg.date != blank and msg.date != last_date -%}
+                <p class="acct-thread__day">{{ msg.date | date: '%a, %-d %b' | default: msg.date }}</p>
+                {%- assign last_date = msg.date -%}
+              {%- endif -%}
+              {%- if msg.from == 'you' or msg.from == 'customer' -%}
+                <div class="acct-bubble acct-bubble--me"><p>{{ msg.text | escape }}</p><small>{{ section.settings.you_label }}{% if msg.time != blank %} · {{ msg.time }}{% endif %}</small></div>
+              {%- else -%}
+                <div class="acct-bubble"><p>{{ msg.text | escape }}</p><small>{{ doc_short }}{% if msg.time != blank %} · {{ msg.time }}{% endif %}</small></div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          {%- if messages == blank or messages.size == 0 -%}
+            <div class="acct-thread__msgs acct-thread__empty" data-care-empty>
+              <span class="acct-empty__icon">{% render 'icon', name: 'chat', color: '#3f3478', size: 32 %}</span>
+              <h2 class="acct-empty__title">{{ section.settings.empty_title }}</h2>
+              <p class="acct-empty__text">{{ section.settings.empty_text | replace: '[doctor]', doc_short }}</p>
+              <div class="acct-thread__chips">
+                {%- assign chips = section.settings.suggestions | split: '|' -%}
+                {%- for c in chips -%}<button type="button" data-care-suggest>{{ c | strip }}</button>{%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- form 'contact', data-care-form: '' -%}
+            <input type="hidden" name="contact[email]" value="{{ customer.email }}">
+            <input type="hidden" name="contact[name]" value="{{ customer.name }}">
+            <input type="hidden" name="contact[Request]" value="Care team message">
+            <textarea name="contact[body]" hidden data-care-body></textarea>
+            {%- if form.posted_successfully? -%}<p class="visually-hidden" role="status">{{ section.settings.sent_text }}</p>{%- endif -%}
+            <div class="acct-composer">
+              <a class="acct-composer__clip" href="mailto:{{ shop.email }}?subject={{ section.settings.attach_subject | url_encode }}" aria-label="{{ section.settings.attach_label | escape }}">{% render 'icon', name: 'clip', size: 18 %}</a>
+              <label class="visually-hidden" for="CareMessage">{{ section.settings.placeholder }}</label>
+              <input type="text" id="CareMessage" placeholder="{{ section.settings.placeholder | escape }}" autocomplete="off" data-care-input>
+              <button type="submit" class="acct-composer__send" aria-label="{{ section.settings.send_label | escape }}">{% render 'icon', name: 'send', size: 16 %}</button>
+            </div>
+            <p class="acct-flash" data-care-live hidden role="status" style="padding: 0 16px 14px">{{ section.settings.sent_text }}</p>
+          {%- endform -%}
+        </div>
+
+        <aside class="acct-care__side">
+          <dl class="acct-plan">
+            <p class="acct-card__title">{{ section.settings.plan_title }}</p>
+            <div><dt>{{ section.settings.plan_formula }}</dt><dd>{{ plan_formula | default: '—' }}</dd></div>
+            <div><dt>{{ section.settings.plan_when }}</dt><dd>{{ plan_when | default: '—' }}</dd></div>
+            <div><dt>{{ section.settings.plan_approved }}</dt><dd>{{ plan_approved | default: '—' }}</dd></div>
+            <div><dt>{{ section.settings.plan_next }}</dt><dd>{{ plan_next | default: '—' }}</dd></div>
+          </dl>
+          <p class="acct-note">{% render 'icon', name: 'info', color: '#1d2142', size: 18 %}<span>{{ section.settings.emergency }}</span></p>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+<script src="{{ 'account.js' | asset_url }}" defer="defer"></script>
+{%- else -%}
+  {% render 'account-guest', title: page.title %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Care team",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "info": "Leave empty to use the page title.", "default": "Care team" },
+    { "type": "text", "id": "doctor_name", "label": "Doctor name (fallback for lelap.doctor_name)", "default": "Dr. Ratna Wijaya" },
+    { "type": "image_picker", "id": "doctor_photo", "label": "Doctor photo" },
+    { "type": "text", "id": "reply_time", "label": "Reply time", "default": "Usually replies within 4 hours" },
+    { "type": "text", "id": "you_label", "label": "Your messages label", "default": "You" },
+    { "type": "text", "id": "empty_title", "label": "Empty heading", "default": "No messages yet" },
+    { "type": "textarea", "id": "empty_text", "label": "Empty text", "info": "[doctor] is replaced by the doctor's name.", "default": "[doctor] will message you here after reviewing your assessment, usually within 24 hours. You can also ask a question anytime." },
+    { "type": "text", "id": "suggestions", "label": "Suggested questions (separated by |)", "default": "When should I take it?|Can I drink coffee?|Is it safe with my medication?" },
+    { "type": "text", "id": "placeholder", "label": "Message placeholder", "default": "Write a message…" },
+    { "type": "text", "id": "send_label", "label": "Send label (screen readers)", "default": "Send message" },
+    { "type": "text", "id": "attach_label", "label": "Attach label (screen readers)", "default": "Email us a file" },
+    { "type": "text", "id": "attach_subject", "label": "Attachment email subject", "default": "File for my care team" },
+    { "type": "text", "id": "sent_text", "label": "Sent confirmation", "default": "Message sent. Your care team will reply here and by WhatsApp." },
+    { "type": "header", "content": "Your plan" },
+    { "type": "text", "id": "plan_title", "label": "Heading", "default": "Your plan" },
+    { "type": "text", "id": "plan_formula", "label": "Formula label", "default": "Formula" },
+    { "type": "text", "id": "plan_when", "label": "When label", "default": "When" },
+    { "type": "text", "id": "plan_approved", "label": "Approved label", "default": "Approved" },
+    { "type": "text", "id": "plan_next", "label": "Next check-in label", "default": "Next check-in" },
+    { "type": "textarea", "id": "emergency", "label": "Safety note", "default": "Not for emergencies. If you feel unwell after taking lelap, stop and call 119 or visit your nearest clinic." }
+  ]
+}
+{% endschema %}

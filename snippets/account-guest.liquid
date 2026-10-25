@@ -1,0 +1,12 @@
+{%- comment -%} Shown on account page templates (profile, care team) when nobody is logged in. Params: title {%- endcomment -%}
+<section class="acct acct-guest">
+  <div class="container">
+    <div class="acct-card acct-empty">
+      <span class="acct-empty__icon">{% render 'icon', name: 'user', color: '#1d2142', size: 32 %}</span>
+      <h1 class="acct-empty__title">{{ title }}</h1>
+      <p class="acct-empty__text">Log in to see your lelap account.</p>
+      <a class="btn btn--primary" href="{{ routes.account_login_url }}">Log in</a>
+      <a class="acct-link" href="{{ routes.account_register_url }}">Create an account</a>
+    </div>
+  </div>
+</section>
