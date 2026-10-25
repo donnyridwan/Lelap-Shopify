@@ -15,8 +15,8 @@
 .product-card__info { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; flex: 1 1 0; min-width: 0; }
 .product-card__tags { display: flex; gap: 8px; align-items: center; }
 .product-card__title { font-size: 28px; font-weight: 500; letter-spacing: -0.28px; line-height: normal; color: var(--navy); }
-.product-card__desc { font-size: 15px; line-height: 1.5; color: var(--body); }
-.product-card__note { font-size: 13px; color: var(--body); }
+.product-card__desc { font-size: 15px; line-height: 23px; color: var(--body); }
+.product-card__note { font-size: 13px; line-height: 16px; color: var(--body); }
 .product-card__actions { display: flex; gap: 20px; align-items: center; padding-top: 6px; flex-wrap: wrap; }
 .product-card__form { display: contents; }
 .price { display: flex; gap: 8px; align-items: baseline; white-space: nowrap; }

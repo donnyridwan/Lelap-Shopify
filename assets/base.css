@@ -152,7 +152,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 .stars--sm .icon { width: 13px; height: 13px; }
 .stars--md .icon { width: 15px; height: 15px; }
 .rating { display: inline-flex; align-items: center; gap: 6px; }
-.rating__text { font-size: 13px; font-weight: 500; color: var(--body); white-space: nowrap; }
+.rating__text { font-size: 13px; line-height: 16px; font-weight: 500; color: var(--body); white-space: nowrap; }
 
 /* Forms --------------------------------------------------------------------- */
 .field { display: flex; flex-direction: column; gap: 8px; }
@@ -173,7 +173,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 }
 .ticker__item { display: inline-flex; gap: 8px; align-items: center; font-size: 13px; font-weight: 500; line-height: 16px; white-space: nowrap; }
 .ticker__item .icon { width: 16px; height: 16px; }
-@media (max-width: 1199px) { .ticker__item:nth-child(n+4) { display: none; } }
+@media (max-width: 1199px) { .ticker { gap: 28px; } .ticker__item:nth-child(n+4) { display: none; } }
 @media (max-width: 767px)  { .ticker__item:nth-child(n+2) { display: none; } }
 
 .site-header-section { position: sticky; top: 0; z-index: 50; }
@@ -183,7 +183,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   padding: 18px 40px; position: relative;
 }
 .site-header__logo { font-size: 30px; letter-spacing: -0.9px; }
-.site-header__nav { display: flex; gap: 32px; position: absolute; left: 50%; transform: translateX(-50%); }
+.site-header__nav { display: flex; gap: 32px; }
 .site-header__nav a, .site-header__navbtn { font-size: 15px; font-weight: 500; color: var(--navy); white-space: nowrap; }
 .site-header__nav a:hover, .site-header__nav a[aria-current='page'] { color: var(--plum); }
 .site-header__actions { display: flex; align-items: center; gap: 16px; }

@@ -238,8 +238,6 @@
   font-size: 13px; font-weight: 500; color: var(--navy); white-space: nowrap; line-height: 16px;
 }
 .pdp-reviews__filter.is-active { background: var(--navy); border-width: 0; padding: 8px 14px; color: var(--white); }
-/* Figma outline Button: 1px border + 16/30 padding (53px tall). */
-.pdp-reviews .btn--outline { padding: 16px 30px; }
 .pdp-reviews__grid { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .pdp-reviews__grid > [hidden] { display: none; }
 .pdp-reviews__empty { font-size: 15px; color: var(--body); }
@@ -606,7 +604,6 @@
 .nf__title { font-size: 72px; letter-spacing: -2.52px; line-height: 1; color: var(--navy); }
 .nf__text { font-size: 18px; line-height: 1.55; color: var(--body); }
 .nf__actions { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
-.nf .btn--outline { padding: 16px 30px; } /* Figma outline Button is 53px tall */
 .nf .chip { line-height: 16px; }
 .nf__links { display: flex; flex-direction: column; gap: 10px; padding-top: 12px; }
 .nf__links-title { font-size: 13px; font-weight: 600; color: var(--body); line-height: 16px; }

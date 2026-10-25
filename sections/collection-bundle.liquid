@@ -50,7 +50,7 @@
             <a class="btn btn--primary" href="{{ routes.all_products_collection_url }}">{{ section.settings.button }}</a>
           {%- endif -%}
           {%- if section.settings.link_label != blank -%}
-            <a class="link-underline" href="{{ section.settings.link_url | default: bundle.url | default: '#' }}">{{ section.settings.link_label }}</a>
+            <a class="link-underline" href="{{ section.settings.link_url | default: bundle.url | default: p1.url | default: routes.all_products_collection_url }}">{{ section.settings.link_label }}</a>
           {%- endif -%}
         </div>
       </div>

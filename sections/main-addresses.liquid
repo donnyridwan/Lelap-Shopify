@@ -103,7 +103,7 @@
         {%- if form.errors -%}<script>document.currentScript.closest('[data-address-modal]').setAttribute('data-open-on-load', '');</script>{%- endif -%}
         <div class="acct-modal__head">
           <h2 id="AddressTitle-{{ mid }}">{{ title }}</h2>
-          <button type="button" class="acct-modal__close" data-address-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon', name: 'x', color: '#1d2142', size: 22 %}</button>
+          <button type="button" class="acct-modal__close" data-address-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon', name: 'close', color: '#1d2142', size: 22 %}</button>
         </div>
         {%- if form.errors -%}
           <div class="auth-alert" role="alert">{% render 'icon', name: 'alert', size: 18 %}<div class="auth-alert__text">{{ form.errors | default_errors }}</div></div>

@@ -113,7 +113,8 @@
               <li class="acct-track__step{% if delivered %} is-done{% endif %}"><span class="acct-track__mark"><span class="acct-track__dot">{% if delivered %}{% render 'icon', name: 'check', color: '#ffffff', size: 14 %}{% endif %}</span><span class="acct-track__line"></span></span><span class="acct-track__label"><strong>{{ section.settings.step_delivered }}</strong><span>{% if eta != blank %}{{ section.settings.eta_prefix }} {{ eta | date: '%-d %b' }}{% else %}—{% endif %}</span></span></li>
           {%- endcase -%}
         </ol>
-        {%- if tracking != '' -%}
+        {%- if state == 'shipped' or state == 'delivered' -%}{%- assign show_tracking = true -%}{%- else -%}{%- assign show_tracking = false -%}{%- endif -%}
+        {%- if tracking != '' and show_tracking -%}
           <p class="acct-track__note">{% render 'icon', name: 'truck', color: '#1d2142', size: 16 %}
             {%- if tracking.tracking_url != blank -%}<a href="{{ tracking.tracking_url }}">{%- endif -%}
             {{ tracking.tracking_company }} · {{ section.settings.tracking_label }} {{ tracking.tracking_number }}{% if eta != blank %} · {{ section.settings.arriving_label }} {{ eta | date: '%a, %-d %b' }}{% endif %}
@@ -147,7 +148,7 @@
         </div>
         <div class="acct-detail__side">
           {%- if order.shipping_address -%}
-            <div class="acct-card">
+            <div class="acct-card acct-card--address">
               <h2 class="acct-card__title">{{ section.settings.address_title }}</h2>
               <p class="acct-address">
                 {{ order.shipping_address.name }}<br>

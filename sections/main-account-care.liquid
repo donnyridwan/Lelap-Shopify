@@ -115,13 +115,15 @@
         </div>
 
         <aside class="acct-care__side">
-          <dl class="acct-plan">
-            <p class="acct-card__title">{{ section.settings.plan_title }}</p>
+          <div class="acct-plan">
+            <h2 class="acct-card__title">{{ section.settings.plan_title }}</h2>
+            <dl class="acct-plan__list">
             <div><dt>{{ section.settings.plan_formula }}</dt><dd>{{ plan_formula | default: '—' }}</dd></div>
             <div><dt>{{ section.settings.plan_when }}</dt><dd>{{ plan_when | default: '—' }}</dd></div>
             <div><dt>{{ section.settings.plan_approved }}</dt><dd>{{ plan_approved | default: '—' }}</dd></div>
             <div><dt>{{ section.settings.plan_next }}</dt><dd>{{ plan_next | default: '—' }}</dd></div>
-          </dl>
+            </dl>
+          </div>
           <p class="acct-note">{% render 'icon', name: 'info', color: '#1d2142', size: 18 %}<span>{{ section.settings.emergency }}</span></p>
         </aside>
       </div>

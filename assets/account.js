@@ -134,7 +134,18 @@
       const c = e.target.closest('[data-address-close]');
       if (c) { e.preventDefault(); close(c.closest('[data-address-modal]')); }
     });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') modals.forEach((m) => { if (!m.hidden) close(m); }); });
+    document.addEventListener('keydown', (e) => {
+      const m = modals.find((x) => !x.hidden);
+      if (!m) return;
+      if (e.key === 'Escape') { close(m); return; }
+      if (e.key !== 'Tab') return;
+      /* keep focus inside the open dialog */
+      const items = Array.from(m.querySelectorAll('a[href], button:not([disabled]), input:not([type=hidden]):not([disabled]), select, textarea')).filter((n) => n.offsetParent !== null);
+      if (!items.length) return;
+      const first = items[0], lastItem = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); lastItem.focus(); }
+      else if (!e.shiftKey && document.activeElement === lastItem) { e.preventDefault(); first.focus(); }
+    });
     modals.forEach((m) => {
       const form = m.querySelector('form');
       /* Provinces for the selected country (Shopify data-provinces). */

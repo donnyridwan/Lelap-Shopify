@@ -52,9 +52,9 @@
       </div>
 
       <div class="acct-card acct-card--lg">
-        <h2 class="acct-card__title acct-card__title--lg" style="display:flex;align-items:center;gap:10px">{% render 'icon', name: 'steth', color: '#1d2142', size: 18 %}{{ section.settings.health_title }}</h2>
+        <h2 class="acct-card__title acct-card__title--lg acct-card__title--icon">{% render 'icon', name: 'steth', color: '#1d2142', size: 18 %}{{ section.settings.health_title }}</h2>
         <p class="acct-info acct-info--moon">{% render 'icon', name: 'info', color: '#1d2142', size: 16 %}{{ section.settings.health_note }}</p>
-        <dl style="width:100%">
+        <dl class="acct-kv-list">
           {%- liquid
             assign last = m.last_assessment.value
             if last != blank
@@ -76,7 +76,7 @@
       </div>
 
       <div class="acct-card acct-card--lg">
-        {%- form 'contact', data-pref-form: '' -%}
+        {%- form 'contact', data-pref-form: '', class: 'acct-pref-form' -%}
           <h2 class="acct-card__title acct-card__title--lg">{{ section.settings.notif_title }}</h2>
           <input type="hidden" name="contact[email]" value="{{ customer.email }}">
           <input type="hidden" name="contact[Request]" value="Notification preferences">
