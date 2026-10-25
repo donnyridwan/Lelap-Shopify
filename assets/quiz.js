@@ -195,6 +195,14 @@
 
     function showPlan() {
       const { best, alts } = recommend();
+      // Mark the cart so the drawer shows "Sleep assessment completed" (snippets/cart-drawer-body.liquid).
+      try {
+        const root = (window.theme && window.theme.routes && window.theme.routes.root) || '/';
+        fetch(root.replace(/\/?$/, '/') + 'cart/update.js', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ attributes: { assessment: 'completed', 'Recommended formula': best } })
+        }).catch(() => {});
+      } catch (e) { /* non-blocking */ }
       fillNames();
       plan.querySelectorAll('[data-plan-for]').forEach((p) => { p.hidden = p.dataset.planFor !== best; });
       plan.querySelectorAll('[data-alt-for]').forEach((a) => {

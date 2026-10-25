@@ -14,7 +14,7 @@ body.template-activate_account .site-footer { display: none; }
 .auth { display: flex; min-height: 820px; background: var(--white); }
 .auth__main { flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
 .auth__form { width: 420px; max-width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
-.auth__form > form, .auth__panel { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+.auth__form > form, .auth__panel, .auth__panel > form { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
 .auth__panel[hidden] { display: none; }
 .auth__title { font-size: 34px; letter-spacing: -0.68px; line-height: normal; color: var(--navy); font-weight: 400; }
 .auth__lead { font-size: 15px; line-height: normal; color: var(--body); }
@@ -213,7 +213,7 @@ body.template-activate_account .site-footer { display: none; }
 .acct-orders__thumbs .acct-thumb { width: 40px; height: 40px; border: 0; }
 .acct-orders__thumbs .acct-thumb + .acct-thumb { margin-left: -10px; }
 .acct-orders__view { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 600; color: var(--navy); white-space: nowrap; }
-.acct-orders__card { display: none; }
+.acct-orders__mobile { display: none; }
 
 /* Order detail */
 .acct-back { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: var(--body); line-height: normal; align-self: flex-start; }
@@ -385,11 +385,14 @@ body.template-activate_account .site-footer { display: none; }
   .acct-sub__top { flex-direction: column; align-items: flex-start; gap: 20px; }
   .acct-sub__thumb { width: 96px; height: 96px; }
   .acct-pair { flex-direction: column; }
-  .acct-orders { padding: 0; background: none; display: flex; flex-direction: column; gap: 12px; }
+  .acct-orders { padding: 8px 20px; }
   .acct-orders table { display: none; }
-  .acct-orders__card { display: flex; flex-direction: column; gap: 12px; background: var(--white); border-radius: 20px; padding: 16px; }
+  .acct-orders__mobile { display: flex; flex-direction: column; }
+  .acct-orders__card { display: flex; flex-direction: column; gap: 10px; padding: 16px 0; border-top: 1px solid var(--line); }
   .acct-orders__card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .acct-orders__card-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .acct-orders__card-bottom { display: flex; align-items: center; gap: 12px; }
+  .acct-orders__card-meta { flex: 1 1 0; display: flex; flex-direction: column; gap: 2px; line-height: normal; }
+  .acct-orders__card-meta .acct-orders__date { font-size: 13px; }
   .acct-track { padding: 20px; }
   .acct-track__steps { flex-direction: column; gap: 0; }
   .acct-track__step { flex-direction: row; align-items: flex-start; gap: 12px; padding-bottom: 16px; position: relative; }

@@ -32,16 +32,18 @@
                 {%- endfor -%}
               </tbody>
             </table>
-            {%- for order in customer.orders -%}
-              <a class="acct-orders__card" href="{{ order.customer_url }}">
-                <span class="acct-orders__card-top"><span class="acct-orders__num">{{ order.name }}</span>{% render 'order-pill', order: order %}</span>
-                <span class="acct-orders__card-bottom">
-                  <span class="acct-orders__thumbs">{% for li in order.line_items limit: 4 %}{% render 'line-item-thumb', item: li, size: 40 %}{% endfor %}</span>
-                  <span class="acct-orders__date">{{ order.created_at | date: '%-d %b %Y' }}</span>
-                  <span class="acct-orders__total">{{ order.total_price | money_without_trailing_zeros }}</span>
-                </span>
-              </a>
-            {%- endfor -%}
+            <div class="acct-orders__mobile">
+              {%- for order in customer.orders -%}
+                <a class="acct-orders__card" href="{{ order.customer_url }}">
+                  <span class="acct-orders__card-top"><span class="acct-orders__num">{{ order.name }}</span>{% render 'order-pill', order: order %}</span>
+                  <span class="acct-orders__card-bottom">
+                    <span class="acct-orders__thumbs">{% for li in order.line_items limit: 4 %}{% render 'line-item-thumb', item: li, size: 40 %}{% endfor %}</span>
+                    <span class="acct-orders__card-meta"><span class="acct-orders__date">{{ order.created_at | date: '%-d %b %Y' }}</span><span class="acct-orders__total">{{ order.total_price | money_without_trailing_zeros }}</span></span>
+                    {% render 'icon', name: 'chev', size: 16 %}
+                  </span>
+                </a>
+              {%- endfor -%}
+            </div>
           </div>
           {%- if paginate.pages > 1 -%}
             <nav class="c-pagination" aria-label="{{ 'general.pagination.label' | t }}">

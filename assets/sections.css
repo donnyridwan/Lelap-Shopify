@@ -11,7 +11,7 @@
   position: relative; flex: 0 0 260px; min-height: 224px; border-radius: 16px; overflow: hidden;
   background: #e7e7f3; display: flex; align-items: center; justify-content: center;
 }
-.product-card__img { width: 224px; height: 224px; object-fit: cover; }
+.product-card__img { width: 273px; height: 273px; max-width: none; object-fit: cover; }
 .product-card__info { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; flex: 1 1 0; min-width: 0; }
 .product-card__tags { display: flex; gap: 8px; align-items: center; }
 .product-card__title { font-size: 28px; font-weight: 500; letter-spacing: -0.28px; line-height: normal; color: var(--navy); }
