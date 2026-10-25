@@ -1,0 +1,151 @@
+{%- comment -%} Figma: Product · Reviews — summary with distribution, topic filters, review cards, load more. {%- endcomment -%}
+{%- liquid
+  assign h = product.handle | default: 'sleep-classic'
+  capture p_rating
+    render 'product-fact', product: product, handle: h, key: 'rating'
+  endcapture
+  capture p_reviews
+    render 'product-fact', product: product, handle: h, key: 'reviews'
+  endcapture
+  assign counts = section.settings.counts | split: ','
+  assign total = 0
+  for c in counts
+    assign n = c | strip | plus: 0
+    assign total = total | plus: n
+  endfor
+  assign filters = section.settings.filters | split: ','
+  assign per_page = section.settings.per_page
+-%}
+<section class="pdp-reviews" id="reviews" data-reviews>
+  <div class="container">
+    <h2 class="pdp-reviews__title">{{ section.settings.heading }}</h2>
+
+    <div class="pdp-reviews__summary">
+      <div class="pdp-reviews__score">
+        <p class="pdp-reviews__avg">{{ p_rating }}</p>
+        {% render 'stars' %}
+        <p class="pdp-reviews__based">{{ section.settings.based_on | replace: '[count]', p_reviews }}</p>
+      </div>
+      <ul class="pdp-reviews__dist">
+        {%- for c in counts -%}
+          {%- liquid
+            assign n = c | strip | plus: 0
+            assign pct = 0
+            if total > 0
+              assign pct = n | times: 100.0 | divided_by: total | round: 1
+            endif
+            assign star = 6 | minus: forloop.index
+            assign n_label = n
+            if n >= 1000
+              assign th = n | divided_by: 1000
+              assign rest = n | modulo: 1000 | prepend: '00' | slice: -3, 3
+              assign n_label = th | append: ',' | append: rest
+            endif
+          -%}
+          <li class="pdp-reviews__dist-row">
+            <span class="pdp-reviews__dist-label">{{ star }} ★</span>
+            <span class="pdp-reviews__bar"><span style="width: {{ pct | at_least: 1 }}%"></span></span>
+            <span class="pdp-reviews__dist-count">{{ n_label }}</span>
+          </li>
+        {%- endfor -%}
+      </ul>
+      {%- if section.settings.write_label != blank -%}
+        <a class="btn btn--outline pdp-reviews__write" href="{{ section.settings.write_url | default: '#' }}">{{ section.settings.write_label }}</a>
+      {%- endif -%}
+    </div>
+
+    {%- if filters.size > 0 -%}
+      <div class="pdp-reviews__filters" role="group" aria-label="{{ section.settings.filters_label | escape }}">
+        <button type="button" class="pdp-reviews__filter is-active" data-review-filter="all" aria-pressed="true">{{ section.settings.all_label }}</button>
+        {%- for f in filters -%}
+          <button type="button" class="pdp-reviews__filter" data-review-filter="{{ f | strip | handleize }}" aria-pressed="false">{{ f | strip }}</button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <ul class="pdp-reviews__grid">
+      {%- for block in section.blocks -%}
+        {%- assign topics = block.settings.topics | split: ',' -%}
+        <li class="review-card" data-review data-topics="{% for t in topics %}{{ t | strip | handleize }} {% endfor %}"{% if forloop.index > per_page %} hidden data-review-more{% endif %} {{ block.shopify_attributes }}>
+          {% render 'stars' %}
+          <h3 class="review-card__title">{{ block.settings.title }}</h3>
+          <p class="review-card__body">{{ block.settings.body }}</p>
+          <p class="review-card__foot"><strong>{{ block.settings.name }}</strong>{% render 'icon', name: 'check', color: '#5f6179', size: 14 %}<span>{{ block.settings.badge }}</span></p>
+        </li>
+      {%- endfor -%}
+    </ul>
+    <p class="pdp-reviews__empty" data-review-empty hidden>{{ section.settings.empty_text }}</p>
+
+    {%- if section.settings.more_label != blank -%}
+      <button type="button" class="btn btn--outline pdp-reviews__more" data-review-load>{{ section.settings.more_label }}</button>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.currentScript && document.currentScript.previousElementSibling;
+    if (!root || !root.matches('[data-reviews]')) return;
+    var cards = root.querySelectorAll('[data-review]');
+    var empty = root.querySelector('[data-review-empty]');
+    var more = root.querySelector('[data-review-load]');
+    root.querySelectorAll('[data-review-filter]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var key = btn.dataset.reviewFilter, shown = 0;
+        root.querySelectorAll('[data-review-filter]').forEach(function (b) { var on = b === btn; b.classList.toggle('is-active', on); b.setAttribute('aria-pressed', on); });
+        cards.forEach(function (c) {
+          var match = key === 'all' ? !c.hasAttribute('data-review-more') : (' ' + c.dataset.topics).indexOf(' ' + key + ' ') > -1;
+          c.hidden = !match; if (match) shown++;
+        });
+        if (empty) empty.hidden = shown > 0;
+      });
+    });
+    if (more) more.addEventListener('click', function () {
+      root.querySelectorAll('[data-review-more]').forEach(function (c) { c.hidden = false; c.removeAttribute('data-review-more'); });
+      more.hidden = true;
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product reviews",
+  "tag": "div",
+  "settings": [
+    { "type": "paragraph", "content": "Average rating and review count come from the lelap.rating and lelap.reviews metafields (or the design defaults). Replace with your reviews app block if you use one." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Reviews" },
+    { "type": "text", "id": "based_on", "label": "Count line", "info": "[count] is replaced by the review count.", "default": "Based on [count] reviews" },
+    { "type": "text", "id": "counts", "label": "Star distribution (5★ to 1★, separated by commas without thousands separators)", "default": "1042,136,37,12,13" },
+    { "type": "text", "id": "write_label", "label": "Write a review label", "default": "Write a review" },
+    { "type": "url", "id": "write_url", "label": "Write a review link" },
+    { "type": "text", "id": "filters_label", "label": "Filters label (screen readers)", "default": "Filter reviews" },
+    { "type": "text", "id": "all_label", "label": "All filter label", "default": "All" },
+    { "type": "text", "id": "filters", "label": "Topic filters (comma separated)", "default": "Fell asleep faster, No grogginess, Taste, With photos" },
+    { "type": "text", "id": "empty_text", "label": "No matching reviews text", "default": "No reviews for this topic yet." },
+    { "type": "range", "id": "per_page", "label": "Reviews shown before “Load more”", "min": 1, "max": 12, "step": 1, "default": 3 },
+    { "type": "text", "id": "more_label", "label": "Load more label", "default": "Load more reviews" }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Asleep before 11 again" },
+        { "type": "textarea", "id": "body", "label": "Review", "default": "I used to scroll until 1am. Now I take one gummy after dinner and I’m out before my alarm-setting routine is done." },
+        { "type": "text", "id": "name", "label": "Name", "default": "Nadia A." },
+        { "type": "text", "id": "badge", "label": "Badge", "default": "Verified subscriber" },
+        { "type": "text", "id": "topics", "label": "Topics (match the filters, comma separated)", "default": "Fell asleep faster" }
+      ]
+    }
+  ],
+  "presets": [{
+    "name": "Product reviews",
+    "blocks": [
+      { "type": "review", "settings": { "title": "Asleep before 11 again", "body": "I used to scroll until 1am. Now I take one gummy after dinner and I’m out before my alarm-setting routine is done.", "name": "Nadia A.", "topics": "Fell asleep faster" } },
+      { "type": "review", "settings": { "title": "No groggy mornings", "body": "Other melatonin left me foggy. This one wears off by the time my alarm goes. The blueberry flavour is nice too.", "name": "Dimas R.", "topics": "No grogginess, Taste" } },
+      { "type": "review", "settings": { "title": "The doctor actually listened", "body": "I was nervous about melatonin. The doctor explained everything and started me on a lower dose. Big difference.", "name": "Rahma P.", "topics": "Fell asleep faster" } }
+    ]
+  }],
+  "enabled_on": { "templates": ["product"] }
+}
+{% endschema %}

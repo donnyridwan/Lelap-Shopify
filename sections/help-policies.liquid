@@ -1,0 +1,35 @@
+{%- comment -%} Figma: Help Center › Policies (three policy summary cards). {%- endcomment -%}
+<section class="help-policies">
+  <div class="container help-policies__grid">
+    {%- for block in section.blocks -%}
+      <div class="help-policy" {{ block.shopify_attributes }}>
+        <h2 class="help-policy__title">{{ block.settings.title | escape }}</h2>
+        <p class="help-policy__text">{{ block.settings.text | escape }}</p>
+        {%- if block.settings.link_label != blank -%}
+          <a class="help-policy__link" href="{{ block.settings.link | default: '#' }}">{{ block.settings.link_label | escape }}</a>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Policy cards",
+  "class": "section-help-policies",
+  "max_blocks": 6,
+  "blocks": [
+    { "type": "policy", "name": "Policy", "settings": [
+      { "type": "text", "id": "title", "label": "Title", "default": "Shipping" },
+      { "type": "textarea", "id": "text", "label": "Text", "default": "Free regular delivery across Indonesia in 2–4 working days. Express next-day delivery in Jabodetabek for $5." },
+      { "type": "text", "id": "link_label", "label": "Link label", "default": "Read full policy" },
+      { "type": "url", "id": "link", "label": "Link" }
+    ] }
+  ],
+  "presets": [{ "name": "Policy cards", "blocks": [
+    { "type": "policy", "settings": { "title": "Shipping", "text": "Free regular delivery across Indonesia in 2–4 working days. Express next-day delivery in Jabodetabek for $5." } },
+    { "type": "policy", "settings": { "title": "30-night promise", "text": "Not sleeping better after 30 nights? We refund your first order. No need to send it back." } },
+    { "type": "policy", "settings": { "title": "Doctor declines", "text": "If a doctor decides lelap isn’t right for you, we refund the full amount within 3 working days." } }
+  ] }]
+}
+{% endschema %}

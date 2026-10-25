@@ -1,0 +1,72 @@
+{%- comment -%} Figma "Shop All Formulas" → Quick Compare: table on desktop, one card per formula on tablet/mobile. {%- endcomment -%}
+{%- liquid
+  assign handles = 'sleep-classic,sleep-deep,sleep-reset,sleep-calm' | split: ','
+  assign keys = 'compare_best_for,key_actives,melatonin,when_to_take,flavour' | split: ','
+  assign labels = section.settings.row_1 | append: '|' | append: section.settings.row_2 | append: '|' | append: section.settings.row_3 | append: '|' | append: section.settings.row_4 | append: '|' | append: section.settings.row_5 | split: '|'
+-%}
+<section class="c-compare">
+  <div class="container">
+    <h2 class="c-h-section c-compare__heading">{{ section.settings.heading }}</h2>
+    <table class="c-compare__table">
+      <thead>
+        <tr>
+          <td></td>
+          {%- for h in handles -%}
+            {%- assign p = all_products[h] -%}{%- unless p.id -%}{%- assign p = nil -%}{%- endunless -%}
+            <th scope="col">
+              <a href="{% if p != blank %}{{ p.url }}{% else %}/products/{{ h }}{% endif %}" class="c-compare__product">
+                <span class="c-compare__thumb">{% render 'product-image', product: p, handle: h, width: 120, sizes: '56px', class: 'c-compare__img' %}</span>
+                {% if p != blank %}{{ p.title }}{% else %}{% render 'product-fact', handle: h, key: 'title' %}{% endif %}
+              </a>
+            </th>
+          {%- endfor -%}
+        </tr>
+      </thead>
+      <tbody>
+        {%- for k in keys -%}
+          <tr>
+            <th scope="row">{{ labels[forloop.index0] }}</th>
+            {%- for h in handles -%}
+              {%- assign p = all_products[h] -%}{%- unless p.id -%}{%- assign p = nil -%}{%- endunless -%}
+              <td>{% render 'product-fact', product: p, handle: h, key: k %}</td>
+            {%- endfor -%}
+          </tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+
+    <div class="c-compare__cards">
+      {%- for h in handles -%}
+        {%- assign p = all_products[h] -%}{%- unless p.id -%}{%- assign p = nil -%}{%- endunless -%}
+        <div class="c-compare-card">
+          <a href="{% if p != blank %}{{ p.url }}{% else %}/products/{{ h }}{% endif %}" class="c-compare-card__head">
+            <span class="c-compare-card__thumb">{% render 'product-image', product: p, handle: h, width: 120, sizes: '48px', class: 'c-compare__img' %}</span>
+            {% if p != blank %}{{ p.title }}{% else %}{% render 'product-fact', handle: h, key: 'title' %}{% endif %}
+          </a>
+          <dl>
+            {%- for k in keys -%}
+              <div class="c-compare-card__row"><dt>{{ labels[forloop.index0] }}</dt><dd>{% render 'product-fact', product: p, handle: h, key: k %}</dd></div>
+            {%- endfor -%}
+          </dl>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Compare formulas",
+  "tag": "div",
+  "settings": [
+    { "type": "paragraph", "content": "Values come from the lelap.compare_best_for, key_actives, melatonin, when_to_take and flavour metafields, or the design defaults." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Compare at a glance" },
+    { "type": "text", "id": "row_1", "label": "Row 1", "default": "Best for" },
+    { "type": "text", "id": "row_2", "label": "Row 2", "default": "Key actives" },
+    { "type": "text", "id": "row_3", "label": "Row 3", "default": "Melatonin" },
+    { "type": "text", "id": "row_4", "label": "Row 4", "default": "When to take" },
+    { "type": "text", "id": "row_5", "label": "Row 5", "default": "Flavour" }
+  ],
+  "presets": [{ "name": "Compare formulas" }]
+}
+{% endschema %}

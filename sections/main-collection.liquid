@@ -1,0 +1,129 @@
+{%- comment -%}
+  Collection — Figma "Shop All Formulas": header with need filters, quiz banner, product cards, disclaimer.
+  When the collection is empty the four lelap formulas are shown by handle.
+{%- endcomment -%}
+{%- liquid
+  assign needs = section.settings.filters | split: ','
+  assign fallback = 'sleep-classic,sleep-deep,sleep-reset,sleep-calm' | split: ','
+  assign quiz_url = section.settings.quiz_url | default: settings.quiz_url | default: '/pages/sleep-quiz'
+  assign title_main = section.settings.title
+  if title_main == blank
+    assign title_main = collection.title
+  endif
+-%}
+<div class="c-shop" data-shop-filter>
+  <header class="c-shop__header">
+    <div class="container">
+      <nav class="c-breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ routes.root_url }}">{{ section.settings.crumb_home }}</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{% if collection.handle == 'all' or collection == blank %}{{ section.settings.crumb_shop }}{% else %}{{ collection.title }}{% endif %}</span>
+      </nav>
+      <h1 class="c-shop__title">{{ title_main }}{% if section.settings.title_accent != blank %} <span class="text-lav">{{ section.settings.title_accent }}</span>{% endif %}</h1>
+      {%- if section.settings.lead != blank -%}
+        <p class="c-shop__lead">{{ section.settings.lead }}</p>
+      {%- elsif collection.description != blank -%}
+        <div class="c-shop__lead">{{ collection.description }}</div>
+      {%- endif -%}
+      {%- if section.settings.show_filters and needs.size > 0 -%}
+        <div class="c-shop__filters" role="group" aria-label="{{ section.settings.filters_label | escape }}">
+          <button type="button" class="c-shop__filter is-active" data-need="all" aria-pressed="true">{{ section.settings.all_label }}</button>
+          {%- for n in needs -%}
+            <button type="button" class="c-shop__filter" data-need="{{ n | strip | handleize }}" aria-pressed="false">{{ n | strip }}</button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </header>
+
+  <div class="c-shop__products">
+    <div class="container">
+      {%- if section.settings.show_banner -%}
+        <div class="c-quiz-banner">
+          <div class="c-quiz-banner__copy">
+            <p class="c-quiz-banner__title">{{ section.settings.banner_title }}</p>
+            <p class="c-quiz-banner__text">{{ section.settings.banner_text }}</p>
+          </div>
+          <a href="{{ quiz_url }}" class="btn btn--light">{{ section.settings.banner_button }}</a>
+        </div>
+      {%- endif -%}
+
+      {%- paginate collection.products by section.settings.per_page -%}
+        <ul class="c-shop__grid" data-shop-grid>
+          {%- for product in collection.products -%}
+            {%- capture need -%}{% render 'product-fact', product: product, key: 'need' %}{%- endcapture -%}
+            <li class="c-shop__item" data-need="{{ need | handleize }}">{% render 'product-card', product: product %}</li>
+          {%- else -%}
+            {%- for h in fallback -%}
+              {%- assign p = all_products[h] -%}{%- unless p.id -%}{%- assign p = nil -%}{%- endunless -%}
+              {%- capture need -%}{% render 'product-fact', handle: h, key: 'need' %}{%- endcapture -%}
+              <li class="c-shop__item" data-need="{{ need | handleize }}">
+                {%- if p != blank -%}{% render 'product-card', product: p %}{%- else -%}{% render 'product-card', handle: h %}{%- endif -%}
+              </li>
+            {%- endfor -%}
+          {%- endfor -%}
+        </ul>
+        <p class="c-shop__none" data-shop-empty hidden>{{ section.settings.no_match }}</p>
+        {%- if paginate.pages > 1 -%}
+          <nav class="c-pagination" aria-label="{{ 'general.pagination.label' | t }}">
+            {%- if paginate.previous -%}<a class="c-pill-toggle" href="{{ paginate.previous.url }}">{{ 'general.pagination.previous' | t }}</a>{%- endif -%}
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}<a class="c-pill-toggle" href="{{ part.url }}">{{ part.title }}</a>{%- else -%}<span class="c-pill-toggle{% if part.title == paginate.current_page %} is-active{% endif %}">{{ part.title }}</span>{%- endif -%}
+            {%- endfor -%}
+            {%- if paginate.next -%}<a class="c-pill-toggle" href="{{ paginate.next.url }}">{{ 'general.pagination.next' | t }}</a>{%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- endpaginate -%}
+
+      {%- if section.settings.disclaimer != blank -%}
+        <p class="c-shop__disclaimer">{{ section.settings.disclaimer }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.currentScript && document.currentScript.previousElementSibling;
+    if (!root) return;
+    var items = root.querySelectorAll('[data-shop-grid] > [data-need]');
+    var empty = root.querySelector('[data-shop-empty]');
+    root.querySelectorAll('.c-shop__filter').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var key = btn.dataset.need, shown = 0;
+        root.querySelectorAll('.c-shop__filter').forEach(function (b) { var on = b === btn; b.classList.toggle('is-active', on); b.setAttribute('aria-pressed', on); });
+        items.forEach(function (li) { var on = key === 'all' || li.dataset.need === key; li.hidden = !on; if (on) shown++; });
+        if (empty) empty.hidden = shown > 0;
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Collection products",
+  "tag": "section",
+  "class": "section-main-collection",
+  "settings": [
+    { "type": "text", "id": "crumb_home", "label": "Breadcrumb home", "default": "Home" },
+    { "type": "text", "id": "crumb_shop", "label": "Breadcrumb shop", "default": "Shop" },
+    { "type": "text", "id": "title", "label": "Heading", "info": "Leave empty to use the collection title.", "default": "Shop sleep" },
+    { "type": "text", "id": "title_accent", "label": "Heading accent (lavender)", "default": "formulas" },
+    { "type": "textarea", "id": "lead", "label": "Intro", "info": "Leave empty to use the collection description.", "default": "Four formulas for four kinds of nights. Every order is reviewed by a licensed doctor." },
+    { "type": "checkbox", "id": "show_filters", "label": "Show need filters", "default": true },
+    { "type": "text", "id": "filters_label", "label": "Filters label (screen readers)", "default": "Filter by need" },
+    { "type": "text", "id": "all_label", "label": "All filter label", "default": "All formulas" },
+    { "type": "text", "id": "filters", "label": "Needs (comma separated)", "info": "Each matches a product's lelap.need metafield.", "default": "Fall asleep, Stay asleep, Jet lag & shifts, Busy mind" },
+    { "type": "text", "id": "no_match", "label": "No match text", "default": "No formulas match this need yet." },
+    { "type": "header", "content": "Quiz banner" },
+    { "type": "checkbox", "id": "show_banner", "label": "Show quiz banner", "default": true },
+    { "type": "text", "id": "banner_title", "label": "Title", "default": "Not sure which one?" },
+    { "type": "text", "id": "banner_text", "label": "Text", "default": "Take the 2-minute quiz and a doctor will match you to the right formula." },
+    { "type": "text", "id": "banner_button", "label": "Button label", "default": "Take the sleep quiz" },
+    { "type": "url", "id": "quiz_url", "label": "Button link", "info": "Defaults to the quiz page in theme settings." },
+    { "type": "header", "content": "Products" },
+    { "type": "range", "id": "per_page", "label": "Products per page", "min": 4, "max": 24, "step": 2, "default": 12 },
+    { "type": "textarea", "id": "disclaimer", "label": "Disclaimer", "default": "*These statements have not been evaluated by BPOM. Not intended to diagnose, treat, cure or prevent any disease." }
+  ]
+}
+{% endschema %}

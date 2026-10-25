@@ -1,0 +1,10 @@
+{%- comment -%}
+  Cart drawer shell (Figma: Cart Drawer / Cart Drawer · Empty). Rendered once from layout/theme.liquid.
+  The inner markup lives in snippets/cart-drawer-body.liquid and is re-rendered by assets/cart.js
+  through the Section Rendering API (sections/cart-drawer-content.liquid).
+{%- endcomment -%}
+<div class="drawer-overlay" data-cart-overlay hidden></div>
+<div class="cart-drawer" id="CartDrawer" data-cart-drawer role="dialog" aria-modal="true" aria-labelledby="CartDrawerTitle" aria-hidden="true" tabindex="-1" inert
+  data-open-on-add="{% if settings.cart_drawer == false %}false{% else %}true{% endif %}">
+  {% render 'cart-drawer-body' %}
+</div>

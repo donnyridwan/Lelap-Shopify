@@ -1,0 +1,65 @@
+{%- comment -%}
+  Page hero (Figma: About Us › Hero = "stacked", Science & Doctors › Hero = "split").
+{%- endcomment -%}
+{%- liquid
+  assign layout = section.settings.layout
+  assign img_sizes = '(min-width: 1200px) 1280px, 100vw'
+  if layout == 'split'
+    assign img_sizes = '(min-width: 1200px) 600px, 100vw'
+  endif
+-%}
+<section class="pg-hero pg-hero--{{ layout }}" aria-labelledby="PageHero-{{ section.id }}">
+  <div class="container pg-hero__inner">
+    <div class="pg-hero__copy">
+      {%- if section.settings.chip != blank -%}
+        <span class="chip">{% render 'icon', name: 'moon' %}{{ section.settings.chip | escape }}</span>
+      {%- endif -%}
+      <h1 class="pg-display" id="PageHero-{{ section.id }}">
+        <span>{{ section.settings.heading | escape }}</span>
+        {%- if section.settings.heading_accent != blank %} <span class="pg-accent">{{ section.settings.heading_accent | escape }}</span>{% endif -%}
+      </h1>
+      {%- if section.settings.text != blank -%}
+        <p class="pg-hero__text">{{ section.settings.text | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.button_label != blank and layout == 'split' -%}
+        <a href="{{ section.settings.button_link | default: settings.quiz_url | default: '/pages/sleep-quiz' }}" class="btn btn--primary">{{ section.settings.button_label | escape }}</a>
+      {%- endif -%}
+    </div>
+    <div class="pg-hero__media">
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 2560 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: img_sizes, widths: '600, 900, 1280, 1920, 2560', alt: section.settings.image.alt | default: section.settings.heading }}
+      {%- elsif section.settings.fallback_image != blank -%}
+        <img src="{{ section.settings.fallback_image | asset_url }}" alt="" width="1280" height="520" fetchpriority="high">
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Page hero",
+  "tag": "div",
+  "class": "section-page-hero",
+  "settings": [
+    { "type": "select", "id": "layout", "label": "Layout", "default": "stacked", "options": [
+      { "value": "stacked", "label": "Stacked (text above wide image)" },
+      { "value": "split", "label": "Split (text beside image)" }
+    ] },
+    { "type": "text", "id": "chip", "label": "Chip", "default": "Our story" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "We started lelap after" },
+    { "type": "text", "id": "heading_accent", "label": "Heading (lavender line)", "default": "too many sleepless nights." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Melatonin was easy to buy and hard to get right. Doses were too high, advice was missing, and nobody asked what was actually keeping people up. So we built a way to sleep better with a doctor in the loop." },
+    { "type": "text", "id": "button_label", "label": "Button label (split layout)" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "select", "id": "fallback_image", "label": "Design image (used when no image is chosen)", "default": "photo-morning.jpg", "options": [
+      { "value": "photo-morning.jpg", "label": "Morning stretch" },
+      { "value": "photo-ingredients.jpg", "label": "Ingredients" },
+      { "value": "photo-phone.jpg", "label": "Bedside lamp" },
+      { "value": "photo-bedroom.jpg", "label": "Bedroom" },
+      { "value": "photo-tea.jpg", "label": "Tea" }
+    ] }
+  ],
+  "presets": [{ "name": "Page hero" }]
+}
+{% endschema %}

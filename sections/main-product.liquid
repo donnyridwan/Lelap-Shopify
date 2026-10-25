@@ -1,0 +1,399 @@
+{%- comment -%}
+  Product page — breadcrumb, gallery, buy box (subscription / one-time via selling plans),
+  accordions and the mobile/tablet sticky add-to-cart bar.
+  Figma: Product · Sleep Classic / Deep / Reset / Calm (237:1211, 237:1684, 250:6404).
+  Per-product copy comes from snippets/product-fact.liquid (metafield lelap.<key> first).
+{%- endcomment -%}
+{%- liquid
+  assign h = product.handle
+  assign current_variant = product.selected_or_first_available_variant
+  assign form_id = 'ProductForm-' | append: section.id
+
+  capture p_code
+    render 'product-fact', product: product, key: 'code'
+  endcapture
+  capture p_tagline
+    render 'product-fact', product: product, key: 'tagline'
+  endcapture
+  capture p_badge
+    render 'product-fact', product: product, key: 'badge'
+  endcapture
+  capture p_rating
+    render 'product-fact', product: product, key: 'rating'
+  endcapture
+  capture p_reviews
+    render 'product-fact', product: product, key: 'reviews'
+  endcapture
+  capture p_intro
+    render 'product-fact', product: product, key: 'intro'
+  endcapture
+  capture p_highlights
+    render 'product-fact', product: product, key: 'highlights'
+  endcapture
+  capture p_note
+    render 'product-fact', product: product, key: 'doctor_note'
+  endcapture
+  capture p_facts
+    render 'product-fact', product: product, key: 'facts'
+  endcapture
+  capture p_other
+    render 'product-fact', product: product, key: 'other_ingredients'
+  endcapture
+  capture p_image
+    render 'product-fact', product: product, key: 'image'
+  endcapture
+
+  if p_intro == blank
+    assign p_intro = product.description | strip_html | truncatewords: 40
+  endif
+  if p_note == blank
+    assign p_note = section.settings.doctor_note
+  endif
+
+  # Selling plans: the first selling plan group drives the "Delivery frequency" control.
+  assign plan_group = product.selling_plan_groups.first
+  assign has_plans = false
+  if plan_group != blank and plan_group.selling_plans.size > 0
+    assign has_plans = true
+  endif
+  assign selected_plan = blank
+  if has_plans
+    assign selected_plan = plan_group.selling_plans.first
+    if product.selected_selling_plan
+      assign selected_plan = product.selected_selling_plan
+    endif
+  endif
+
+  assign full_price = current_variant.price
+  assign sub_price = full_price | times: 0.8 | round
+  if has_plans
+    for alloc in current_variant.selling_plan_allocations
+      if alloc.selling_plan.id == selected_plan.id
+        assign sub_price = alloc.price
+      endif
+    endfor
+  endif
+  assign start_subscribe = true
+  if has_plans == false and section.settings.default_one_time
+    assign start_subscribe = false
+  endif
+  if product.requires_selling_plan
+    assign start_subscribe = true
+  endif
+
+  assign highlight_icons = 'moon,leaf,check,sun' | split: ','
+  assign highlight_list = p_highlights | split: '|'
+-%}
+
+<section class="pdp-main" data-product-section data-section-id="{{ section.id }}" data-has-plans="{{ has_plans }}">
+  <div class="container">
+    <nav class="c-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">{{ section.settings.crumb_home }}</a>
+      <span class="c-breadcrumb__sep" aria-hidden="true">/</span>
+      <a href="{{ routes.all_products_collection_url }}">{{ section.settings.crumb_shop }}</a>
+      <span class="c-breadcrumb__sep" aria-hidden="true">/</span>
+      <span aria-current="page">{{ product.title }}</span>
+    </nav>
+
+    <div class="pdp-main__grid">
+      {%- comment -%} Gallery ------------------------------------------------------- {%- endcomment -%}
+      <div class="pdp-gallery" data-gallery>
+        {%- liquid
+          assign images = product.media | where: 'media_type', 'image'
+          assign extra = 'ingredients,bedroom,morning' | split: ','
+          assign extra_main = 'photo-ingredients.jpg,photo-bedroom-night.jpg,photo-morning-tall.jpg' | split: ','
+          assign gallery_count = images.size
+          if gallery_count == 0
+            assign gallery_count = 1
+          endif
+          assign fill = 0
+          if section.settings.show_lifestyle and gallery_count < 4
+            assign fill = 4 | minus: gallery_count
+          endif
+        -%}
+        <div class="pdp-gallery__main{% if images.size == 0 %} pdp-gallery__main--pouch{% endif %}" data-gallery-main>
+          {%- if images.size > 0 -%}
+            {%- assign first = images.first -%}
+            {%- assign first_alt = first.alt | default: product.title | escape -%}
+            {{ first | image_url: width: 1360 | image_tag: widths: '350, 480, 680, 960, 1360', sizes: '(min-width: 1200px) 680px, calc(100vw - 40px)', loading: 'eager', fetchpriority: 'high', class: 'pdp-gallery__img', data-gallery-img: '', alt: first_alt }}
+          {%- else -%}
+            <img class="pdp-gallery__img" data-gallery-img src="{{ p_image | asset_url }}" width="680" height="680" alt="{{ product.title | escape }}" fetchpriority="high">
+          {%- endif -%}
+          {%- if p_badge != blank -%}
+            <span class="chip pdp-gallery__chip">{% render 'icon', name: 'moon' %}{{ p_badge }}</span>
+          {%- endif -%}
+        </div>
+
+        {%- if gallery_count > 1 or fill > 0 -%}
+          <div class="pdp-gallery__thumbs" role="group" aria-label="{{ section.settings.gallery_label | escape }}">
+            {%- if images.size > 0 -%}
+              {%- for img in images limit: 8 -%}
+                <button type="button" class="pdp-gallery__thumb{% if forloop.first %} is-active{% endif %}" data-gallery-thumb
+                  data-src="{{ img | image_url: width: 1360 }}"
+                  data-srcset="{{ img | image_url: width: 680 }} 680w, {{ img | image_url: width: 1360 }} 1360w"
+                  data-fit="contain" data-alt="{{ img.alt | default: product.title | escape }}"
+                  aria-label="{{ section.settings.thumb_label | escape }} {{ forloop.index }}"{% if forloop.first %} aria-current="true"{% endif %}>
+                  {{ img | image_url: width: 320 | image_tag: loading: 'lazy', sizes: '(min-width: 1200px) 158px, 74px', widths: '160, 320', alt: '' }}
+                </button>
+              {%- endfor -%}
+            {%- else -%}
+              <button type="button" class="pdp-gallery__thumb is-active" data-gallery-thumb data-src="{{ p_image | asset_url }}" data-srcset="" data-fit="contain" data-alt="{{ product.title | escape }}" aria-label="{{ section.settings.thumb_label | escape }} 1" aria-current="true">
+                <img src="{{ p_image | asset_url }}" width="158" height="158" alt="" loading="lazy">
+              </button>
+            {%- endif -%}
+            {%- if fill > 0 -%}
+              {%- for i in (1..fill) -%}
+                {%- liquid
+                  assign idx = forloop.index0
+                  assign key = extra[idx]
+                  assign big = extra_main[idx]
+                  assign thumb = 'thumb-' | append: key | append: '.jpg'
+                  case key
+                    when 'ingredients'
+                      assign alt = section.settings.alt_ingredients
+                    when 'bedroom'
+                      assign alt = section.settings.alt_bedroom
+                    else
+                      assign alt = section.settings.alt_morning
+                  endcase
+                -%}
+                <button type="button" class="pdp-gallery__thumb" data-gallery-thumb data-src="{{ big | asset_url }}" data-srcset="" data-fit="cover" data-alt="{{ alt | escape }}" aria-label="{{ section.settings.thumb_label | escape }} {{ gallery_count | plus: forloop.index }}">
+                  <img src="{{ thumb | asset_url }}" width="158" height="158" alt="" loading="lazy">
+                </button>
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Buy box ------------------------------------------------------- {%- endcomment -%}
+      <div class="pdp-buybox">
+        <div class="pdp-buybox__eyebrow">
+          {%- if p_code != blank -%}<span class="code-tag">{{ p_code }}</span>{%- endif -%}
+          {%- if p_tagline != blank -%}<span class="pdp-buybox__tagline">{{ p_tagline }}</span>{%- endif -%}
+        </div>
+        <h1 class="pdp-buybox__title">{{ product.title }}</h1>
+        {%- if p_rating != blank -%}
+          <a href="#reviews" class="pdp-buybox__rating">
+            {% render 'stars', size: 'md' %}
+            <span>{{ p_rating }} · {{ p_reviews }} {{ section.settings.reviews_word }}</span>
+          </a>
+        {%- endif -%}
+        <p class="pdp-buybox__intro">{{ p_intro }}</p>
+
+        {%- if highlight_list.size > 0 -%}
+          <ul class="pdp-buybox__highlights">
+            {%- for item in highlight_list -%}
+              <li class="c-pill-soft">{% render 'icon', name: highlight_icons[forloop.index0], color: '#1d2142', size: 14 %}{{ item | escape }}</li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- form 'product', product, id: form_id, class: 'pdp-buybox__form', data-product-form: '', novalidate: 'novalidate' -%}
+          <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-input>
+          <input type="hidden" name="quantity" value="1">
+          <input type="hidden" name="selling_plan" value="{% if start_subscribe and has_plans %}{{ selected_plan.id }}{% endif %}" data-selling-plan-input>
+          {%- unless has_plans -%}
+            <input type="hidden" name="properties[Delivery]" value="{% if start_subscribe %}{{ section.settings.freq_1 }}{% endif %}" data-frequency-property{% unless start_subscribe %} disabled{% endunless %}>
+          {%- endunless -%}
+
+          {%- unless product.has_only_default_variant -%}
+            <div class="field pdp-buybox__variant">
+              <label class="pdp-buybox__label" for="Variant-{{ section.id }}">{{ product.options.first }}</label>
+              <select class="field__input" id="Variant-{{ section.id }}" data-variant-select>
+                {%- for variant in product.variants -%}
+                  <option value="{{ variant.id }}"{% if variant.id == current_variant.id %} selected{% endif %}{% unless variant.available %} disabled{% endunless %}>{{ variant.title }}</option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- endunless -%}
+
+          <fieldset class="pdp-buybox__fieldset">
+            <legend class="pdp-buybox__label">{{ section.settings.purchase_label }}</legend>
+            <div class="pdp-options">
+              <label class="pdp-option{% if start_subscribe %} is-selected{% endif %}" data-purchase-option="subscribe">
+                <input type="radio" class="visually-hidden" name="purchase_type" value="subscribe" data-purchase-radio{% if start_subscribe %} checked{% endif %}>
+                <span class="pdp-option__row">
+                  <span class="pdp-option__name"><span class="pdp-option__radio" aria-hidden="true">{% render 'icon', name: 'check', color: '#ffffff', size: 11 %}</span>{{ section.settings.subscribe_label }}</span>
+                  <span class="pdp-option__price">
+                    <s class="pdp-option__was" data-full-price>{{ full_price | money_without_trailing_zeros }}</s>
+                    <span class="pdp-option__now" data-sub-price>{{ sub_price | money_without_trailing_zeros }}</span>
+                  </span>
+                </span>
+                <span class="pdp-option__perks">
+                  {%- for i in (1..3) -%}
+                    {%- liquid
+                      case i
+                        when 1
+                          assign perk = section.settings.perk_1
+                        when 2
+                          assign perk = section.settings.perk_2
+                        else
+                          assign perk = section.settings.perk_3
+                      endcase
+                    -%}
+                    {%- if perk != blank -%}<span class="pdp-option__perk">{% render 'icon', name: 'check', color: '#1d2142', size: 13 %}{{ perk }}</span>{%- endif -%}
+                  {%- endfor -%}
+                </span>
+              </label>
+              {%- unless product.requires_selling_plan -%}
+                <label class="pdp-option{% unless start_subscribe %} is-selected{% endunless %}" data-purchase-option="once">
+                  <input type="radio" class="visually-hidden" name="purchase_type" value="once" data-purchase-radio{% unless start_subscribe %} checked{% endunless %}>
+                  <span class="pdp-option__row">
+                    <span class="pdp-option__name"><span class="pdp-option__radio" aria-hidden="true">{% render 'icon', name: 'check', color: '#ffffff', size: 11 %}</span>{{ section.settings.once_label }}</span>
+                    <span class="pdp-option__price"><span class="pdp-option__now" data-once-price>{{ full_price | money_without_trailing_zeros }}</span></span>
+                  </span>
+                </label>
+              {%- endunless -%}
+            </div>
+          </fieldset>
+
+          <fieldset class="pdp-buybox__fieldset" data-frequency{% unless start_subscribe %} hidden{% endunless %}>
+            <legend class="pdp-buybox__label">{{ section.settings.frequency_label }}</legend>
+            <div class="pdp-freq">
+              {%- if has_plans -%}
+                {%- for plan in plan_group.selling_plans -%}
+                  {%- liquid
+                    assign plan_price = sub_price
+                    for alloc in current_variant.selling_plan_allocations
+                      if alloc.selling_plan.id == plan.id
+                        assign plan_price = alloc.price
+                      endif
+                    endfor
+                  -%}
+                  <label class="pdp-freq__opt">
+                    <input type="radio" class="visually-hidden" name="frequency" value="{{ plan.id }}" data-plan-id="{{ plan.id }}" data-price="{{ plan_price }}"{% if plan.id == selected_plan.id %} checked{% endif %}>
+                    <span>{{ plan.name }}</span>
+                  </label>
+                {%- endfor -%}
+              {%- else -%}
+                {%- assign freqs = section.settings.freq_1 | append: '|' | append: section.settings.freq_2 | append: '|' | append: section.settings.freq_3 | split: '|' -%}
+                {%- for f in freqs -%}
+                  {%- if f != blank -%}
+                    <label class="pdp-freq__opt">
+                      <input type="radio" class="visually-hidden" name="frequency" value="{{ f | escape }}" data-plan-id="" data-price="{{ sub_price }}"{% if forloop.first %} checked{% endif %}>
+                      <span>{{ f }}</span>
+                    </label>
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
+            </div>
+          </fieldset>
+
+          <button type="submit" class="btn btn--primary btn--block pdp-buybox__submit" data-add-button{% unless current_variant.available %} disabled{% endunless %}>
+            {%- if current_variant.available -%}{{ section.settings.button_label }}{%- else -%}{{ 'products.product.sold_out' | t }}{%- endif -%}
+          </button>
+          <p class="pdp-buybox__error" role="alert" data-form-error hidden></p>
+        {%- endform -%}
+
+        {%- if p_note != blank -%}
+          <div class="pdp-buybox__note">
+            {% render 'icon', name: 'steth', color: '#1d2142', size: 18 %}
+            <p>{{ p_note }}</p>
+          </div>
+        {%- endif -%}
+
+        <ul class="pdp-buybox__trust">
+          {%- if section.settings.trust_1 != blank -%}<li>{% render 'icon', name: 'truck', color: '#1d2142', size: 16 %}{{ section.settings.trust_1 }}</li>{%- endif -%}
+          {%- if section.settings.trust_2 != blank -%}<li>{% render 'icon', name: 'refresh', color: '#1d2142', size: 16 %}{{ section.settings.trust_2 }}</li>{%- endif -%}
+          {%- if section.settings.trust_3 != blank -%}<li>{% render 'icon', name: 'shield', color: '#1d2142', size: 16 %}{{ section.settings.trust_3 }}</li>{%- endif -%}
+        </ul>
+
+        <div class="pdp-buybox__accordions" data-accordion>
+          <details class="pdp-acc" open>
+            <summary class="pdp-acc__head">{{ section.settings.how_title }}<span class="pdp-acc__icon" aria-hidden="true">{% render 'icon', name: 'plus', size: 18 %}{% render 'icon', name: 'minus', size: 18 %}</span></summary>
+            <div class="pdp-acc__body">{{ section.settings.how_text }}</div>
+          </details>
+          <details class="pdp-acc">
+            <summary class="pdp-acc__head">{{ section.settings.ingredients_title }}<span class="pdp-acc__icon" aria-hidden="true">{% render 'icon', name: 'plus', size: 18 %}{% render 'icon', name: 'minus', size: 18 %}</span></summary>
+            <div class="pdp-acc__body">
+              {%- assign rows = p_facts | split: '|' -%}
+              {%- capture actives -%}
+                {%- for row in rows -%}
+                  {%- assign pair = row | split: '::' -%}
+                  {%- unless pair[0] == 'Calories' or pair[0] == 'Total sugars' -%}{{ pair[0] }} {{ pair[1] }}, {% endunless -%}
+                {%- endfor -%}
+              {%- endcapture -%}
+              {%- assign actives = actives | strip | remove_last: ',' -%}
+              {%- if actives != blank -%}<p>{{ section.settings.actives_prefix }} {{ actives }} {{ section.settings.serving_suffix }}</p>{%- endif -%}
+              {%- if p_other != blank -%}<p>{{ p_other }}</p>{%- endif -%}
+            </div>
+          </details>
+          <details class="pdp-acc">
+            <summary class="pdp-acc__head">{{ section.settings.safety_title }}<span class="pdp-acc__icon" aria-hidden="true">{% render 'icon', name: 'plus', size: 18 %}{% render 'icon', name: 'minus', size: 18 %}</span></summary>
+            <div class="pdp-acc__body rte">{{ section.settings.safety_text }}</div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Sticky add to cart (mobile + tablet) {%- endcomment -%}
+  <div class="pdp-sticky" data-sticky-atc>
+    <div class="pdp-sticky__price">
+      <span data-sticky-price>{% if start_subscribe %}{{ sub_price | money_without_trailing_zeros }}{% else %}{{ full_price | money_without_trailing_zeros }}{% endif %}</span>
+      <small data-sticky-note data-sub-note="{{ section.settings.sticky_note | escape }}" data-once-note="{{ section.settings.sticky_note_once | escape }}">{% if start_subscribe %}{{ section.settings.sticky_note }}{% else %}{{ section.settings.sticky_note_once }}{% endif %}</small>
+    </div>
+    <button type="submit" form="{{ form_id }}" class="btn btn--primary pdp-sticky__btn"{% unless current_variant.available %} disabled{% endunless %}>{{ section.settings.sticky_button }}</button>
+  </div>
+
+  <script type="application/json" data-product-json>
+    {
+      "variants": [{%- for v in product.variants -%}{"id": {{ v.id }}, "price": {{ v.price }}, "available": {{ v.available | json }}, "allocations": [{%- for a in v.selling_plan_allocations -%}{"plan": {{ a.selling_plan.id }}, "price": {{ a.price }}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],
+      "soldOut": {{ 'products.product.sold_out' | t | json }},
+      "buttonLabel": {{ section.settings.button_label | json }}
+    }
+  </script>
+</section>
+
+<script src="{{ 'product.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Product information",
+  "tag": "div",
+  "class": "section-main-product",
+  "settings": [
+    { "type": "header", "content": "Breadcrumb" },
+    { "type": "text", "id": "crumb_home", "label": "Home label", "default": "Home" },
+    { "type": "text", "id": "crumb_shop", "label": "Shop label", "default": "Shop" },
+    { "type": "header", "content": "Gallery" },
+    { "type": "checkbox", "id": "show_lifestyle", "label": "Fill the gallery with lifestyle photos", "info": "Adds the ingredients, bedroom and morning photos when the product has fewer than 4 images.", "default": true },
+    { "type": "text", "id": "gallery_label", "label": "Thumbnails label (screen readers)", "default": "Product images" },
+    { "type": "text", "id": "thumb_label", "label": "Thumbnail label (screen readers)", "default": "Show image" },
+    { "type": "text", "id": "alt_ingredients", "label": "Ingredients photo alt text", "default": "Gummies with chamomile, blueberries and lavender" },
+    { "type": "text", "id": "alt_bedroom", "label": "Bedroom photo alt text", "default": "Woman asleep in a dim bedroom" },
+    { "type": "text", "id": "alt_morning", "label": "Morning photo alt text", "default": "Woman stretching in bed after waking up" },
+    { "type": "header", "content": "Buy box" },
+    { "type": "text", "id": "reviews_word", "label": "Reviews word", "default": "reviews" },
+    { "type": "text", "id": "purchase_label", "label": "Purchase option label", "default": "Purchase option" },
+    { "type": "text", "id": "subscribe_label", "label": "Subscription label", "default": "Subscribe & save 20%" },
+    { "type": "text", "id": "perk_1", "label": "Subscription perk 1", "default": "Free doctor follow-ups and messaging" },
+    { "type": "text", "id": "perk_2", "label": "Subscription perk 2", "default": "Free shipping every month" },
+    { "type": "text", "id": "perk_3", "label": "Subscription perk 3", "default": "Skip, pause or cancel anytime" },
+    { "type": "text", "id": "once_label", "label": "One-time label", "default": "One-time purchase" },
+    { "type": "checkbox", "id": "default_one_time", "label": "Preselect one-time purchase when the product has no selling plans", "default": false },
+    { "type": "text", "id": "frequency_label", "label": "Frequency label", "default": "Delivery frequency" },
+    { "type": "text", "id": "freq_1", "label": "Frequency 1 (used when the product has no selling plans)", "default": "Every month" },
+    { "type": "text", "id": "freq_2", "label": "Frequency 2", "default": "Every 2 months" },
+    { "type": "text", "id": "freq_3", "label": "Frequency 3", "default": "Every 3 months" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Start my assessment to buy" },
+    { "type": "textarea", "id": "doctor_note", "label": "Doctor review note (fallback)", "info": "Each formula's own note comes from the lelap.doctor_note metafield or the design default.", "default": "Melatonin needs a quick doctor review. Answer 10 questions at checkout. If it isn’t right for you, you get a full refund." },
+    { "type": "text", "id": "trust_1", "label": "Trust item 1", "default": "Free shipping" },
+    { "type": "text", "id": "trust_2", "label": "Trust item 2", "default": "Cancel anytime" },
+    { "type": "text", "id": "trust_3", "label": "Trust item 3", "default": "30-night promise" },
+    { "type": "header", "content": "Accordions" },
+    { "type": "text", "id": "how_title", "label": "How to use title", "default": "How to use" },
+    { "type": "textarea", "id": "how_text", "label": "How to use text", "default": "Chew one gummy 30 to 60 minutes before bed. Dim the lights and put your phone away. Don’t take more than your doctor recommends." },
+    { "type": "text", "id": "ingredients_title", "label": "Ingredients title", "default": "Ingredients" },
+    { "type": "text", "id": "actives_prefix", "label": "Ingredients intro", "default": "Each gummy contains" },
+    { "type": "text", "id": "serving_suffix", "label": "Ingredients outro", "default": "· 30 gummies per pouch." },
+    { "type": "text", "id": "safety_title", "label": "Safety title", "default": "Safety information" },
+    { "type": "richtext", "id": "safety_text", "label": "Safety text", "default": "<ul><li>Not suitable during pregnancy or breastfeeding, or for anyone under 18 unless a doctor advises it.</li><li>Melatonin can cause drowsiness. Don’t drive or operate machinery after taking it.</li><li>Tell your doctor if you take blood thinners, antidepressants, blood pressure medication or immunosuppressants, or have an autoimmune condition.</li><li>Stop and contact your doctor if you have an allergic reaction, a severe headache or any side effect that worries you.</li><li>Store in a cool, dry place out of reach of children.</li></ul>" },
+    { "type": "header", "content": "Sticky bar (mobile and tablet)" },
+    { "type": "text", "id": "sticky_note", "label": "Price note (subscription)", "default": "per month" },
+    { "type": "text", "id": "sticky_note_once", "label": "Price note (one-time)", "default": "one-time" },
+    { "type": "text", "id": "sticky_button", "label": "Button label", "default": "Start assessment" }
+  ]
+}
+{% endschema %}

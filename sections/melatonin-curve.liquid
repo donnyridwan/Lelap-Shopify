@@ -1,0 +1,58 @@
+{%- comment -%} Figma: Science & Doctors › How Melatonin Works (text + "Melatonin Curve" chart). {%- endcomment -%}
+<section class="pg sci-mel">
+  <div class="container sci-mel__inner">
+    <div class="sci-mel__copy">
+      <h2 class="pg-title">{{ section.settings.heading | escape }}</h2>
+      {{ section.settings.text }}
+    </div>
+    <figure class="sci-mel__chart">
+      <figcaption class="sci-mel__chart-title">{{ section.settings.chart_title | escape }}</figcaption>
+      <div class="sci-mel__bars" role="img" aria-label="{{ section.settings.chart_title | escape }}">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign h = block.settings.level | divided_by: 100.0
+            assign o = block.settings.level | divided_by: 100.0 | times: 0.65 | plus: 0.35 | at_most: 1
+          -%}
+          <div class="sci-mel__bar{% if block.settings.highlight %} is-hl{% endif %}" style="--h: {{ h }}; --o: {{ o | round: 2 }};" {{ block.shopify_attributes }}>
+            <i></i><span>{{ block.settings.label | escape }}</span>
+          </div>
+        {%- endfor -%}
+      </div>
+      {%- if section.settings.legend != blank -%}<p class="sci-mel__legend">{{ section.settings.legend | escape }}</p>{%- endif -%}
+      {%- if section.settings.note != blank -%}<p class="sci-mel__note">{{ section.settings.note | escape }}</p>{%- endif -%}
+    </figure>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Melatonin curve",
+  "class": "section-melatonin-curve",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "How melatonin works" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Melatonin is the hormone your body releases when it gets dark. It doesn’t knock you out like a sleeping pill. It tells your body clock that night has started.</p><p>Bright screens, late meals, stress and travel can delay that signal. A small, well-timed dose can bring it forward, which is why the timing matters as much as the amount.</p>" },
+    { "type": "text", "id": "chart_title", "label": "Chart title", "default": "Natural melatonin through the night" },
+    { "type": "text", "id": "legend", "label": "Legend", "default": "Lelap is taken here, as your natural levels start to rise." },
+    { "type": "text", "id": "note", "label": "Footnote", "default": "Illustrative only. Individual patterns vary." }
+  ],
+  "blocks": [
+    { "type": "bar", "name": "Bar", "settings": [
+      { "type": "text", "id": "label", "label": "Time label", "default": "6pm" },
+      { "type": "range", "id": "level", "label": "Level", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 8 },
+      { "type": "checkbox", "id": "highlight", "label": "Highlight (lelap dose time)", "default": false }
+    ] }
+  ],
+  "presets": [{ "name": "Melatonin curve", "blocks": [
+    { "type": "bar", "settings": { "label": "6pm", "level": 8 } },
+    { "type": "bar", "settings": { "label": "8pm", "level": 15 } },
+    { "type": "bar", "settings": { "label": "9pm", "level": 40, "highlight": true } },
+    { "type": "bar", "settings": { "label": "11pm", "level": 72 } },
+    { "type": "bar", "settings": { "label": "1am", "level": 95 } },
+    { "type": "bar", "settings": { "label": "3am", "level": 100 } },
+    { "type": "bar", "settings": { "label": "5am", "level": 70 } },
+    { "type": "bar", "settings": { "label": "7am", "level": 25 } },
+    { "type": "bar", "settings": { "label": "9am", "level": 8 } }
+  ] }]
+}
+{% endschema %}

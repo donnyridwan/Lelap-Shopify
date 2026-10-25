@@ -1,0 +1,62 @@
+{%- comment -%} Figma: Science & Doctors › Our Doctors. {%- endcomment -%}
+<section class="pg sci-doctors">
+  <div class="container">
+    <div class="sci-doctors__head">
+      <h2 class="pg-title pg-title--stack">
+        <span>{{ section.settings.heading | escape }}</span>
+        {%- if section.settings.heading_accent != blank %} <span class="pg-accent">{{ section.settings.heading_accent | escape }}</span>{% endif -%}
+      </h2>
+      {%- if section.settings.text != blank -%}<p class="pg-lead sci-doctors__lead">{{ section.settings.text | escape }}</p>{%- endif -%}
+    </div>
+    <div class="sci-doctors__grid">
+      {%- for block in section.blocks -%}
+        <article class="sci-doctor" {{ block.shopify_attributes }}>
+          <div class="sci-doctor__media">
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(min-width: 1200px) 384px, 100vw', widths: '400, 600, 800, 1200', alt: block.settings.name }}
+            {%- elsif block.settings.use_design_photo -%}
+              <img src="{{ 'photo-doctor.jpg' | asset_url }}" alt="{{ block.settings.name | escape }}" width="400" height="370" loading="lazy">
+            {%- else -%}
+              <span class="sci-doctor__initials" aria-hidden="true">{{ block.settings.initials | escape }}</span>
+            {%- endif -%}
+          </div>
+          <div class="sci-doctor__info">
+            <h3 class="sci-doctor__name">{{ block.settings.name | escape }}</h3>
+            <p class="sci-doctor__role">{{ block.settings.role | escape }}</p>
+            {%- if block.settings.credential != blank -%}
+              <p class="sci-doctor__cred">{% render 'icon', name: 'check', color: '#3f3478' %}{{ block.settings.credential | escape }}</p>
+            {%- endif -%}
+          </div>
+        </article>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Doctors",
+  "class": "section-doctors",
+  "max_blocks": 9,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Meet the doctors" },
+    { "type": "text", "id": "heading_accent", "label": "Heading (lavender line)", "default": "behind your plan" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Every lelap doctor is licensed in Indonesia (STR verified) and trained in sleep and general medicine." }
+  ],
+  "blocks": [
+    { "type": "doctor", "name": "Doctor", "settings": [
+      { "type": "image_picker", "id": "image", "label": "Photo" },
+      { "type": "checkbox", "id": "use_design_photo", "label": "Use the design photo when no photo is chosen", "default": false },
+      { "type": "text", "id": "initials", "label": "Initials (shown without a photo)", "default": "AP" },
+      { "type": "text", "id": "name", "label": "Name", "default": "Dr. Andi Pratama, Sp.N" },
+      { "type": "text", "id": "role", "label": "Specialty", "default": "Neurologist, sleep medicine" },
+      { "type": "text", "id": "credential", "label": "Credential", "default": "STR verified · 15 years in practice" }
+    ] }
+  ],
+  "presets": [{ "name": "Doctors", "blocks": [
+    { "type": "doctor", "settings": { "use_design_photo": true, "initials": "RW", "name": "Dr. Ratna Wijaya", "role": "General practitioner", "credential": "STR verified · 12 years in practice" } },
+    { "type": "doctor", "settings": { "initials": "AP", "name": "Dr. Andi Pratama, Sp.N", "role": "Neurologist, sleep medicine", "credential": "STR verified · 15 years in practice" } },
+    { "type": "doctor", "settings": { "initials": "ML", "name": "Dr. Maya Lestari, Sp.KJ", "role": "Psychiatrist", "credential": "STR verified · 10 years in practice" } }
+  ] }]
+}
+{% endschema %}

@@ -1,0 +1,66 @@
+{%- comment -%} Figma: Product · How To Use ("Your nightly routine") — four time-stamped steps. {%- endcomment -%}
+{%- liquid
+  assign h = product.handle | default: 'sleep-classic'
+  capture last_title
+    render 'product-fact', product: product, handle: h, key: 'routine_4_title'
+  endcapture
+-%}
+<section class="pdp-routine">
+  <div class="container">
+    <h2 class="pdp-routine__title">{{ section.settings.heading }}</h2>
+    <ol class="pdp-routine__grid">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign step_title = block.settings.title
+          if forloop.last and block.settings.use_product_title and last_title != blank
+            assign step_title = last_title
+          endif
+        -%}
+        <li class="pdp-routine__card" {{ block.shopify_attributes }}>
+          <div class="pdp-routine__time">
+            <span class="pdp-routine__icon">{% render 'icon', name: block.settings.icon, color: '#1d2142', size: 16 %}</span>
+            {{ block.settings.time }}
+          </div>
+          <h3 class="pdp-routine__card-title">{{ step_title }}</h3>
+          <p class="pdp-routine__text">{{ block.settings.text }}</p>
+        </li>
+      {%- endfor -%}
+    </ol>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Nightly routine",
+  "tag": "div",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Your nightly routine" }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "options": [
+          { "value": "moon", "label": "Moon" }, { "value": "lamp", "label": "Lamp" }, { "value": "sun", "label": "Sun" },
+          { "value": "clock", "label": "Clock" }, { "value": "leaf", "label": "Leaf" } ], "default": "moon" },
+        { "type": "text", "id": "time", "label": "Time", "default": "9:30 pm" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Take one gummy" },
+        { "type": "checkbox", "id": "use_product_title", "label": "Use the formula's own title (last step)", "info": "Reads lelap.routine_4_title.", "default": false },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "About 30 to 60 minutes before you plan to sleep." }
+      ]
+    }
+  ],
+  "presets": [{
+    "name": "Nightly routine",
+    "blocks": [
+      { "type": "step", "settings": { "icon": "moon", "time": "9:30 pm", "title": "Take one gummy", "text": "About 30 to 60 minutes before you plan to sleep." } },
+      { "type": "step", "settings": { "icon": "lamp", "time": "9:45 pm", "title": "Dim the lights", "text": "Lower lights and screens help your melatonin work." } },
+      { "type": "step", "settings": { "icon": "moon", "time": "10:15 pm", "title": "Drift off", "text": "Most people feel drowsy within the hour.*" } },
+      { "type": "step", "settings": { "icon": "sun", "time": "6:30 am", "title": "Wake up clear", "use_product_title": true, "text": "A low dose is designed to wear off by morning.*" } }
+    ]
+  }],
+  "enabled_on": { "templates": ["product"] }
+}
+{% endschema %}

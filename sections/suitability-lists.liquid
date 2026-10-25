@@ -1,0 +1,51 @@
+{%- comment -%} Figma: Science & Doctors › Is It Right For You (two check/cross lists). {%- endcomment -%}
+<section class="pg sci-suit">
+  <div class="container sci-suit__inner">
+    {%- liquid
+      assign yes = section.blocks | where: 'type', 'suits'
+      assign no = section.blocks | where: 'type', 'caution'
+    -%}
+    <div class="sci-suit__card">
+      <h2 class="sci-suit__title">{{ section.settings.yes_title | escape }}</h2>
+      <ul class="sci-suit__list">
+        {%- for block in yes -%}
+          <li class="sci-suit__item" {{ block.shopify_attributes }}><span class="sci-suit__mark">{% render 'icon', name: 'check', color: '#ffffff' %}</span>{{ block.settings.text | escape }}</li>
+        {%- endfor -%}
+      </ul>
+    </div>
+    <div class="sci-suit__card sci-suit__card--outline">
+      <h2 class="sci-suit__title">{{ section.settings.no_title | escape }}</h2>
+      <ul class="sci-suit__list">
+        {%- for block in no -%}
+          <li class="sci-suit__item" {{ block.shopify_attributes }}><span class="sci-suit__mark">{% render 'icon', name: 'x', color: '#5f6179' %}</span>{{ block.settings.text | escape }}</li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Is it right for you",
+  "class": "section-suitability",
+  "max_blocks": 16,
+  "settings": [
+    { "type": "text", "id": "yes_title", "label": "Left list title", "default": "Lelap may suit you if you…" },
+    { "type": "text", "id": "no_title", "label": "Right list title", "default": "Talk to a doctor first if you…" }
+  ],
+  "blocks": [
+    { "type": "suits", "name": "May suit you if…", "settings": [ { "type": "text", "id": "text", "label": "Text", "default": "Take more than 30 minutes to fall asleep" } ] },
+    { "type": "caution", "name": "Talk to a doctor if…", "settings": [ { "type": "text", "id": "text", "label": "Text", "default": "Are pregnant, breastfeeding or under 18" } ] }
+  ],
+  "presets": [{ "name": "Is it right for you", "blocks": [
+    { "type": "suits", "settings": { "text": "Take more than 30 minutes to fall asleep" } },
+    { "type": "suits", "settings": { "text": "Wake up during the night and struggle to drift off" } },
+    { "type": "suits", "settings": { "text": "Travel across time zones or work night shifts" } },
+    { "type": "suits", "settings": { "text": "Want a lower-dose, doctor-guided option" } },
+    { "type": "caution", "settings": { "text": "Are pregnant, breastfeeding or under 18" } },
+    { "type": "caution", "settings": { "text": "Take blood thinners, antidepressants or immunosuppressants" } },
+    { "type": "caution", "settings": { "text": "Have an autoimmune condition, epilepsy or depression" } },
+    { "type": "caution", "settings": { "text": "Have had trouble sleeping for more than three weeks" } }
+  ] }]
+}
+{% endschema %}

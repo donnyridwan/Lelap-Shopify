@@ -1,0 +1,95 @@
+{%- comment -%}
+  Policy page (Figma: Policies · Terms of Service). Title and body come from the page in Shopify admin;
+  when the page has no content yet, the Figma Terms of Service copy is shown.
+  Left: "All policies" navigation (a dropdown on tablet/mobile). Use with templates/page.terms.json.
+{%- endcomment -%}
+{%- liquid
+  assign title = page.title | default: section.settings.fallback_title
+  assign current_label = title
+  for block in section.blocks
+    if block.settings.link == request.path or block.settings.title == page.title
+      assign current_label = block.settings.title
+    endif
+  endfor
+-%}
+<section class="policy">
+  <header class="policy__head">
+    <div class="container">
+      <p class="policy__crumbs">
+        <a href="{{ section.settings.crumb_link | default: '/pages/help' }}">{{ section.settings.crumb_parent | escape }}</a>
+        <span aria-hidden="true">/</span>
+        <span>{{ section.settings.crumb_current | escape }}</span>
+      </p>
+      <h1 class="policy__title">{{ title | escape }}</h1>
+      {%- if section.settings.updated != blank -%}<p class="policy__updated">{{ section.settings.updated | escape }}</p>{%- endif -%}
+    </div>
+  </header>
+  <div class="container policy__body">
+    <nav class="policy__nav" aria-label="{{ section.settings.nav_title | escape }}">
+      <details class="policy__menu" data-policy-menu>
+        <summary class="policy__menu-toggle"><span>{{ current_label | escape }}</span>{% render 'icon', name: 'chevd', size: 18 %}</summary>
+        <div class="policy__menu-list">
+          <p class="policy__nav-title">{{ section.settings.nav_title | escape }}</p>
+          {%- for block in section.blocks -%}
+            {%- liquid
+              assign active = false
+              if block.settings.link == request.path or block.settings.title == page.title
+                assign active = true
+              endif
+            -%}
+            <a href="{{ block.settings.link | default: '#' }}" class="policy__link{% if active %} is-active{% endif %}"{% if active %} aria-current="page"{% endif %} {{ block.shopify_attributes }}>
+              {% render 'icon', name: 'doc', size: 16, color: '#5f6179' %}<span>{{ block.settings.title | escape }}</span>
+            </a>
+          {%- endfor -%}
+        </div>
+      </details>
+    </nav>
+    <article class="policy__content">
+      {%- if section.settings.notice != blank -%}
+        <p class="policy__notice">{% render 'icon', name: 'info', size: 16 %}<span>{{ section.settings.notice | escape }}</span></p>
+      {%- endif -%}
+      <div class="policy__rte">
+        {%- if page.content != blank -%}{{ page.content }}{%- else -%}{{ section.settings.fallback_content }}{%- endif -%}
+      </div>
+    </article>
+  </div>
+</section>
+<script>
+  (function () {
+    var mq = window.matchMedia('(min-width: 1200px)');
+    var sync = function () { document.querySelectorAll('[data-policy-menu]').forEach(function (d) { d.open = mq.matches; }); };
+    sync();
+    if (mq.addEventListener) mq.addEventListener('change', sync);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Policy page",
+  "class": "section-policy-page",
+  "settings": [
+    { "type": "text", "id": "crumb_parent", "label": "Breadcrumb parent", "default": "Help" },
+    { "type": "url", "id": "crumb_link", "label": "Breadcrumb parent link" },
+    { "type": "text", "id": "crumb_current", "label": "Breadcrumb current", "default": "Policies" },
+    { "type": "text", "id": "updated", "label": "Last updated", "default": "Last updated 1 October 2026" },
+    { "type": "text", "id": "nav_title", "label": "Navigation title", "default": "All policies" },
+    { "type": "textarea", "id": "notice", "label": "Notice", "info": "Yellow note above the text. Clear it once your legal counsel has reviewed the wording.", "default": "Template. Final wording must be reviewed by your legal counsel before launch." },
+    { "type": "text", "id": "fallback_title", "label": "Title (when no page title)", "default": "Terms of Service" },
+    { "type": "richtext", "id": "fallback_content", "label": "Text shown while the page has no content", "default": "<h2>1. Who we are</h2><p>Lelap Health (“lelap”, “we”) sells sleep supplements and connects customers with independent licensed doctors who review each order. By using our website or placing an order, you agree to these terms.</p><h2>2. Our telehealth service</h2><p>Doctors on lelap are independent practitioners. They review your assessment and decide whether a product is suitable for you. A doctor may decline an order, ask for more information, or recommend in-person care.</p><h2>3. Subscriptions and billing</h2><p>Subscriptions renew automatically at the interval you choose. We charge your saved payment method 2 days before each delivery. You can skip, pause, change or cancel anytime from your account before that date.</p><h2>4. Refunds</h2><p>If a doctor declines your order, we refund the full amount. Our 30-Night Sleep Promise covers your first order of each formula. See Refunds &amp; 30-Night Promise for details.</p><h2>5. Your responsibilities</h2><p>You agree to answer the assessment truthfully, keep your health profile up to date, and contact a doctor or emergency services if you experience serious side effects.</p><h2>6. Contact</h2><p>Questions about these terms? Email legal@lelap.com or message our care team from your account.</p>" }
+  ],
+  "blocks": [
+    { "type": "policy", "name": "Policy link", "settings": [
+      { "type": "text", "id": "title", "label": "Title", "default": "Terms of Service" },
+      { "type": "url", "id": "link", "label": "Link" }
+    ] }
+  ],
+  "presets": [{ "name": "Policy page", "blocks": [
+    { "type": "policy", "settings": { "title": "Terms of Service", "link": "/policies/terms-of-service" } },
+    { "type": "policy", "settings": { "title": "Privacy Policy", "link": "/policies/privacy-policy" } },
+    { "type": "policy", "settings": { "title": "Telehealth Consent", "link": "/pages/telehealth-consent" } },
+    { "type": "policy", "settings": { "title": "Subscription Terms", "link": "/policies/subscription-policy" } },
+    { "type": "policy", "settings": { "title": "Shipping Policy", "link": "/policies/shipping-policy" } },
+    { "type": "policy", "settings": { "title": "Refunds & 30-Night Promise", "link": "/policies/refund-policy" } }
+  ] }]
+}
+{% endschema %}

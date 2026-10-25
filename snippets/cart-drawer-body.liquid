@@ -1,0 +1,229 @@
+{%- comment -%}
+  Cart contents shared by the drawer (context: 'drawer', default) and the /cart page (context: 'page').
+  Figma: Cart Drawer (240:1166) and Cart Drawer · Empty (240:1250).
+  Copy can be overridden with theme settings when the lead adds them (cart_* keys); design copy is the default.
+{%- endcomment -%}
+{%- liquid
+  assign ctx = context | default: 'drawer'
+  assign quiz_url = settings.quiz_url | default: '/pages/sleep-quiz'
+  assign threshold = settings.free_shipping_threshold | default: 0 | times: 100
+  assign subtotal = cart.items_subtotal_price
+  assign free_ship = false
+  if threshold == 0 or subtotal >= threshold
+    assign free_ship = true
+  endif
+
+  assign savings = 0
+  for item in cart.items
+    if item.selling_plan_allocation and item.selling_plan_allocation.compare_at_price > item.selling_plan_allocation.price
+      assign diff = item.selling_plan_allocation.compare_at_price | minus: item.selling_plan_allocation.price | times: item.quantity
+      assign savings = savings | plus: diff
+    endif
+  endfor
+
+  assign in_cart = ''
+  for item in cart.items
+    assign in_cart = in_cart | append: ' ' | append: item.product.handle
+  endfor
+  assign in_cart = in_cart | append: ' '
+  assign upsell = nil
+  assign upsell_order = 'sleep-calm,sleep-deep,sleep-reset,sleep-classic' | split: ','
+  for uh in upsell_order
+    assign needle = ' ' | append: uh | append: ' '
+    unless in_cart contains needle
+      assign cand = all_products[uh]
+      if cand.id and cand.available
+        assign upsell = cand
+        break
+      endif
+    endunless
+  endfor
+
+  assign assessment = cart.attributes.assessment | default: cart.attributes.Assessment
+-%}
+<div class="cart-panel cart-panel--{{ ctx }}" data-cart-drawer-inner data-item-count="{{ cart.item_count }}">
+  <div class="cart-panel__header">
+    {%- if ctx == 'page' -%}
+      <h1 class="cart-panel__title" id="CartPageTitle">{{ settings.cart_title | default: 'Your cart' }}{% if cart.item_count > 0 %} ({{ cart.item_count }}){% endif %}</h1>
+    {%- else -%}
+      <h2 class="cart-panel__title" id="CartDrawerTitle">{{ settings.cart_title | default: 'Your cart' }}{% if cart.item_count > 0 %} ({{ cart.item_count }}){% endif %}</h2>
+      <button type="button" class="cart-panel__close" data-cart-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon', name: 'x', color: '#1d2142', size: 22 %}</button>
+    {%- endif -%}
+  </div>
+
+  {%- if cart.item_count > 0 -%}
+    <div class="cart-panel__body">
+      <div class="cart-ship">
+        <p class="cart-ship__msg">{% render 'icon', name: 'truck', color: '#3f3478', size: 16 %}
+          {%- if free_ship -%}
+            {{ settings.cart_free_shipping_unlocked | default: 'You’ve unlocked free shipping' }}
+          {%- else -%}
+            {%- assign remaining = threshold | minus: subtotal | money_without_trailing_zeros -%}
+            {{ settings.cart_free_shipping_away | default: 'You’re [amount] away from free shipping' | replace: '[amount]', remaining }}
+          {%- endif -%}
+        </p>
+        {%- liquid
+          assign pct = 100
+          unless free_ship
+            assign pct = subtotal | times: 100 | divided_by: threshold
+          endunless
+        -%}
+        <span class="cart-ship__bar"><span style="width: {{ pct }}%"></span></span>
+      </div>
+
+      <ul class="cart-items" role="list">
+        {%- for item in cart.items -%}
+          {%- liquid
+            assign alloc = item.selling_plan_allocation
+            assign was = 0
+            if alloc and alloc.compare_at_price > alloc.price
+              assign was = alloc.compare_at_price | times: item.quantity
+            elsif item.original_line_price > item.final_line_price
+              assign was = item.original_line_price
+            endif
+            assign delivery = item.properties.Delivery
+          -%}
+          <li class="cart-item" data-cart-item="{{ item.key }}">
+            <a href="{{ item.url }}" class="cart-item__media" tabindex="-1" aria-hidden="true">
+              {%- if item.image -%}
+                {{ item.image | image_url: width: 168 | image_tag: loading: 'lazy', sizes: '84px', widths: '84, 168', alt: '', class: 'cart-item__img' }}
+              {%- else -%}
+                {% render 'product-image', handle: item.product.handle, class: 'cart-item__img', alt: '' %}
+              {%- endif -%}
+            </a>
+            <div class="cart-item__info">
+              <div class="cart-item__top">
+                <a href="{{ item.url }}" class="cart-item__title">{{ item.product.title }}</a>
+                <span class="cart-item__price">
+                  {%- if was > 0 -%}<s>{{ was | money_without_trailing_zeros }}</s>{%- endif -%}
+                  <span>{{ item.final_line_price | money_without_trailing_zeros }}</span>
+                </span>
+              </div>
+              <p class="cart-item__meta">
+                {%- if alloc -%}
+                  {{ settings.cart_subscription_label | default: 'Subscription' }}, {{ alloc.selling_plan.name | downcase }}
+                {%- elsif delivery != blank -%}
+                  {{ settings.cart_subscription_label | default: 'Subscription' }}, {{ delivery | downcase }}
+                {%- else -%}
+                  {{ 'products.product.one_time' | t }}
+                {%- endif -%}
+                {%- unless item.product.has_only_default_variant -%} · {{ item.variant.title }}{%- endunless -%}
+              </p>
+              <div class="cart-item__actions">
+                <div class="cart-qty">
+                  <a class="cart-qty__btn" href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity={{ item.quantity | minus: 1 }}" data-cart-qty data-key="{{ item.key }}" data-qty="{{ item.quantity | minus: 1 }}" aria-label="{{ settings.cart_decrease | default: 'Decrease quantity' }}">{% render 'icon', name: 'minus', color: '#1d2142', size: 14 %}</a>
+                  <span class="cart-qty__value" aria-live="polite">{{ item.quantity }}</span>
+                  <a class="cart-qty__btn" href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity={{ item.quantity | plus: 1 }}" data-cart-qty data-key="{{ item.key }}" data-qty="{{ item.quantity | plus: 1 }}" aria-label="{{ settings.cart_increase | default: 'Increase quantity' }}">{% render 'icon', name: 'plus', color: '#1d2142', size: 14 %}</a>
+                </div>
+                <a class="cart-item__remove" href="{{ item.url_to_remove }}" data-cart-qty data-key="{{ item.key }}" data-qty="0">{{ 'cart.remove' | t }}</a>
+              </div>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      {%- if assessment != blank or settings.cart_show_assessment -%}
+        <div class="cart-status">
+          <span class="cart-status__icon">{% render 'icon', name: 'check', color: '#ffffff', size: 12 %}</span>
+          <p>{{ settings.cart_assessment_text | default: 'Sleep assessment completed. A doctor will review it after you check out.' }}</p>
+        </div>
+      {%- endif -%}
+
+      {%- if upsell != blank -%}
+        {%- assign uv = upsell.selected_or_first_available_variant -%}
+        {%- capture upsell_line -%}{% render 'product-fact', product: upsell, key: 'upsell' %}{%- endcapture -%}
+        <div class="cart-upsell">
+          <a href="{{ upsell.url }}" class="cart-upsell__media" tabindex="-1" aria-hidden="true">{% render 'product-image', product: upsell, width: 120, sizes: '56px', class: 'cart-upsell__img', alt: '' %}</a>
+          <div class="cart-upsell__info">
+            <p class="cart-upsell__title">{{ settings.cart_upsell_prefix | default: 'Add' }} {{ upsell.title }}</p>
+            <p class="cart-upsell__line">{{ upsell_line }}</p>
+          </div>
+          {%- form 'product', upsell, data-product-form: '', class: 'cart-upsell__form' -%}
+            <input type="hidden" name="id" value="{{ uv.id }}">
+            <input type="hidden" name="quantity" value="1">
+            {%- if uv.selling_plan_allocations.size > 0 -%}<input type="hidden" name="selling_plan" value="{{ uv.selling_plan_allocations.first.selling_plan.id }}">{%- endif -%}
+            <button type="submit" class="cart-upsell__btn">{{ settings.cart_upsell_button | default: 'Add' }}</button>
+          {%- endform -%}
+        </div>
+      {%- endif -%}
+
+      {%- if ctx == 'page' -%}
+        <form action="{{ routes.cart_url }}" method="post" id="CartNoteForm" class="cart-note">
+          <label class="field__label" for="CartNote">{{ settings.cart_note_label | default: 'Order note' }}</label>
+          <textarea class="field__input" id="CartNote" name="note" rows="3">{{ cart.note }}</textarea>
+        </form>
+      {%- endif -%}
+    </div>
+
+    <div class="cart-panel__footer">
+      <dl class="cart-totals">
+        <div><dt>{{ 'cart.subtotal' | t }}</dt><dd>{{ cart.items_subtotal_price | money_without_trailing_zeros }}</dd></div>
+        {%- if savings > 0 -%}
+          <div class="cart-totals__save"><dt>{{ settings.cart_savings_label | default: 'Subscription savings' }}</dt><dd>−{{ savings | money_without_trailing_zeros }}</dd></div>
+        {%- endif -%}
+        {%- for discount in cart.cart_level_discount_applications -%}
+          <div class="cart-totals__save"><dt>{{ discount.title }}</dt><dd>−{{ discount.total_allocated_amount | money_without_trailing_zeros }}</dd></div>
+        {%- endfor -%}
+        <div><dt>{{ settings.cart_shipping_label | default: 'Shipping' }}</dt><dd>{% if free_ship %}{{ settings.cart_shipping_free | default: 'Free' }}{% else %}{{ settings.cart_shipping_calc | default: 'Calculated at checkout' }}{% endif %}</dd></div>
+        <div class="cart-totals__total"><dt>{{ settings.cart_total_label | default: 'Total' }}</dt><dd>{{ cart.total_price | money_without_trailing_zeros }}</dd></div>
+      </dl>
+      <form action="{{ routes.cart_url }}" method="post" class="cart-checkout">
+        {%- if ctx == 'page' -%}<input type="hidden" name="note" value="{{ cart.note | escape }}" data-cart-note-mirror>{%- endif -%}
+        <button type="submit" name="checkout" class="btn btn--primary btn--block">{{ settings.cart_checkout_label | default: 'Checkout securely' }}</button>
+      </form>
+      <p class="cart-panel__secure">{% render 'icon', name: 'lock', size: 13 %}{{ settings.cart_payments_text | default: 'Cards, Apple Pay, Google Pay, PayPal and Klarna' }}</p>
+    </div>
+  {%- else -%}
+    <div class="cart-empty">
+      <span class="cart-empty__icon">{% render 'icon', name: 'bag', color: '#1d2142', size: 36 %}</span>
+      <p class="cart-empty__title">{{ 'cart.empty' | t }}</p>
+      <p class="cart-empty__text">{{ settings.cart_empty_text | default: 'Not sure where to start? Take the 2-minute quiz and a doctor will match you to a formula.' }}</p>
+      <a href="{{ quiz_url }}" class="btn btn--primary">{{ settings.cart_empty_button | default: 'Take the sleep quiz' }}</a>
+      <a href="{{ routes.all_products_collection_url }}" class="link-underline">{{ settings.cart_empty_link | default: 'Shop all formulas' }}</a>
+      {%- liquid
+        assign pop_h = settings.cart_popular_handle | default: 'sleep-classic'
+        assign pop = all_products[pop_h]
+        unless pop.id
+          assign pop = nil
+        endunless
+        if pop != blank
+          assign pv = pop.selected_or_first_available_variant
+          assign pop_price = pv.price | times: 0.8 | round
+          if pv.selling_plan_allocations.size > 0
+            assign pop_price = pv.selling_plan_allocations.first.price
+          endif
+          assign pop_title = pop.title
+        else
+          capture pop_price_s
+            render 'product-fact', handle: pop_h, key: 'price_sub'
+          endcapture
+          assign pop_price = pop_price_s | plus: 0
+          capture pop_title
+            render 'product-fact', handle: pop_h, key: 'title'
+          endcapture
+        endif
+      -%}
+      <div class="cart-popular">
+        <p class="cart-popular__label">{{ settings.cart_popular_label | default: 'Most popular' }}</p>
+        <div class="cart-popular__row">
+          <a href="{% if pop != blank %}{{ pop.url }}{% else %}/products/{{ pop_h }}{% endif %}" class="cart-popular__media" tabindex="-1" aria-hidden="true">{% render 'product-image', product: pop, handle: pop_h, width: 120, sizes: '56px', class: 'cart-upsell__img', alt: '' %}</a>
+          <div class="cart-popular__info">
+            <a href="{% if pop != blank %}{{ pop.url }}{% else %}/products/{{ pop_h }}{% endif %}" class="cart-popular__title">{{ pop_title }}</a>
+            <p class="cart-popular__price">{{ settings.cart_from_label | default: 'From' }} {{ pop_price | money_without_trailing_zeros }} / {{ settings.cart_month_label | default: 'month' }}</p>
+          </div>
+          {%- if pop != blank and pv.available -%}
+            {%- form 'product', pop, data-product-form: '', class: 'cart-popular__form' -%}
+              <input type="hidden" name="id" value="{{ pv.id }}">
+              <input type="hidden" name="quantity" value="1">
+              {%- if pv.selling_plan_allocations.size > 0 -%}<input type="hidden" name="selling_plan" value="{{ pv.selling_plan_allocations.first.selling_plan.id }}">{%- endif -%}
+              <button type="submit" class="cart-popular__add" aria-label="{{ 'products.product.add_to_cart' | t }}: {{ pop_title | escape }}">{% render 'icon', name: 'plus', color: '#ffffff', size: 14 %}</button>
+            {%- endform -%}
+          {%- else -%}
+            <a href="/products/{{ pop_h }}" class="cart-popular__add" aria-label="{{ pop_title | escape }}">{% render 'icon', name: 'plus', color: '#ffffff', size: 14 %}</a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+  <p class="visually-hidden" role="status" data-cart-live></p>
+</div>

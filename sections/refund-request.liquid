@@ -1,0 +1,210 @@
+{%- comment -%}
+  Refund request (Figma: Help · Refund Request / Help · Refund Request Sent).
+  Uses Shopify's contact form; the "sent" state renders when form.posted_successfully?.
+  Logged-in customers see their latest order; guests enter their email and order number.
+{%- endcomment -%}
+{%- liquid
+  assign order = blank
+  if customer and customer.orders_count > 0
+    assign order = customer.orders.first
+  endif
+  assign item = blank
+  assign order_label = ''
+  assign product_title = ''
+  assign card_label = ''
+  assign eligible = true
+  if order != blank
+    assign item = order.line_items.first
+    assign product_title = item.product.title | default: item.title
+    assign order_label = order.name | remove: '#' | append: ' · ' | append: product_title
+    assign base_date = order.created_at
+    assign date_word = section.settings.ordered_word
+    if item.fulfillment != blank
+      assign base_date = item.fulfillment.created_at
+      assign date_word = section.settings.delivered_word
+    endif
+    assign base_ts = base_date | date: '%s' | plus: 0
+    assign until_ts = section.settings.window_days | times: 86400 | plus: base_ts
+    assign now_ts = 'now' | date: '%s' | plus: 0
+    if now_ts > until_ts
+      assign eligible = false
+    endif
+    for t in order.transactions
+      if t.payment_details.credit_card_last_four != blank
+        assign card_label = t.payment_details.credit_card_company | append: ' •••• ' | append: t.payment_details.credit_card_last_four
+        break
+      endif
+    endfor
+  endif
+  assign refund_to = card_label | default: section.settings.method_title
+-%}
+<section class="refund" data-refund>
+  {%- form 'contact', id: 'RefundRequestForm', class: 'refund__form', data-refund-form: '' -%}
+    {%- if form.posted_successfully? -%}
+      <div class="container refund__sent">
+        <span class="refund__sent-icon">{% render 'icon', name: 'check', color: '#2f8f5b', size: 32 %}</span>
+        <h1 class="refund__sent-title">{{ section.settings.sent_heading | escape }}</h1>
+        <p class="refund__sent-text">
+          {%- capture email_html -%}<span data-refund-fill="email">{{ customer.email | default: section.settings.sent_email_fallback | escape }}</span>{%- endcapture -%}
+          {{ section.settings.sent_text | escape | replace: '[email]', email_html }}
+        </p>
+        <dl class="refund__summary">
+          <div><dt>{{ section.settings.label_reference | escape }}</dt><dd data-refund-fill="ref">—</dd></div>
+          <div><dt>{{ section.settings.label_order | escape }}</dt><dd data-refund-fill="order">{{ order_label | default: '—' }}</dd></div>
+          <div><dt>{{ section.settings.label_amount | escape }}</dt><dd data-refund-fill="amount">{% if order != blank %}{{ order.total_price | money }}{% else %}—{% endif %}</dd></div>
+          <div><dt>{{ section.settings.label_refund_to | escape }}</dt><dd data-refund-fill="method">{{ refund_to | escape }}</dd></div>
+          <div><dt>{{ section.settings.label_expected | escape }}</dt><dd>{{ section.settings.method_time | escape }}</dd></div>
+        </dl>
+        {%- if section.settings.sent_note != blank -%}
+          <p class="refund__note">{% render 'icon', name: 'chat', size: 18 %}<span>{{ section.settings.sent_note | escape }}</span></p>
+        {%- endif -%}
+        <div class="refund__sent-actions">
+          <a href="{{ section.settings.sent_button_link | default: routes.account_url }}" class="btn btn--primary">{{ section.settings.sent_button | escape }}</a>
+          {%- if section.settings.sent_button2 != blank -%}
+            <a href="{{ section.settings.sent_button2_link | default: routes.account_url }}" class="btn btn--outline">{{ section.settings.sent_button2 | escape }}</a>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- else -%}
+      <div class="container refund__inner">
+        <a href="{{ section.settings.back_link | default: '/pages/help' }}" class="refund__back">{% render 'icon', name: 'back', size: 16, color: '#5f6179' %}{{ section.settings.back_label | escape }}</a>
+        <h1 class="refund__title">{{ section.settings.heading | escape }}</h1>
+        <p class="refund__lead">{{ section.settings.text | escape }}</p>
+
+        <input type="hidden" name="contact[subject]" value="{{ section.settings.subject | escape }}">
+        <input type="hidden" name="contact[Reference]" value="" data-refund-ref>
+        {%- if order != blank -%}
+          <input type="hidden" name="contact[email]" value="{{ customer.email | escape }}">
+          <input type="hidden" name="contact[name]" value="{{ customer.name | escape }}">
+          <input type="hidden" name="contact[Order]" value="{{ order_label | escape }}">
+          <input type="hidden" name="contact[Amount]" value="{{ order.total_price | money | escape }}">
+          <div class="refund__order">
+            <span class="refund__thumb">
+              {%- if item.image != blank -%}
+                {{ item.image | image_url: width: 112 | image_tag: width: 56, height: 56, alt: product_title, loading: 'eager' }}
+              {%- else -%}
+                {% render 'product-image', handle: item.product.handle, width: 112, alt: product_title %}
+              {%- endif -%}
+            </span>
+            <span class="refund__order-info">
+              <span class="refund__order-name">{{ order_label }}</span>
+              <span class="refund__order-meta">{{ date_word }} {{ base_date | date: '%-d %b' }} · {{ section.settings.eligible_until | escape }} {{ until_ts | date: '%-d %b' }}</span>
+            </span>
+            {%- if eligible -%}
+              <span class="refund__badge">{% render 'icon', name: 'check', color: '#2f8f5b', size: 12 %}{{ section.settings.eligible_label | escape }}</span>
+            {%- else -%}
+              <span class="refund__badge refund__badge--muted">{{ section.settings.ineligible_label | escape }}</span>
+            {%- endif -%}
+          </div>
+        {%- else -%}
+          <div class="refund__order refund__order--guest">
+            <div class="field">
+              <label class="field__label" for="RefundEmail">{{ section.settings.email_label | escape }}</label>
+              <input class="field__input" id="RefundEmail" type="email" name="contact[email]" autocomplete="email" required value="{{ form.email }}" data-refund-email>
+            </div>
+            <div class="field">
+              <label class="field__label" for="RefundOrder">{{ section.settings.order_label | escape }}</label>
+              <input class="field__input" id="RefundOrder" type="text" name="contact[Order]" required placeholder="{{ section.settings.order_placeholder | escape }}" data-refund-order>
+            </div>
+          </div>
+        {%- endif -%}
+
+        <div class="refund__card">
+          {%- if form.errors -%}
+            <p class="field__error refund__error" role="alert">{% render 'icon', name: 'alert', size: 16 %}{{ form.errors | default_errors }}</p>
+          {%- endif -%}
+          <fieldset class="refund__group">
+            <legend class="refund__label">{{ section.settings.q_nights | escape }}</legend>
+            <div class="refund__pills">
+              {%- assign nights = section.settings.nights_options | newline_to_br | split: '<br />' -%}
+              {%- for n in nights -%}
+                {%- assign n = n | strip -%}
+                <label class="refund__pill"><input type="radio" name="contact[Nights taken]" value="{{ n | escape }}"{% if forloop.last %} checked{% endif %} required><span>{{ n | escape }}</span></label>
+              {%- endfor -%}
+            </div>
+          </fieldset>
+          <fieldset class="refund__group">
+            <legend class="refund__label">{{ section.settings.q_reason | escape }}</legend>
+            {%- assign reasons = section.settings.reason_options | newline_to_br | split: '<br />' -%}
+            {%- for r in reasons -%}
+              {%- assign r = r | strip -%}
+              <label class="refund__option"><input type="radio" name="contact[Reason]" value="{{ r | escape }}"{% if forloop.first %} checked{% endif %} required><span class="refund__radio" aria-hidden="true">{% render 'icon', name: 'check', color: '#ffffff', size: 11 %}</span><span class="refund__option-text"><span class="refund__option-title">{{ r | escape }}</span></span></label>
+            {%- endfor -%}
+          </fieldset>
+          <div class="refund__more">
+            <label class="refund__more-label" for="RefundMore">{{ section.settings.more_label | escape }}</label>
+            <textarea class="field__input refund__textarea" id="RefundMore" name="contact[body]" placeholder="{{ section.settings.more_placeholder | escape }}"></textarea>
+          </div>
+          <fieldset class="refund__group">
+            <legend class="refund__label">{{ section.settings.q_refund_to | escape }}</legend>
+            <label class="refund__option"><input type="radio" name="contact[Refund to]" value="{{ refund_to | escape }}" checked><span class="refund__radio" aria-hidden="true">{% render 'icon', name: 'check', color: '#ffffff', size: 11 %}</span><span class="refund__option-text"><span class="refund__option-title">{{ section.settings.method_title | escape }}</span><span class="refund__option-sub">{% if card_label != blank %}{{ card_label }} · {% endif %}{{ section.settings.method_time | escape }}</span></span></label>
+          </fieldset>
+          <label class="refund__check">
+            <input type="checkbox" name="contact[Also cancel subscription]" value="Yes">
+            <span class="refund__box" aria-hidden="true">{% render 'icon', name: 'check', color: '#ffffff', size: 12 %}</span>
+            <span>{% if product_title != blank %}{{ section.settings.cancel_label | replace: '[product]', product_title }}{% else %}{{ section.settings.cancel_label_generic | escape }}{% endif %}</span>
+          </label>
+          <button type="submit" class="btn btn--primary btn--block">{{ section.settings.submit | escape }}</button>
+          <p class="refund__foot">
+            {%- if order != blank -%}{{ section.settings.amount_prefix | escape }} {{ order.total_price | money }}. {% endif -%}
+            {{ section.settings.foot | escape }}
+          </p>
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endform -%}
+</section>
+<script src="{{ 'refund-request.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Refund request",
+  "class": "section-refund-request",
+  "settings": [
+    { "type": "header", "content": "Request form" },
+    { "type": "text", "id": "back_label", "label": "Back link label", "default": "Help center" },
+    { "type": "url", "id": "back_link", "label": "Back link" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Request a refund" },
+    { "type": "textarea", "id": "text", "label": "Intro", "default": "Our 30-Night Sleep Promise: if you’re not sleeping better after giving lelap a real try, we’ll refund your first order. No need to send anything back." },
+    { "type": "text", "id": "subject", "label": "Email subject", "default": "Refund request" },
+    { "type": "range", "id": "window_days", "label": "Refund window", "min": 7, "max": 90, "step": 1, "unit": "d", "default": 30 },
+    { "type": "text", "id": "delivered_word", "label": "Delivered label", "default": "Delivered" },
+    { "type": "text", "id": "ordered_word", "label": "Ordered label (not yet shipped)", "default": "Ordered" },
+    { "type": "text", "id": "eligible_until", "label": "Eligible until label", "default": "Eligible until" },
+    { "type": "text", "id": "eligible_label", "label": "Eligible badge", "default": "Eligible" },
+    { "type": "text", "id": "ineligible_label", "label": "Outside window badge", "default": "Past 30 nights" },
+    { "type": "text", "id": "email_label", "label": "Guest email label", "default": "Email used for your order" },
+    { "type": "text", "id": "order_label", "label": "Guest order number label", "default": "Order number" },
+    { "type": "text", "id": "order_placeholder", "label": "Order number placeholder", "default": "e.g. LLP-24117" },
+    { "type": "text", "id": "q_nights", "label": "Nights question", "default": "How many nights did you take it?" },
+    { "type": "textarea", "id": "nights_options", "label": "Nights options (one per line)", "default": "Under 14\n14 to 30\n30 or more" },
+    { "type": "text", "id": "q_reason", "label": "Reason question", "default": "What happened?" },
+    { "type": "textarea", "id": "reason_options", "label": "Reasons (one per line)", "default": "I didn’t notice a difference in my sleep\nI felt groggy in the morning\nI didn’t like the taste\nSomething else" },
+    { "type": "text", "id": "more_label", "label": "Comment label", "default": "Tell us more (optional)" },
+    { "type": "text", "id": "more_placeholder", "label": "Comment placeholder", "default": "Anything that would help your doctor or our team…" },
+    { "type": "text", "id": "q_refund_to", "label": "Refund to label", "default": "Refund to" },
+    { "type": "text", "id": "method_title", "label": "Refund method", "default": "Original payment method" },
+    { "type": "text", "id": "method_time", "label": "Refund timing", "default": "3–5 business days" },
+    { "type": "text", "id": "cancel_label", "label": "Cancel subscription label", "info": "[product] = product in the order", "default": "Also cancel my [product] subscription" },
+    { "type": "text", "id": "cancel_label_generic", "label": "Cancel subscription label (guest)", "default": "Also cancel my subscription" },
+    { "type": "text", "id": "submit", "label": "Submit button", "default": "Submit refund request" },
+    { "type": "text", "id": "amount_prefix", "label": "Amount prefix", "default": "Refund:" },
+    { "type": "text", "id": "foot", "label": "Footnote", "default": "Your doctor may reach out to suggest a different formula or dose first." },
+    { "type": "header", "content": "Request sent" },
+    { "type": "text", "id": "sent_heading", "label": "Heading", "default": "Refund request received" },
+    { "type": "textarea", "id": "sent_text", "label": "Text", "info": "[email] = the customer’s email", "default": "We’ve sent a confirmation to [email]. Most refunds are approved within 1 business day." },
+    { "type": "text", "id": "sent_email_fallback", "label": "Email fallback", "default": "your email" },
+    { "type": "text", "id": "label_reference", "label": "Reference label", "default": "Reference" },
+    { "type": "text", "id": "label_order", "label": "Order label", "default": "Order" },
+    { "type": "text", "id": "label_amount", "label": "Amount label", "default": "Amount" },
+    { "type": "text", "id": "label_refund_to", "label": "Refund to label", "default": "Refund to" },
+    { "type": "text", "id": "label_expected", "label": "Expected label", "default": "Expected" },
+    { "type": "textarea", "id": "sent_note", "label": "Note", "default": "Want to try a different formula instead? Dr. Ratna can suggest one, and your first pouch of it is covered by the promise too." },
+    { "type": "text", "id": "sent_button", "label": "Primary button", "default": "Back to my account" },
+    { "type": "url", "id": "sent_button_link", "label": "Primary button link" },
+    { "type": "text", "id": "sent_button2", "label": "Outline button", "default": "Message Dr. Ratna" },
+    { "type": "url", "id": "sent_button2_link", "label": "Outline button link" }
+  ],
+  "presets": [{ "name": "Refund request" }]
+}
+{% endschema %}

@@ -1,0 +1,43 @@
+{%- comment -%} Figma: Help Center › Contact ("Still need help?"). {%- endcomment -%}
+<section class="help-contact">
+  <div class="container">
+    <h2 class="help-h2">{{ section.settings.heading | escape }}</h2>
+    {%- if section.settings.text != blank -%}<p class="help-contact__lead">{{ section.settings.text | escape }}</p>{%- endif -%}
+    <div class="help-contact__grid">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="help-channel" {{ block.shopify_attributes }}>{%- else -%}<div class="help-channel" {{ block.shopify_attributes }}>{%- endif -%}
+          <span class="help-channel__icon">{% render 'icon', name: block.settings.icon, color: '#1d2142' %}</span>
+          <span class="help-channel__title">{{ block.settings.title | escape }}</span>
+          <span class="help-channel__value">{{ block.settings.value | escape }}</span>
+          <span class="help-channel__note">{{ block.settings.note | escape }}</span>
+        {%- if block.settings.link != blank -%}</a>{%- else -%}</div>{%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Contact options",
+  "class": "section-help-contact",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Still need help?" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Our care team is online every day, 08:00 to 22:00 WIB. Medical questions go straight to a doctor." }
+  ],
+  "blocks": [
+    { "type": "channel", "name": "Channel", "settings": [
+      { "type": "select", "id": "icon", "label": "Icon", "default": "phone", "options": [{"value": "truck", "label": "truck"}, {"value": "steth", "label": "steth"}, {"value": "phone", "label": "phone"}, {"value": "spark", "label": "spark"}, {"value": "refresh", "label": "refresh"}, {"value": "cart", "label": "cart"}, {"value": "moon", "label": "moon"}, {"value": "star", "label": "star"}, {"value": "chev", "label": "chev"}, {"value": "search", "label": "search"}, {"value": "check", "label": "check"}, {"value": "back", "label": "back"}, {"value": "bottle", "label": "bottle"}, {"value": "x", "label": "x"}, {"value": "close", "label": "close"}, {"value": "shield", "label": "shield"}, {"value": "minus", "label": "minus"}, {"value": "plus", "label": "plus"}, {"value": "menu", "label": "menu"}, {"value": "lock", "label": "lock"}, {"value": "info", "label": "info"}, {"value": "leaf", "label": "leaf"}, {"value": "sun", "label": "sun"}, {"value": "lamp", "label": "lamp"}, {"value": "drop", "label": "drop"}, {"value": "target", "label": "target"}, {"value": "factory", "label": "factory"}, {"value": "flask", "label": "flask"}, {"value": "bag", "label": "bag"}, {"value": "card", "label": "card"}, {"value": "p", "label": "p"}, {"value": "clock", "label": "clock"}, {"value": "tag", "label": "tag"}, {"value": "chevd", "label": "chevd"}, {"value": "chat", "label": "chat"}, {"value": "eye", "label": "eye"}, {"value": "mail", "label": "mail"}, {"value": "home", "label": "home"}, {"value": "box", "label": "box"}, {"value": "pin", "label": "pin"}, {"value": "user", "label": "user"}, {"value": "out", "label": "out"}, {"value": "cal", "label": "cal"}, {"value": "skip", "label": "skip"}, {"value": "swap", "label": "swap"}, {"value": "pause", "label": "pause"}, {"value": "doc", "label": "doc"}, {"value": "clip", "label": "clip"}, {"value": "send", "label": "send"}, {"value": "edit", "label": "edit"}, {"value": "heart", "label": "heart"}, {"value": "share", "label": "share"}, {"value": "undo", "label": "undo"}, {"value": "arrow", "label": "arrow"}, {"value": "chevl", "label": "chevl"}, {"value": "chevr", "label": "chevr"}, {"value": "alert", "label": "alert"}] },
+      { "type": "text", "id": "title", "label": "Title", "default": "WhatsApp" },
+      { "type": "text", "id": "value", "label": "Contact detail", "default": "+62 811 0000 5327" },
+      { "type": "text", "id": "note", "label": "Note", "default": "Fastest, usually under 15 minutes" },
+      { "type": "url", "id": "link", "label": "Link" }
+    ] }
+  ],
+  "presets": [{ "name": "Contact options", "blocks": [
+    { "type": "channel", "settings": { "icon": "phone", "title": "WhatsApp", "value": "+62 811 0000 5327", "note": "Fastest, usually under 15 minutes" } },
+    { "type": "channel", "settings": { "icon": "chat", "title": "Message your doctor", "value": "From your account", "note": "Replies within 4 hours" } },
+    { "type": "channel", "settings": { "icon": "mail", "title": "Email", "value": "care@lelap.id", "note": "Replies within 1 working day" } }
+  ] }]
+}
+{% endschema %}

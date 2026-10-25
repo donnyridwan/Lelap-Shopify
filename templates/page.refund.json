@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "refund": {
+      "type": "refund-request",
+      "settings": {
+        "heading": "Request a refund",
+        "back_label": "Help center",
+        "back_link": "/pages/help"
+      }
+    }
+  },
+  "order": ["refund"]
+}

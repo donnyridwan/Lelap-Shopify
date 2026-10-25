@@ -1,0 +1,36 @@
+{%- comment -%} Centered call to action (Figma: About Us › CTA, Science & Doctors › CTA). {%- endcomment -%}
+<section class="pg pg-cta">
+  <div class="container pg-cta__inner">
+    <h2 class="pg-title{% if section.settings.accent_new_line %} pg-title--stack{% endif %}">
+      <span>{{ section.settings.heading | escape }}</span>
+      {%- if section.settings.heading_accent != blank %} <span class="pg-accent">{{ section.settings.heading_accent | escape }}</span>{% endif -%}
+    </h2>
+    {%- if section.settings.text != blank -%}<p class="pg-cta__text">{{ section.settings.text | escape }}</p>{%- endif -%}
+    <div class="pg-cta__actions">
+      {%- if section.settings.button_label != blank -%}
+        <a href="{{ section.settings.button_link | default: '/pages/science-doctors' }}" class="btn btn--primary">{{ section.settings.button_label | escape }}</a>
+      {%- endif -%}
+      {%- if section.settings.button2_label != blank -%}
+        <a href="{{ section.settings.button2_link | default: settings.quiz_url | default: '/pages/sleep-quiz' }}" class="btn btn--outline">{{ section.settings.button2_label | escape }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Centered CTA",
+  "class": "section-cta-center",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Meet the doctors" },
+    { "type": "text", "id": "heading_accent", "label": "Heading (lavender part)", "default": "behind lelap" },
+    { "type": "checkbox", "id": "accent_new_line", "label": "Lavender part on its own line (desktop)", "default": false },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Every plan is reviewed by a licensed Indonesian doctor." },
+    { "type": "text", "id": "button_label", "label": "Primary button label", "default": "Our science & doctors" },
+    { "type": "url", "id": "button_link", "label": "Primary button link" },
+    { "type": "text", "id": "button2_label", "label": "Outline button label", "default": "Take the quiz" },
+    { "type": "url", "id": "button2_link", "label": "Outline button link", "info": "Defaults to the sleep quiz page." }
+  ],
+  "presets": [{ "name": "Centered CTA" }]
+}
+{% endschema %}

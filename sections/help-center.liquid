@@ -1,0 +1,153 @@
+{%- comment -%}
+  Help Center (Figma: Help Center + Help Center · Search Results).
+  Header with search, topic cards, popular questions (accordion) and the search-results state.
+  Searching (?q=) and topics (?topic=) filter the FAQ blocks client-side (assets/help-center.js).
+{%- endcomment -%}
+{%- liquid
+  assign faqs = section.blocks | where: 'type', 'faq'
+  assign topics = section.blocks | where: 'type', 'topic'
+  assign page_url = request.path | default: '/pages/help'
+-%}
+<script>
+  (function () {
+    var p = new URLSearchParams(location.search);
+    if ((p.get('q') || '').trim() || (p.get('topic') || '').trim()) document.documentElement.classList.add('is-help-search');
+  })();
+</script>
+<div class="help" data-help data-results-one="{{ section.settings.results_one | escape }}" data-results-many="{{ section.settings.results_many | escape }}" data-results-none="{{ section.settings.results_none | escape }}" data-topic-label="{{ section.settings.topic_results | escape }}">
+  <section class="help-hero">
+    <div class="container help-hero__inner">
+      <h1 class="help-hero__title">
+        <span class="help-hero__title-home">{{ section.settings.heading | escape }}</span>
+        <span class="help-hero__title-search">{{ section.settings.search_heading | escape }}</span>
+      </h1>
+      <form action="{{ page_url }}" method="get" role="search" class="help-search" data-help-form>
+        <label for="HelpSearch-{{ section.id }}" class="visually-hidden">{{ section.settings.placeholder | escape }}</label>
+        {% render 'icon', name: 'search', size: 18 %}
+        <input id="HelpSearch-{{ section.id }}" type="search" name="q" class="help-search__input" placeholder="{{ section.settings.placeholder | escape }}" autocomplete="off" data-help-input>
+        <button type="button" class="help-search__clear" data-help-clear aria-label="Clear search" hidden>{% render 'icon', name: 'x', size: 16, color: '#5f6179' %}</button>
+      </form>
+    </div>
+  </section>
+
+  <div class="help-home">
+    {%- if topics.size > 0 -%}
+      <section class="help-topics" aria-label="{{ section.settings.topics_label | escape }}">
+        <div class="container help-topics__grid">
+          {%- for block in topics -%}
+            {%- capture topic_url -%}{% if block.settings.link != blank %}{{ block.settings.link }}{% else %}{{ page_url }}?topic={{ block.settings.title | url_encode }}{% endif %}{%- endcapture -%}
+            <a href="{{ topic_url }}" class="help-topic" {{ block.shopify_attributes }}>
+              <span class="help-topic__icon">{% render 'icon', name: block.settings.icon, color: '#1d2142' %}</span>
+              <span class="help-topic__body">
+                <span class="help-topic__title">{{ block.settings.title | escape }}</span>
+                <span class="help-topic__text">{{ block.settings.text | escape }}</span>
+              </span>
+              {% render 'icon', name: 'chev', class: 'help-topic__chev' %}
+            </a>
+          {%- endfor -%}
+        </div>
+      </section>
+    {%- endif -%}
+
+    <section class="help-faq">
+      <div class="container">
+        <h2 class="help-h2">{{ section.settings.faq_heading | escape }}</h2>
+        <div class="help-faq__list" data-accordion="single">
+          {%- assign shown = 0 -%}
+          {%- for block in faqs -%}
+            {%- if block.settings.popular -%}
+              {%- assign shown = shown | plus: 1 -%}
+              <details class="help-faq-row" id="faq-{{ block.id }}"{% if shown == 1 and section.settings.open_first %} open{% endif %} {{ block.shopify_attributes }}>
+                <summary class="help-faq-row__q">
+                  <span>{{ block.settings.question | escape }}</span>
+                  <span class="help-faq-row__icon" aria-hidden="true">{% render 'icon', name: 'plus', class: 'help-faq-row__plus' %}{% render 'icon', name: 'minus', class: 'help-faq-row__minus' %}</span>
+                </summary>
+                <div class="help-faq-row__a rte">{{ block.settings.answer }}</div>
+              </details>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="help-results" data-help-results hidden>
+    <div class="container help-results__inner">
+      <div class="help-results__list">
+        <p class="help-results__count" data-help-count aria-live="polite"></p>
+        {%- for block in faqs -%}
+          <article class="help-result" data-help-item data-topic="{{ block.settings.topic | escape }}" data-keywords="{{ block.settings.keywords | escape }}" hidden>
+            {%- if block.settings.topic != blank -%}<p class="help-result__topic">{{ block.settings.topic | escape }}</p>{%- endif -%}
+            <h2 class="help-result__q" data-help-q>{{ block.settings.question | escape }}</h2>
+            <p class="help-result__a" data-help-a>{{ block.settings.answer | strip_html | strip | escape }}</p>
+            <div class="help-result__full rte" hidden>{{ block.settings.answer }}</div>
+            <button type="button" class="help-result__more" data-help-more aria-expanded="false">
+              <span>{{ section.settings.read_answer | escape }}</span>{% render 'icon', name: 'chev', size: 14 %}
+            </button>
+          </article>
+        {%- endfor -%}
+        <div class="help-results__empty" data-help-empty hidden>
+          <p class="help-results__empty-text">{{ section.settings.empty_text | escape }}</p>
+          <div class="help-results__topics">
+            {%- for block in topics -%}
+              <a class="help-results__topic" href="{{ page_url }}?topic={{ block.settings.title | url_encode }}">{{ block.settings.title | escape }}</a>
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+      <aside class="help-results__contact">
+        <span class="help-topic__icon">{% render 'icon', name: 'chat', color: '#1d2142' %}</span>
+        <h2 class="help-results__contact-title">{{ section.settings.contact_title | escape }}</h2>
+        <p class="help-results__contact-text">{{ section.settings.contact_text | escape }}</p>
+        {%- if section.settings.contact_button != blank -%}
+          <a href="{{ section.settings.contact_link | default: 'https://wa.me/6281100005327' }}" class="btn btn--primary">{{ section.settings.contact_button | escape }}</a>
+        {%- endif -%}
+      </aside>
+    </div>
+  </section>
+</div>
+<script src="{{ 'help-center.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Help center",
+  "class": "section-help-center",
+  "settings": [
+    { "type": "header", "content": "Header" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "How can we help?" },
+    { "type": "text", "id": "search_heading", "label": "Heading while searching", "default": "Help center" },
+    { "type": "text", "id": "placeholder", "label": "Search placeholder", "default": "Search, e.g. “skip a delivery”" },
+    { "type": "text", "id": "topics_label", "label": "Topics label (screen readers)", "default": "Help topics" },
+    { "type": "header", "content": "Popular questions" },
+    { "type": "text", "id": "faq_heading", "label": "Heading", "default": "Popular questions" },
+    { "type": "checkbox", "id": "open_first", "label": "Open the first question", "default": true },
+    { "type": "header", "content": "Search results" },
+    { "type": "text", "id": "results_one", "label": "One result", "default": "1 result for “[q]”" },
+    { "type": "text", "id": "results_many", "label": "Several results", "info": "[n] = count, [q] = search terms", "default": "[n] results for “[q]”" },
+    { "type": "text", "id": "results_none", "label": "No results", "default": "No results for “[q]”" },
+    { "type": "text", "id": "topic_results", "label": "Topic heading", "info": "[n] = count, [topic] = topic", "default": "[n] articles in [topic]" },
+    { "type": "text", "id": "empty_text", "label": "No results text", "default": "Try a different search, or browse a topic below." },
+    { "type": "text", "id": "read_answer", "label": "Read answer label", "default": "Read answer" },
+    { "type": "text", "id": "contact_title", "label": "Contact card title", "default": "Didn’t find it?" },
+    { "type": "textarea", "id": "contact_text", "label": "Contact card text", "default": "Our care team replies in about 15 minutes, every day 08:00–22:00." },
+    { "type": "text", "id": "contact_button", "label": "Contact button label", "default": "Chat with us" },
+    { "type": "url", "id": "contact_link", "label": "Contact button link", "info": "Defaults to WhatsApp +62 811 0000 5327." }
+  ],
+  "blocks": [
+    { "type": "topic", "name": "Topic", "limit": 9, "settings": [
+      { "type": "select", "id": "icon", "label": "Icon", "default": "box", "options": [{"value": "truck", "label": "truck"}, {"value": "steth", "label": "steth"}, {"value": "phone", "label": "phone"}, {"value": "spark", "label": "spark"}, {"value": "refresh", "label": "refresh"}, {"value": "cart", "label": "cart"}, {"value": "moon", "label": "moon"}, {"value": "star", "label": "star"}, {"value": "chev", "label": "chev"}, {"value": "search", "label": "search"}, {"value": "check", "label": "check"}, {"value": "back", "label": "back"}, {"value": "bottle", "label": "bottle"}, {"value": "x", "label": "x"}, {"value": "close", "label": "close"}, {"value": "shield", "label": "shield"}, {"value": "minus", "label": "minus"}, {"value": "plus", "label": "plus"}, {"value": "menu", "label": "menu"}, {"value": "lock", "label": "lock"}, {"value": "info", "label": "info"}, {"value": "leaf", "label": "leaf"}, {"value": "sun", "label": "sun"}, {"value": "lamp", "label": "lamp"}, {"value": "drop", "label": "drop"}, {"value": "target", "label": "target"}, {"value": "factory", "label": "factory"}, {"value": "flask", "label": "flask"}, {"value": "bag", "label": "bag"}, {"value": "card", "label": "card"}, {"value": "p", "label": "p"}, {"value": "clock", "label": "clock"}, {"value": "tag", "label": "tag"}, {"value": "chevd", "label": "chevd"}, {"value": "chat", "label": "chat"}, {"value": "eye", "label": "eye"}, {"value": "mail", "label": "mail"}, {"value": "home", "label": "home"}, {"value": "box", "label": "box"}, {"value": "pin", "label": "pin"}, {"value": "user", "label": "user"}, {"value": "out", "label": "out"}, {"value": "cal", "label": "cal"}, {"value": "skip", "label": "skip"}, {"value": "swap", "label": "swap"}, {"value": "pause", "label": "pause"}, {"value": "doc", "label": "doc"}, {"value": "clip", "label": "clip"}, {"value": "send", "label": "send"}, {"value": "edit", "label": "edit"}, {"value": "heart", "label": "heart"}, {"value": "share", "label": "share"}, {"value": "undo", "label": "undo"}, {"value": "arrow", "label": "arrow"}, {"value": "chevl", "label": "chevl"}, {"value": "chevr", "label": "chevr"}, {"value": "alert", "label": "alert"}] },
+      { "type": "text", "id": "title", "label": "Title", "default": "Orders & shipping", "info": "FAQ blocks with this exact topic are listed when the card is clicked." },
+      { "type": "text", "id": "text", "label": "Description", "default": "Tracking, delivery times, missing parcels" },
+      { "type": "url", "id": "link", "label": "Link (optional)", "info": "Leave empty to list this topic’s questions." }
+    ] },
+    { "type": "faq", "name": "Question", "settings": [
+      { "type": "text", "id": "question", "label": "Question", "default": "How do I skip or pause my subscription?" },
+      { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Go to Account, then Overview, and choose Skip next delivery or Pause. Changes made at least 2 days before your delivery date apply right away.</p>" },
+      { "type": "text", "id": "topic", "label": "Topic", "default": "Subscriptions" },
+      { "type": "text", "id": "keywords", "label": "Extra search keywords" },
+      { "type": "checkbox", "id": "popular", "label": "Show in Popular questions", "default": true }
+    ] }
+  ],
+  "presets": [{ "name": "Help center" }]
+}
+{% endschema %}

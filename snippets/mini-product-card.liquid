@@ -1,0 +1,43 @@
+{%- comment -%}
+  Small formula card (Figma: Product · Related card; tablet/mobile = horizontal row).
+  Params: product (optional), handle, per (price suffix, default '/ month')
+{%- endcomment -%}
+{%- liquid
+  assign h = handle
+  if product != blank
+    assign h = product.handle
+    assign url = product.url
+  else
+    assign url = '/products/' | append: h
+  endif
+  capture t
+    if product != blank
+      echo product.title
+    else
+      render 'product-fact', handle: h, key: 'title'
+    endif
+  endcapture
+  capture line
+    render 'product-fact', product: product, handle: h, key: 'short_tagline'
+  endcapture
+  if product != blank
+    assign v = product.selected_or_first_available_variant
+    assign sub = v.price | times: 0.8 | round
+    if v.selling_plan_allocations.size > 0
+      assign sub = v.selling_plan_allocations.first.price
+    endif
+  else
+    capture sub_s
+      render 'product-fact', handle: h, key: 'price_sub'
+    endcapture
+    assign sub = sub_s | plus: 0
+  endif
+-%}
+<a class="c-mini-card" href="{{ url }}">
+  <span class="c-mini-card__media">{% render 'product-image', product: product, handle: h, width: 600, sizes: '(min-width: 1200px) 290px, 100px', class: 'c-mini-card__img' %}</span>
+  <span class="c-mini-card__info">
+    <span class="c-mini-card__title">{{ t }}</span>
+    <span class="c-mini-card__line">{{ line }}</span>
+    <span class="c-mini-card__price">{{ sub | money_without_trailing_zeros }} {{ per | default: '/ month' }}</span>
+  </span>
+</a>

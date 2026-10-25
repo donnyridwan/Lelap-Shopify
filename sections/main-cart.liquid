@@ -1,0 +1,15 @@
+{%- comment -%} /cart page — no-JS fallback, styled like the cart drawer (Figma: Cart Drawer). {%- endcomment -%}
+<section class="cart-page">
+  <div class="container cart-page__inner">
+    {% render 'cart-drawer-body', context: 'page' %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Cart",
+  "tag": "div",
+  "class": "section-main-cart",
+  "settings": []
+}
+{% endschema %}

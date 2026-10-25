@@ -1,0 +1,88 @@
+{
+  "sections": {
+    "hero": {
+      "type": "page-hero",
+      "settings": {
+        "layout": "split",
+        "chip": "Our science",
+        "heading": "The science of",
+        "heading_accent": "a better night.",
+        "text": "Lelap is built on three ideas: use the lowest dose that works, match the formula to the sleep problem, and let a doctor decide what’s right for you.",
+        "button_label": "Take the sleep quiz",
+        "fallback_image": "photo-ingredients.jpg"
+      }
+    },
+    "melatonin": {
+      "type": "melatonin-curve",
+      "blocks": {
+        "b1": { "type": "bar", "settings": { "label": "6pm", "level": 8 } },
+        "b2": { "type": "bar", "settings": { "label": "8pm", "level": 15 } },
+        "b3": { "type": "bar", "settings": { "label": "9pm", "level": 40, "highlight": true } },
+        "b4": { "type": "bar", "settings": { "label": "11pm", "level": 72 } },
+        "b5": { "type": "bar", "settings": { "label": "1am", "level": 95 } },
+        "b6": { "type": "bar", "settings": { "label": "3am", "level": 100 } },
+        "b7": { "type": "bar", "settings": { "label": "5am", "level": 70 } },
+        "b8": { "type": "bar", "settings": { "label": "7am", "level": 25 } },
+        "b9": { "type": "bar", "settings": { "label": "9am", "level": 8 } }
+      },
+      "block_order": ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"]
+    },
+    "approach": {
+      "type": "icon-cards",
+      "settings": { "style": "white", "heading": "Our approach" },
+      "blocks": {
+        "a1": { "type": "card", "settings": { "icon": "drop", "title": "The lowest dose that works", "text": "Most adults don’t need more than 1 to 3 mg. Higher doses aren’t better and are more likely to leave you groggy." } },
+        "a2": { "type": "card", "settings": { "icon": "target", "title": "A formula for each problem", "text": "Falling asleep, staying asleep, jet lag and a busy mind need different things. One gummy can’t do all four well." } },
+        "a3": { "type": "card", "settings": { "icon": "steth", "title": "A doctor decides", "text": "A licensed doctor reviews every assessment and can say no. If that happens, you get a full refund." } }
+      },
+      "block_order": ["a1", "a2", "a3"]
+    },
+    "doctors": {
+      "type": "doctors-grid",
+      "blocks": {
+        "d1": { "type": "doctor", "settings": { "use_design_photo": true, "initials": "RW", "name": "Dr. Ratna Wijaya", "role": "General practitioner", "credential": "STR verified · 12 years in practice" } },
+        "d2": { "type": "doctor", "settings": { "initials": "AP", "name": "Dr. Andi Pratama, Sp.N", "role": "Neurologist, sleep medicine", "credential": "STR verified · 15 years in practice" } },
+        "d3": { "type": "doctor", "settings": { "initials": "ML", "name": "Dr. Maya Lestari, Sp.KJ", "role": "Psychiatrist", "credential": "STR verified · 10 years in practice" } }
+      },
+      "block_order": ["d1", "d2", "d3"]
+    },
+    "quality": {
+      "type": "icon-cards",
+      "settings": { "style": "dark", "heading": "How every pouch is made" },
+      "blocks": {
+        "q1": { "type": "card", "settings": { "icon": "shield", "title": "BPOM registered", "text": "Each formula is registered with Indonesia’s food and drug authority." } },
+        "q2": { "type": "card", "settings": { "icon": "factory", "title": "GMP-certified facility", "text": "Made to pharmaceutical-grade manufacturing standards." } },
+        "q3": { "type": "card", "settings": { "icon": "flask", "title": "Tested every batch", "text": "Independent labs check purity and melatonin content." } },
+        "q4": { "type": "card", "settings": { "icon": "leaf", "title": "Clean formula", "text": "Vegan, gelatin-free, no added sugar, no artificial colours." } }
+      },
+      "block_order": ["q1", "q2", "q3", "q4"]
+    },
+    "suitability": {
+      "type": "suitability-lists",
+      "blocks": {
+        "s1": { "type": "suits", "settings": { "text": "Take more than 30 minutes to fall asleep" } },
+        "s2": { "type": "suits", "settings": { "text": "Wake up during the night and struggle to drift off" } },
+        "s3": { "type": "suits", "settings": { "text": "Travel across time zones or work night shifts" } },
+        "s4": { "type": "suits", "settings": { "text": "Want a lower-dose, doctor-guided option" } },
+        "n1": { "type": "caution", "settings": { "text": "Are pregnant, breastfeeding or under 18" } },
+        "n2": { "type": "caution", "settings": { "text": "Take blood thinners, antidepressants or immunosuppressants" } },
+        "n3": { "type": "caution", "settings": { "text": "Have an autoimmune condition, epilepsy or depression" } },
+        "n4": { "type": "caution", "settings": { "text": "Have had trouble sleeping for more than three weeks" } }
+      },
+      "block_order": ["s1", "s2", "s3", "s4", "n1", "n2", "n3", "n4"]
+    },
+    "cta": {
+      "type": "cta-center",
+      "settings": {
+        "heading": "Not sure if it’s right for you?",
+        "heading_accent": "Ask a doctor first.",
+        "accent_new_line": true,
+        "text": "The assessment is free and takes 2 minutes. You only pay if a doctor approves your plan.",
+        "button_label": "Start free assessment",
+        "button_link": "/pages/sleep-quiz",
+        "button2_label": ""
+      }
+    }
+  },
+  "order": ["hero", "melatonin", "approach", "doctors", "quality", "suitability", "cta"]
+}

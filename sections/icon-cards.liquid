@@ -1,0 +1,51 @@
+{%- comment -%}
+  Row of icon cards. Styles: outline (About › Values), white (Science › Our approach),
+  dark (Science › Quality Standards).
+{%- endcomment -%}
+{%- liquid
+  assign style = section.settings.style
+  assign icon_color = '#1d2142'
+-%}
+<section class="pg icon-cards icon-cards--{{ style }}">
+  <div class="container">
+    {%- if section.settings.heading != blank -%}<h2 class="pg-title icon-cards__head">{{ section.settings.heading | escape }}</h2>{%- endif -%}
+    <div class="icon-cards__grid" style="--cols: {{ section.blocks.size | at_least: 1 | at_most: 4 }};">
+      {%- for block in section.blocks -%}
+        <div class="pg-icon-card" {{ block.shopify_attributes }}>
+          <span class="pg-icon-card__icon">{% render 'icon', name: block.settings.icon, color: icon_color %}</span>
+          <h3 class="pg-icon-card__title">{{ block.settings.title | escape }}</h3>
+          <p class="pg-icon-card__text">{{ block.settings.text | escape }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Icon cards",
+  "class": "section-icon-cards",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "select", "id": "style", "label": "Style", "default": "outline", "options": [
+      { "value": "outline", "label": "Outline on white" },
+      { "value": "white", "label": "White cards on grey" },
+      { "value": "dark", "label": "Plum" }
+    ] },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "What we stand for" }
+  ],
+  "blocks": [
+    { "type": "card", "name": "Card", "settings": [
+      { "type": "select", "id": "icon", "label": "Icon", "default": "drop", "options": [{"value": "truck", "label": "truck"}, {"value": "steth", "label": "steth"}, {"value": "phone", "label": "phone"}, {"value": "spark", "label": "spark"}, {"value": "refresh", "label": "refresh"}, {"value": "cart", "label": "cart"}, {"value": "moon", "label": "moon"}, {"value": "star", "label": "star"}, {"value": "chev", "label": "chev"}, {"value": "search", "label": "search"}, {"value": "check", "label": "check"}, {"value": "back", "label": "back"}, {"value": "bottle", "label": "bottle"}, {"value": "x", "label": "x"}, {"value": "close", "label": "close"}, {"value": "shield", "label": "shield"}, {"value": "minus", "label": "minus"}, {"value": "plus", "label": "plus"}, {"value": "menu", "label": "menu"}, {"value": "lock", "label": "lock"}, {"value": "info", "label": "info"}, {"value": "leaf", "label": "leaf"}, {"value": "sun", "label": "sun"}, {"value": "lamp", "label": "lamp"}, {"value": "drop", "label": "drop"}, {"value": "target", "label": "target"}, {"value": "factory", "label": "factory"}, {"value": "flask", "label": "flask"}, {"value": "bag", "label": "bag"}, {"value": "card", "label": "card"}, {"value": "p", "label": "p"}, {"value": "clock", "label": "clock"}, {"value": "tag", "label": "tag"}, {"value": "chevd", "label": "chevd"}, {"value": "chat", "label": "chat"}, {"value": "eye", "label": "eye"}, {"value": "mail", "label": "mail"}, {"value": "home", "label": "home"}, {"value": "box", "label": "box"}, {"value": "pin", "label": "pin"}, {"value": "user", "label": "user"}, {"value": "out", "label": "out"}, {"value": "cal", "label": "cal"}, {"value": "skip", "label": "skip"}, {"value": "swap", "label": "swap"}, {"value": "pause", "label": "pause"}, {"value": "doc", "label": "doc"}, {"value": "clip", "label": "clip"}, {"value": "send", "label": "send"}, {"value": "edit", "label": "edit"}, {"value": "heart", "label": "heart"}, {"value": "share", "label": "share"}, {"value": "undo", "label": "undo"}, {"value": "arrow", "label": "arrow"}, {"value": "chevl", "label": "chevl"}, {"value": "chevr", "label": "chevr"}, {"value": "alert", "label": "alert"}] },
+      { "type": "text", "id": "title", "label": "Title", "default": "Less, not more" },
+      { "type": "textarea", "id": "text", "label": "Text", "default": "We use the lowest dose that works and never upsell a higher one." }
+    ] }
+  ],
+  "presets": [{ "name": "Icon cards", "blocks": [
+    { "type": "card", "settings": { "icon": "drop", "title": "Less, not more", "text": "We use the lowest dose that works and never upsell a higher one." } },
+    { "type": "card", "settings": { "icon": "steth", "title": "Doctors decide", "text": "Medical calls are made by licensed doctors, never by marketing." } },
+    { "type": "card", "settings": { "icon": "eye", "title": "Radically clear", "text": "Every ingredient and amount is on the label and on this site." } },
+    { "type": "card", "settings": { "icon": "heart", "title": "Sleep is personal", "text": "Four formulas, because four kinds of nights need different help." } }
+  ] }]
+}
+{% endschema %}

@@ -1,0 +1,82 @@
+{%- comment -%} Figma "Shop All Formulas" → Bundle: The Traveler's Duo card. {%- endcomment -%}
+{%- liquid
+  assign bundle = section.settings.bundle_product
+  assign h1 = section.settings.handle_1 | default: 'sleep-classic'
+  assign h2 = section.settings.handle_2 | default: 'sleep-reset'
+  assign p1 = all_products[h1]
+  assign p2 = all_products[h2]
+  unless p1.id
+    assign p1 = nil
+  endunless
+  unless p2.id
+    assign p2 = nil
+  endunless
+-%}
+<section class="c-bundle">
+  <div class="container">
+    <h2 class="c-h-section c-bundle__heading">{{ section.settings.heading }}</h2>
+    <div class="c-bundle__card">
+      <div class="c-bundle__visual">
+        <span class="c-bundle__pouch">{% render 'product-image', product: p1, handle: h1, width: 480, sizes: '220px', class: 'c-bundle__img' %}</span>
+        <span class="c-bundle__pouch">{% render 'product-image', product: p2, handle: h2, width: 480, sizes: '220px', class: 'c-bundle__img' %}</span>
+      </div>
+      <div class="c-bundle__info">
+        {%- if section.settings.chip != blank -%}<span class="chip">{% render 'icon', name: 'moon' %}{{ section.settings.chip }}</span>{%- endif -%}
+        <h3 class="c-bundle__title">{{ section.settings.title }}</h3>
+        <p class="c-bundle__text">{{ section.settings.text }}</p>
+        <p class="c-bundle__price"><strong>{{ section.settings.price }}</strong><span>{{ section.settings.per }}</span>{% if section.settings.was != blank %}<s>{{ section.settings.was }}</s>{% endif %}</p>
+        <div class="c-bundle__actions">
+          {%- if bundle != blank -%}
+            {%- assign bv = bundle.selected_or_first_available_variant -%}
+            {%- form 'product', bundle, data-product-form: '', class: 'c-bundle__form' -%}
+              <input type="hidden" name="id" value="{{ bv.id }}">
+              <input type="hidden" name="quantity" value="1">
+              {%- if bv.selling_plan_allocations.size > 0 -%}<input type="hidden" name="selling_plan" value="{{ bv.selling_plan_allocations.first.selling_plan.id }}">{%- endif -%}
+              <button type="submit" class="btn btn--primary"{% unless bv.available %} disabled{% endunless %}>{{ section.settings.button }}</button>
+            {%- endform -%}
+          {%- elsif p1 != blank and p2 != blank -%}
+            {%- assign v1 = p1.selected_or_first_available_variant -%}
+            {%- assign v2 = p2.selected_or_first_available_variant -%}
+            <form action="{{ routes.cart_add_url }}" method="post" class="c-bundle__form" data-product-form>
+              <input type="hidden" name="items[0][id]" value="{{ v1.id }}">
+              <input type="hidden" name="items[0][quantity]" value="1">
+              {%- if v1.selling_plan_allocations.size > 0 -%}<input type="hidden" name="items[0][selling_plan]" value="{{ v1.selling_plan_allocations.first.selling_plan.id }}">{%- endif -%}
+              <input type="hidden" name="items[1][id]" value="{{ v2.id }}">
+              <input type="hidden" name="items[1][quantity]" value="1">
+              {%- if v2.selling_plan_allocations.size > 0 -%}<input type="hidden" name="items[1][selling_plan]" value="{{ v2.selling_plan_allocations.first.selling_plan.id }}">{%- endif -%}
+              <button type="submit" class="btn btn--primary"{% unless v1.available and v2.available %} disabled{% endunless %}>{{ section.settings.button }}</button>
+            </form>
+          {%- else -%}
+            <a class="btn btn--primary" href="{{ routes.all_products_collection_url }}">{{ section.settings.button }}</a>
+          {%- endif -%}
+          {%- if section.settings.link_label != blank -%}
+            <a class="link-underline" href="{{ section.settings.link_url | default: bundle.url | default: '#' }}">{{ section.settings.link_label }}</a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Bundle",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Bundles" },
+    { "type": "product", "id": "bundle_product", "label": "Bundle product", "info": "Optional. Without one, the button adds both formulas below to the cart." },
+    { "type": "text", "id": "handle_1", "label": "First formula handle", "default": "sleep-classic" },
+    { "type": "text", "id": "handle_2", "label": "Second formula handle", "default": "sleep-reset" },
+    { "type": "text", "id": "chip", "label": "Savings badge", "default": "Save 13%" },
+    { "type": "text", "id": "title", "label": "Title", "default": "The Traveler’s Duo" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Sleep Classic for everyday nights, Sleep Reset for flights and shift changes. One subscription, both pouches, one doctor." },
+    { "type": "text", "id": "price", "label": "Price", "default": "$45" },
+    { "type": "text", "id": "per", "label": "Price suffix", "default": "/ month" },
+    { "type": "text", "id": "was", "label": "Compare-at price", "default": "$52" },
+    { "type": "text", "id": "button", "label": "Button label", "default": "Add duo to cart" },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "What’s inside" },
+    { "type": "url", "id": "link_url", "label": "Link" }
+  ],
+  "presets": [{ "name": "Bundle" }]
+}
+{% endschema %}

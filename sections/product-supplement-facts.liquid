@@ -1,0 +1,65 @@
+{%- comment -%} Figma: Product · Supplement Facts — facts table + "Short ingredient list" column with chips and photo. {%- endcomment -%}
+{%- liquid
+  assign h = product.handle | default: 'sleep-classic'
+  capture p_facts
+    render 'product-fact', product: product, handle: h, key: 'facts'
+  endcapture
+  capture p_other
+    render 'product-fact', product: product, handle: h, key: 'other_ingredients'
+  endcapture
+  assign rows = p_facts | split: '|'
+  assign chips = section.settings.chips | split: ','
+-%}
+<section class="pdp-facts">
+  <div class="container pdp-facts__inner">
+    <div class="pdp-facts__table">
+      <h2 class="pdp-facts__table-title">{{ section.settings.table_title }}</h2>
+      <p class="pdp-facts__serving">{{ section.settings.serving }}</p>
+      <dl class="pdp-facts__rows">
+        <div class="pdp-facts__row pdp-facts__row--head"><dt>{{ section.settings.amount_label }}</dt><dd></dd></div>
+        {%- for row in rows -%}
+          {%- assign pair = row | split: '::' -%}
+          <div class="pdp-facts__row"><dt>{{ pair[0] }}</dt><dd>{{ pair[1] }}</dd></div>
+        {%- endfor -%}
+      </dl>
+      {%- if p_other != blank -%}<p class="pdp-facts__other">{{ p_other }}</p>{%- endif -%}
+    </div>
+    <div class="pdp-facts__copy">
+      <h2 class="pdp-facts__title">{{ section.settings.title_1 }}<br><span class="text-lav">{{ section.settings.title_2 }}</span></h2>
+      <p class="pdp-facts__text">{{ section.settings.text }}</p>
+      <ul class="pdp-facts__chips">
+        {%- for chip in chips -%}
+          <li>{% render 'icon', name: 'check', color: '#1d2142', size: 13 %}{{ chip | strip }}</li>
+        {%- endfor -%}
+      </ul>
+      <div class="pdp-facts__media">
+        {%- if section.settings.image != blank -%}
+          {{ section.settings.image | image_url: width: 1512 | image_tag: loading: 'lazy', widths: '390, 756, 1134, 1512', sizes: '(min-width: 1200px) 756px, calc(100vw - 40px)' }}
+        {%- else -%}
+          <img src="{{ 'photo-ingredients-wide.jpg' | asset_url }}" width="756" height="300" loading="lazy" alt="{{ section.settings.image_alt | escape }}">
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Supplement facts",
+  "tag": "div",
+  "settings": [
+    { "type": "paragraph", "content": "Rows come from the lelap.facts metafield (Name::Amount|Name::Amount…) and lelap.other_ingredients, or the design defaults." },
+    { "type": "text", "id": "table_title", "label": "Table title", "default": "Supplement facts" },
+    { "type": "text", "id": "serving", "label": "Serving line", "default": "Serving size: 1 gummy · 30 servings per pouch" },
+    { "type": "text", "id": "amount_label", "label": "Amount label", "default": "Amount per serving" },
+    { "type": "text", "id": "title_1", "label": "Heading line 1", "default": "Short ingredient list." },
+    { "type": "text", "id": "title_2", "label": "Heading line 2", "default": "Nothing to hide." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Every pouch is made in a GMP-certified facility and tested for purity and melatonin content before it ships." },
+    { "type": "text", "id": "chips", "label": "Badges (comma separated)", "default": "No added sugar, No gelatin, No artificial colours, No gluten, Halal-friendly ingredients" },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "text", "id": "image_alt", "label": "Fallback image alt text", "default": "Lelap gummies with blueberries, chamomile and lavender" }
+  ],
+  "presets": [{ "name": "Supplement facts" }],
+  "enabled_on": { "templates": ["product"] }
+}
+{% endschema %}

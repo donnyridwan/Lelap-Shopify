@@ -1,0 +1,56 @@
+{
+  "sections": {
+    "hero": {
+      "type": "page-hero",
+      "settings": {
+        "layout": "stacked",
+        "chip": "Our story",
+        "heading": "We started lelap after",
+        "heading_accent": "too many sleepless nights.",
+        "text": "Melatonin was easy to buy and hard to get right. Doses were too high, advice was missing, and nobody asked what was actually keeping people up. So we built a way to sleep better with a doctor in the loop.",
+        "fallback_image": "photo-morning.jpg"
+      }
+    },
+    "why": {
+      "type": "numbered-cards",
+      "blocks": {
+        "c1": { "type": "card", "settings": { "title": "The problem", "text": "Many adults struggle with sleep, and most self-treat with whatever is on the shelf, with no one to ask about dose or safety." } },
+        "c2": { "type": "card", "settings": { "title": "Our answer", "text": "A short assessment, a licensed doctor and a low-dose formula matched to your sleep problem." } },
+        "c3": { "type": "card", "settings": { "title": "Our promise", "text": "If a doctor says lelap isn’t right for you, you get every cent back." } }
+      },
+      "block_order": ["c1", "c2", "c3"]
+    },
+    "founder": {
+      "type": "founder-note",
+      "settings": {
+        "initials": "[F]",
+        "quote": "“For two years I took whatever melatonin I could find. Some nights it worked, most mornings I felt awful. A sleep doctor finally told me I was taking five times what I needed. lelap is the version of that conversation everyone should get.”",
+        "name": "[Founder name], Co-founder"
+      }
+    },
+    "values": {
+      "type": "icon-cards",
+      "settings": { "style": "outline", "heading": "What we stand for" },
+      "blocks": {
+        "v1": { "type": "card", "settings": { "icon": "drop", "title": "Less, not more", "text": "We use the lowest dose that works and never upsell a higher one." } },
+        "v2": { "type": "card", "settings": { "icon": "steth", "title": "Doctors decide", "text": "Medical calls are made by licensed doctors, never by marketing." } },
+        "v3": { "type": "card", "settings": { "icon": "eye", "title": "Radically clear", "text": "Every ingredient and amount is on the label and on this site." } },
+        "v4": { "type": "card", "settings": { "icon": "heart", "title": "Sleep is personal", "text": "Four formulas, because four kinds of nights need different help." } }
+      },
+      "block_order": ["v1", "v2", "v3", "v4"]
+    },
+    "cta": {
+      "type": "cta-center",
+      "settings": {
+        "heading": "Meet the doctors",
+        "heading_accent": "behind lelap",
+        "accent_new_line": false,
+        "text": "Every plan is reviewed by a licensed Indonesian doctor.",
+        "button_label": "Our science & doctors",
+        "button_link": "/pages/science-doctors",
+        "button2_label": "Take the quiz"
+      }
+    }
+  },
+  "order": ["hero", "why", "founder", "values", "cta"]
+}

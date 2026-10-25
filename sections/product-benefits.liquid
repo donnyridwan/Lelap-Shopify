@@ -1,0 +1,37 @@
+{%- comment -%} Figma: Product · Benefits ("What Sleep Classic is designed to do") — plum band with four cards. {%- endcomment -%}
+{%- liquid
+  assign h = product.handle | default: 'sleep-classic'
+  capture p_benefits
+    render 'product-fact', product: product, handle: h, key: 'benefits'
+  endcapture
+  assign items = p_benefits | split: '|'
+  assign icons = 'moon,sun,leaf,steth' | split: ','
+  assign p_title = product.title | default: 'Sleep Classic'
+-%}
+<section class="pdp-benefits">
+  <div class="container">
+    <h2 class="pdp-benefits__title">{{ section.settings.heading | replace: '[product]', p_title }}</h2>
+    <ul class="pdp-benefits__grid">
+      {%- for item in items -%}
+        {%- assign pair = item | split: '::' -%}
+        <li class="pdp-benefits__card">
+          <span class="pdp-benefits__icon">{% render 'icon', name: icons[forloop.index0], color: '#1d2142', size: 18 %}</span>
+          <h3 class="pdp-benefits__card-title">{{ pair[0] }}</h3>
+          <p class="pdp-benefits__text">{{ pair[1] }}</p>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product benefits",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "info": "[product] is replaced by the product title. Card copy comes from the lelap.benefits metafield (Title::Text|Title::Text…) or the design defaults.", "default": "What [product] is designed to do" }
+  ],
+  "presets": [{ "name": "Product benefits" }],
+  "enabled_on": { "templates": ["product"] }
+}
+{% endschema %}

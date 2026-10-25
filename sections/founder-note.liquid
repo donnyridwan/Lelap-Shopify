@@ -1,0 +1,30 @@
+{%- comment -%} Figma: About Us › Founder Note. {%- endcomment -%}
+<section class="pg about-founder">
+  <div class="container about-founder__inner">
+    <div class="about-founder__avatar">
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 400 | image_tag: loading: 'lazy', sizes: '200px', alt: section.settings.name }}
+      {%- else -%}
+        <span aria-hidden="true">{{ section.settings.initials | escape }}</span>
+      {%- endif -%}
+    </div>
+    <figure class="about-founder__body">
+      <blockquote class="about-founder__quote">{{ section.settings.quote | escape }}</blockquote>
+      <figcaption class="about-founder__name">{{ section.settings.name | escape }}</figcaption>
+    </figure>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Founder note",
+  "class": "section-founder-note",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Photo", "info": "Shown in the circle. Leave empty to show the initials." },
+    { "type": "text", "id": "initials", "label": "Initials", "default": "[F]" },
+    { "type": "textarea", "id": "quote", "label": "Quote", "default": "“For two years I took whatever melatonin I could find. Some nights it worked, most mornings I felt awful. A sleep doctor finally told me I was taking five times what I needed. lelap is the version of that conversation everyone should get.”" },
+    { "type": "text", "id": "name", "label": "Name and role", "default": "[Founder name], Co-founder" }
+  ],
+  "presets": [{ "name": "Founder note" }]
+}
+{% endschema %}
