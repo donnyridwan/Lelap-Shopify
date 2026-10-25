@@ -1,6 +1,6 @@
 {%- comment -%} Centered call to action (Figma: About Us › CTA, Science & Doctors › CTA). {%- endcomment -%}
 <section class="pg pg-cta">
-  <div class="container pg-cta__inner">
+  <div class="container pg-cta__inner" data-reveal>
     <h2 class="pg-title{% if section.settings.accent_new_line %} pg-title--stack{% endif %}">
       <span>{{ section.settings.heading | escape }}</span>
       {%- if section.settings.heading_accent != blank %} <span class="pg-accent">{{ section.settings.heading_accent | escape }}</span>{% endif -%}

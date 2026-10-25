@@ -109,6 +109,7 @@
 }
 .pdp-buybox__note p { flex: 1; font-size: 13px; line-height: 1.5; color: var(--navy); }
 .pdp-buybox__trust { display: flex; flex-wrap: wrap; gap: 10px 24px; }
+.pdp-buybox__trust .icon--shield path { stroke-width: 4; }
 .pdp-buybox__trust li { line-height: 16px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: var(--navy); white-space: nowrap; }
 
 .pdp-buybox__accordions { display: flex; flex-direction: column; }
@@ -221,12 +222,14 @@
 .pdp-reviews__bar span { display: block; height: 100%; border-radius: 4px; background: var(--plum); }
 .pdp-reviews__dist-count { color: var(--body); }
 .pdp-reviews__write { flex-shrink: 0; }
-.pdp-reviews__filters { display: flex; gap: 8px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.pdp-reviews__filters { display: flex; align-items: flex-start; gap: 8px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
 .pdp-reviews__filter {
   padding: 8px 14px; border-radius: var(--radius-pill); border: 1px solid var(--line); background: transparent;
   font-size: 13px; font-weight: 500; color: var(--navy); white-space: nowrap; line-height: normal;
 }
-.pdp-reviews__filter.is-active { background: var(--navy); border-color: var(--navy); color: var(--white); }
+.pdp-reviews__filter.is-active { background: var(--navy); border-width: 0; padding: 8px 14px; color: var(--white); }
+/* Figma outline Button: 1px border + 16/30 padding (53px tall). */
+.pdp-reviews .btn--outline { padding: 16px 30px; }
 .pdp-reviews__grid { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .pdp-reviews__grid > [hidden] { display: none; }
 .pdp-reviews__empty { font-size: 15px; color: var(--body); }

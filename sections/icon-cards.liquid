@@ -8,10 +8,10 @@
 -%}
 <section class="pg icon-cards icon-cards--{{ style }}">
   <div class="container">
-    {%- if section.settings.heading != blank -%}<h2 class="pg-title icon-cards__head">{{ section.settings.heading | escape }}</h2>{%- endif -%}
+    {%- if section.settings.heading != blank -%}<h2 class="pg-title icon-cards__head" data-reveal>{{ section.settings.heading | escape }}</h2>{%- endif -%}
     <div class="icon-cards__grid" style="--cols: {{ section.blocks.size | at_least: 1 | at_most: 4 }};">
       {%- for block in section.blocks -%}
-        <div class="pg-icon-card" {{ block.shopify_attributes }}>
+        <div class="pg-icon-card" data-reveal style="--reveal-delay: {{ forloop.index0 | times: 80 }}ms" {{ block.shopify_attributes }}>
           <span class="pg-icon-card__icon">{% render 'icon', name: block.settings.icon, color: icon_color %}</span>
           <h3 class="pg-icon-card__title">{{ block.settings.title | escape }}</h3>
           <p class="pg-icon-card__text">{{ block.settings.text | escape }}</p>

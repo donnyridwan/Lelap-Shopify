@@ -54,8 +54,8 @@
 .pg-num-cards { display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); gap: 24px; align-items: start; }
 .pg-num-card { background: var(--canvas); border-radius: 24px; padding: 28px; display: flex; flex-direction: column; gap: 12px; }
 .pg-num-card__num { font-size: 14px; font-weight: 600; color: var(--lav); }
-.pg-num-card__title { font-size: 22px; font-weight: 600; color: var(--navy); line-height: normal; }
-.pg-num-card__text { font-size: 15px; line-height: 1.55; color: var(--body); }
+.pg-num-card__title { font-size: 22px; font-weight: 600; color: var(--navy); line-height: 26px; }
+.pg-num-card__text { font-size: 15px; line-height: 23px; color: var(--body); }
 @media (max-width: 1199px) { .pg-num-cards { grid-template-columns: minmax(0, 1fr); gap: 16px; } }
 
 /* Founder note -------------------------------------------------------------- */
@@ -82,8 +82,8 @@
 .pg-icon-card { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 24px; border-radius: 20px; border: 1px solid var(--line); }
 .pg-icon-card__icon { width: 44px; height: 44px; border-radius: 50%; background: var(--panel); display: flex; align-items: center; justify-content: center; }
 .pg-icon-card__icon .icon { width: 20px; height: 20px; }
-.pg-icon-card__title { font-size: 18px; font-weight: 600; line-height: normal; color: var(--navy); }
-.pg-icon-card__text { font-size: 14px; line-height: 1.55; color: var(--body); }
+.pg-icon-card__title { font-size: 18px; font-weight: 600; line-height: 22px; color: var(--navy); }
+.pg-icon-card__text { font-size: 14px; line-height: 22px; color: var(--body); }
 .icon-cards--white { background: var(--canvas); --pg-py: 96px; }
 .icon-cards--white .pg-icon-card { background: var(--white); border: 0; padding: 28px; border-radius: 24px; }
 .icon-cards--white .pg-icon-card__icon { width: 48px; height: 48px; }
