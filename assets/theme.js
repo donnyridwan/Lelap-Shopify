@@ -108,6 +108,7 @@
 
   function initReveal(root) {
     if (reduceMotion || !('IntersectionObserver' in window)) return;
+    document.documentElement.classList.add('reveal-ready');
     const targets = [];
     (root || document).querySelectorAll(REVEAL_GROUPS.join(',')).forEach((el) => {
       if (el.closest('.mega-menu, .mobile-menu, .cart-drawer')) return;

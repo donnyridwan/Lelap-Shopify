@@ -10,7 +10,7 @@
 }
 
 /* Scroll reveal ----------------------------------------------------------- */
-.js [data-reveal] {
+.reveal-ready [data-reveal] {
   opacity: 0;
   transform: translate3d(0, var(--reveal-distance), 0);
   transition: opacity .7s var(--ease-out), transform .7s var(--ease-out);
@@ -19,7 +19,7 @@
 }
 .js [data-reveal='fade'] { transform: none; }
 .js [data-reveal='scale'] { transform: scale(.96); }
-.js [data-reveal].is-revealed { opacity: 1; transform: none; will-change: auto; }
+.reveal-ready [data-reveal].is-revealed { opacity: 1; transform: none; will-change: auto; }
 
 /* Hero intro ---------------------------------------------------------------- */
 @keyframes lelap-rise { from { opacity: 0; transform: translate3d(0, 24px, 0); } to { opacity: 1; transform: none; } }
@@ -117,6 +117,6 @@ details[data-animating] { overflow: hidden; }
 /* Reduced motion ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
-  .js [data-reveal] { opacity: 1; transform: none; }
+  .reveal-ready [data-reveal] { opacity: 1; transform: none; }
   .hero__title .text-lav { background: none; color: var(--lav); }
 }
