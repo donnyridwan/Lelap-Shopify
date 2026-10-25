@@ -434,7 +434,7 @@ a.hero__label:hover { color: var(--navy); }
 .guarantee__title { font-size: 28px; font-weight: 500; letter-spacing: -0.28px; color: var(--navy); line-height: normal; }
 .guarantee__text { font-size: 16px; line-height: 1.55; color: var(--body); }
 @media (max-width: 1199px) {
-  .guarantee__panel { gap: 24px; padding: 32px; }
+  .guarantee__panel { gap: 24px; padding: 40px 32px; }
 }
 @media (max-width: 767px) {
   .guarantee__panel { flex-direction: column; align-items: flex-start; gap: 0; padding: 24px; }
@@ -453,6 +453,7 @@ a.hero__label:hover { color: var(--navy); }
 .faq-row__q { display: flex; align-items: center; gap: 24px; cursor: pointer; list-style: none; font-size: 19px; font-weight: 500; color: var(--navy); }
 .faq-row__q::-webkit-details-marker { display: none; }
 .faq-row__q > span:first-child { flex: 1 1 0; }
+.faq-row__icon { display: inline-flex; line-height: 0; }
 .faq-row__icon--minus { display: none; }
 .faq-row[open] .faq-row__icon--plus { display: none; }
 .faq-row[open] .faq-row__icon--minus { display: inline-flex; }
@@ -462,7 +463,7 @@ a.hero__label:hover { color: var(--navy); }
   .faq__inner { padding-top: 56px; padding-bottom: 64px; gap: 64px; }
   .faq__title { font-size: 32px; letter-spacing: -0.8px; line-height: 1.2; max-width: 300px; }
   .faq-row { padding: 24px 0; }
-  .faq-row__q { font-size: 18px; gap: 16px; }
+  .faq-row__q { font-size: 19px; gap: 24px; }
   .faq-row__a { font-size: 15px; line-height: 1.75; padding-top: 16px; }
 }
 
@@ -539,4 +540,41 @@ a.hero__label:hover { color: var(--navy); }
 @media (max-width: 767px) {
   .need-tile__head { right: auto; width: 262px; gap: 8px; }
   .need-tile__title { flex: 0 0 auto; }
+}
+
+/* ==========================================================================
+   Exact tablet / mobile spacing from Figma metadata (224:* / 225:*)
+   ========================================================================== */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .hero__lead { max-width: 688px; }
+  .pgrid__title { font-size: 42px; letter-spacing: -1.26px; }
+  .pgrid__head { gap: 16px; }
+  .pgrid__inner { gap: 48px; }
+  .cmp__inner { padding-block: 88px; gap: 56px; }
+  .cmp__title { font-size: 42px; letter-spacing: -1.26px; }
+  .cmp__row--head .cmp__cell { height: 124px; }
+  .cmp__cell { height: 63px; }
+  .cmp__vs { top: 34px; }
+  .benefits__inner { padding-block: 88px; }
+  .benefits__title { font-size: 42px; letter-spacing: -1.05px; }
+  .faq__inner { padding-top: 72px; padding-bottom: 88px; }
+  .faq__title { font-size: 42px; letter-spacing: -1.05px; }
+}
+@media (max-width: 767px) {
+  .pgrid__title { font-size: 32px; letter-spacing: -0.96px; max-width: 260px; }
+  .pgrid__head { gap: 16px; }
+  .pgrid__inner { gap: 48px; }
+  .pgrid__grid { gap: 20px; }
+  .cmp__inner { gap: 56px; }
+  .how__title { font-size: 30px; letter-spacing: -0.6px; }
+  .reviews__inner { gap: 56px; }
+  .faq__inner { gap: 48px; }
+}
+
+/* Card heights and remaining tablet values (Figma Product Card 366 / mobile 620, Reviews 224:2008) */
+.product-card { min-height: 366px; }
+@media (max-width: 767px) { .product-card { min-height: 620px; } }
+@media (min-width: 768px) and (max-width: 1199px) {
+  .reviews__inner { padding-block: 88px; gap: 56px; }
+  .reviews__title { font-size: 42px; letter-spacing: -1.05px; }
 }
