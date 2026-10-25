@@ -1,0 +1,595 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "chip": "New: 4 formulas for 4 kinds of nights",
+        "title_line_1": "Doctor-guided sleep,",
+        "title_line_2": "delivered every month.",
+        "lead": "Low-dose melatonin gummies matched to your sleep problem by a licensed doctor.",
+        "primary_label": "Take the sleep quiz",
+        "secondary_label": "Shop all",
+        "note": "From $24/month. Free doctor review, free shipping, cancel anytime.",
+        "rating_text": "4.8 from 2,300+ reviews",
+        "image_alt": "Sleep Classic, Sleep Deep, Sleep Reset and Sleep Calm gummy pouches"
+      },
+      "blocks": {
+        "label-1": {
+          "type": "label",
+          "settings": {
+            "label": "Fall asleep"
+          }
+        },
+        "label-2": {
+          "type": "label",
+          "settings": {
+            "label": "Stay asleep"
+          }
+        },
+        "label-3": {
+          "type": "label",
+          "settings": {
+            "label": "Jet lag & shifts"
+          }
+        },
+        "label-4": {
+          "type": "label",
+          "settings": {
+            "label": "Busy mind"
+          }
+        }
+      },
+      "block_order": [
+        "label-1",
+        "label-2",
+        "label-3",
+        "label-4"
+      ]
+    },
+    "social_proof": {
+      "type": "social-proof",
+      "settings": {
+        "score": "4.8",
+        "count_text": "2,300+ verified reviews"
+      },
+      "blocks": {
+        "quote-1": {
+          "type": "quote",
+          "settings": {
+            "quote": "Asleep before 11 again.",
+            "author": "Nadia A., verified subscriber"
+          }
+        },
+        "quote-2": {
+          "type": "quote",
+          "settings": {
+            "quote": "No groggy mornings at all.",
+            "author": "Dimas R., verified subscriber"
+          }
+        },
+        "quote-3": {
+          "type": "quote",
+          "settings": {
+            "quote": "The doctor actually listened.",
+            "author": "Rahma P., verified subscriber"
+          }
+        }
+      },
+      "block_order": [
+        "quote-1",
+        "quote-2",
+        "quote-3"
+      ]
+    },
+    "shop_by_need": {
+      "type": "shop-by-need",
+      "settings": {
+        "title_line_1": "What’s keeping",
+        "title_line_2": "you up?",
+        "lead": "Not sure? The 2-minute quiz matches you to the right formula."
+      },
+      "blocks": {
+        "need-1": {
+          "type": "need",
+          "settings": {
+            "lead": "Fall asleep",
+            "accent": "faster",
+            "handle": "sleep-classic",
+            "badge": "Popular"
+          }
+        },
+        "need-2": {
+          "type": "need",
+          "settings": {
+            "lead": "Stay",
+            "accent": "asleep",
+            "handle": "sleep-deep"
+          }
+        },
+        "need-3": {
+          "type": "need",
+          "settings": {
+            "lead": "Beat",
+            "accent": "jet lag",
+            "handle": "sleep-reset"
+          }
+        },
+        "need-4": {
+          "type": "need",
+          "settings": {
+            "lead": "Quiet a",
+            "accent": "busy mind",
+            "handle": "sleep-calm"
+          }
+        },
+        "need-small-5": {
+          "type": "need_small",
+          "settings": {
+            "lead": "Wind down",
+            "accent": "at night",
+            "handle": "sleep-classic"
+          }
+        },
+        "need-small-6": {
+          "type": "need_small",
+          "settings": {
+            "lead": "After",
+            "accent": "night shifts",
+            "handle": "sleep-reset"
+          }
+        },
+        "need-small-7": {
+          "type": "need_small",
+          "settings": {
+            "lead": "Ease",
+            "accent": "evening stress",
+            "handle": "sleep-calm"
+          }
+        },
+        "browse-8": {
+          "type": "browse",
+          "settings": {
+            "label": "Browse all products"
+          }
+        }
+      },
+      "block_order": [
+        "need-1",
+        "need-2",
+        "need-3",
+        "need-4",
+        "need-small-5",
+        "need-small-6",
+        "need-small-7",
+        "browse-8"
+      ]
+    },
+    "how_it_works": {
+      "type": "how-it-works",
+      "settings": {
+        "title": "How Lelap works",
+        "button_label": "Start my free assessment"
+      },
+      "blocks": {
+        "step-1": {
+          "type": "step",
+          "settings": {
+            "title": "Take the 2-minute quiz",
+            "text": "Tell us how you sleep, your routine and any medication you take.",
+            "meta": "About 2 minutes"
+          }
+        },
+        "step-2": {
+          "type": "step",
+          "settings": {
+            "title": "A doctor reviews it",
+            "text": "A licensed doctor confirms your formula and dose, or suggests another option.",
+            "meta": "Within 24 hours"
+          }
+        },
+        "step-3": {
+          "type": "step",
+          "settings": {
+            "title": "Gummies arrive monthly",
+            "text": "Free delivery across Indonesia. Adjust, pause or cancel from your account.",
+            "meta": "Free shipping"
+          }
+        }
+      },
+      "block_order": [
+        "step-1",
+        "step-2",
+        "step-3"
+      ]
+    },
+    "product_grid": {
+      "type": "product-grid",
+      "settings": {
+        "title_line_1": "Sleep support for",
+        "title_line_2": "every kind of night.",
+        "lead": "Each formula is made for one sleep problem and dosed by a doctor. Subscribe and save 20% on every delivery.",
+        "link_label": "Shop all",
+        "limit": 4,
+        "disclaimer": "*These statements have not been evaluated by BPOM. This product is not intended to diagnose, treat, cure or prevent any disease."
+      }
+    },
+    "care_panels": {
+      "type": "care-panels",
+      "settings": {
+        "quiz_title_1": "Care that fits",
+        "quiz_title_2": "your schedule",
+        "quiz_text": "No appointments or waiting rooms. Answer a few questions from bed and get your plan in a day.",
+        "quiz_button": "Take the sleep quiz",
+        "phone_question": "How long does it take you to fall asleep?",
+        "phone_options": "Under 15 minutes\n15 to 30 minutes\n30 to 60 minutes\nMore than an hour",
+        "phone_selected": 3,
+        "rec_label": "Your recommendation",
+        "rec_handle": "sleep-classic",
+        "rec_dose": "3 mg melatonin, nightly",
+        "doc_title_1": "Prescribed by",
+        "doc_title_2": "licensed doctors",
+        "doc_text": "Every plan is reviewed by a doctor, with free follow-ups whenever you need them.",
+        "doc_button": "Meet our doctors",
+        "doc_badge": "Licensed doctor",
+        "doc_name": "Dr. Ratna Wijaya",
+        "doc_role": "General practitioner"
+      }
+    },
+    "comparison": {
+      "type": "comparison",
+      "settings": {
+        "chip": "Why lelap",
+        "title_line_1": "Not your average",
+        "title_line_2": "sleep gummy.",
+        "lead": "Drugstore melatonin is one-size-fits-all. Lelap starts with a doctor, a lower dose and a formula matched to how you sleep.",
+        "them_title": "Drugstore melatonin",
+        "them_sub": "Off the shelf, one size fits all",
+        "us_title": "With lelap",
+        "us_sub": "Doctor-guided, personalized, delivered",
+        "handle": "sleep-classic",
+        "button_label": "Find my formula",
+        "note": "Takes 2 minutes. Free doctor review."
+      },
+      "blocks": {
+        "row-1": {
+          "type": "row",
+          "settings": {
+            "them": "Same dose for everyone",
+            "us": "Dose set by a licensed doctor"
+          }
+        },
+        "row-2": {
+          "type": "row",
+          "settings": {
+            "them": "Dose varies by brand",
+            "us": "Low, steady dose of 1 to 3 mg"
+          }
+        },
+        "row-3": {
+          "type": "row",
+          "settings": {
+            "them": "You figure it out alone",
+            "us": "Free follow-ups with your doctor"
+          }
+        },
+        "row-4": {
+          "type": "row",
+          "settings": {
+            "them": "Often sugar or gelatin",
+            "us": "Sugar-free, vegan, gelatin-free"
+          }
+        },
+        "row-5": {
+          "type": "row",
+          "settings": {
+            "them": "One formula for every problem",
+            "us": "Matched to how you sleep"
+          }
+        },
+        "row-6": {
+          "type": "row",
+          "settings": {
+            "them": "Buy again when you run out",
+            "us": "Delivered monthly, cancel anytime"
+          }
+        }
+      },
+      "block_order": [
+        "row-1",
+        "row-2",
+        "row-3",
+        "row-4",
+        "row-5",
+        "row-6"
+      ]
+    },
+    "benefits_timeline": {
+      "type": "benefits-timeline",
+      "settings": {
+        "title": "Better nights that build over time.",
+        "lead": "Designed for nightly use, with your doctor fine-tuning your dose along the way.*",
+        "howto_title": "How to use",
+        "howto_text": "Chew one gummy 30 to 60 minutes before bed. Don’t drive or operate machinery afterwards.",
+        "handle": "sleep-classic"
+      },
+      "blocks": {
+        "step-1": {
+          "type": "step",
+          "settings": {
+            "badge": "Night 1",
+            "title": "Wind down more easily*",
+            "bullets": "Take one gummy 30 to 60 minutes before bed\nFeel drowsy at a more regular time\nNo groggy mornings at a low dose"
+          }
+        },
+        "step-2": {
+          "type": "step",
+          "settings": {
+            "badge": "Week 2",
+            "title": "A steadier sleep routine*",
+            "bullets": "Fall asleep closer to the same time each night\nFewer nights lying awake\nTrack your sleep in your account"
+          }
+        },
+        "step-3": {
+          "type": "step",
+          "settings": {
+            "badge": "Week 4",
+            "title": "Check in with your doctor",
+            "bullets": "Talk through how you’re sleeping\nAdjust your dose or formula if needed\nPause or continue, it’s your call"
+          }
+        }
+      },
+      "block_order": [
+        "step-1",
+        "step-2",
+        "step-3"
+      ]
+    },
+    "ingredients": {
+      "type": "ingredients",
+      "settings": {
+        "title_line_1": "Clean ingredients that",
+        "title_line_2": "work with your body.",
+        "lead": "Every gummy is vegan, gelatin-free and made without added sugar or artificial colours. Here’s what’s inside Sleep Classic.",
+        "why_label": "Why it’s in there"
+      },
+      "blocks": {
+        "ingredient-1": {
+          "type": "ingredient",
+          "settings": {
+            "name": "Melatonin",
+            "amount": "3 mg",
+            "desc": "The hormone your body makes when it gets dark, in a low, steady dose.",
+            "illustration": "molecule-melatonin",
+            "why": "Signals to your body that it’s time to sleep.",
+            "badge": "Main active"
+          }
+        },
+        "ingredient-2": {
+          "type": "ingredient",
+          "settings": {
+            "name": "Chamomile extract",
+            "amount": "50 mg",
+            "desc": "A gentle herb used for centuries as part of a bedtime routine.",
+            "illustration": "molecule-chamomile",
+            "why": "Helps you feel calm and ready for bed."
+          }
+        },
+        "ingredient-3": {
+          "type": "ingredient",
+          "settings": {
+            "name": "L-theanine",
+            "amount": "50 mg",
+            "desc": "An amino acid naturally found in green tea leaves.",
+            "illustration": "molecule-l-theanine",
+            "why": "Supports a quieter mind without making you groggy."
+          }
+        },
+        "ingredient-4": {
+          "type": "ingredient",
+          "settings": {
+            "name": "Fruit pectin",
+            "amount": "Base",
+            "desc": "A plant-based gelling agent from citrus and apple peel.",
+            "illustration": "molecule-pectin",
+            "why": "Keeps every gummy vegan and gelatin-free."
+          }
+        }
+      },
+      "block_order": [
+        "ingredient-1",
+        "ingredient-2",
+        "ingredient-3",
+        "ingredient-4"
+      ]
+    },
+    "reviews": {
+      "type": "reviews",
+      "settings": {
+        "title": "Real nights from real customers",
+        "summary": "4.8 out of 5 from 2,300+ reviews",
+        "verified_label": "Verified subscriber"
+      },
+      "blocks": {
+        "review-1": {
+          "type": "review",
+          "settings": {
+            "title": "Asleep before 11 again",
+            "body": "I used to scroll until 1am. Now I take one gummy after dinner and I’m out before my alarm-setting routine is done.",
+            "name": "Nadia A."
+          }
+        },
+        "review-2": {
+          "type": "review",
+          "settings": {
+            "title": "Finally works with my shifts",
+            "body": "Sleep Reset helps me fall asleep after night shifts at the hospital. I wake up for the next one without feeling foggy.",
+            "name": "Bima S."
+          }
+        },
+        "review-3": {
+          "type": "review",
+          "settings": {
+            "title": "The doctor actually listened",
+            "body": "I was nervous about melatonin. The doctor explained everything and started me on a lower dose. It made a big difference.",
+            "name": "Rahma P."
+          }
+        }
+      },
+      "block_order": [
+        "review-1",
+        "review-2",
+        "review-3"
+      ]
+    },
+    "guarantee": {
+      "type": "guarantee",
+      "settings": {
+        "title": "The 30-Night Sleep Promise",
+        "text": "Give Lelap 30 nights. If you’re not sleeping better, we’ll refund your first order. No need to send anything back.",
+        "button_label": "Start risk-free"
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "settings": {
+        "title": "Frequently asked questions",
+        "open_first": true,
+        "single_open": true,
+        "schema_markup": true
+      },
+      "blocks": {
+        "question-1": {
+          "type": "question",
+          "settings": {
+            "question": "Is melatonin safe to take every night?",
+            "answer": "<p>For most healthy adults, low-dose melatonin is well tolerated for short-term use. Your doctor sets your dose and how long to take it, and checks in after your first month.</p>"
+          }
+        },
+        "question-2": {
+          "type": "question",
+          "settings": {
+            "question": "Do I need a prescription first?",
+            "answer": "<p>No. Take the sleep quiz and a licensed doctor reviews your answers before anything ships.</p>"
+          }
+        },
+        "question-3": {
+          "type": "question",
+          "settings": {
+            "question": "How soon will I feel it?",
+            "answer": "<p>Most people feel drowsy 30 to 60 minutes after a gummy, though everyone responds a little differently.</p>"
+          }
+        },
+        "question-4": {
+          "type": "question",
+          "settings": {
+            "question": "Will I become dependent on it?",
+            "answer": "<p>Melatonin isn’t generally considered habit-forming. Your doctor still decides how long you take it and checks in with you.</p>"
+          }
+        },
+        "question-5": {
+          "type": "question",
+          "settings": {
+            "question": "Can I change or cancel my subscription?",
+            "answer": "<p>Yes. Change your formula, skip a month or cancel from your account. No fees.</p>"
+          }
+        },
+        "question-6": {
+          "type": "question",
+          "settings": {
+            "question": "Where do you deliver?",
+            "answer": "<p>Anywhere in Indonesia, free. Most major cities receive orders in 1 to 3 working days.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "question-1",
+        "question-2",
+        "question-3",
+        "question-4",
+        "question-5",
+        "question-6"
+      ]
+    },
+    "safety_info": {
+      "type": "safety-info",
+      "settings": {
+        "title": "Important safety information",
+        "reg": "BPOM reg. no. to be added"
+      },
+      "blocks": {
+        "item-1": {
+          "type": "item",
+          "settings": {
+            "text": "Not suitable during pregnancy or breastfeeding, or for anyone under 18 unless a doctor advises it."
+          }
+        },
+        "item-2": {
+          "type": "item",
+          "settings": {
+            "text": "Melatonin can cause drowsiness. Don’t drive or operate machinery after taking it."
+          }
+        },
+        "item-3": {
+          "type": "item",
+          "settings": {
+            "text": "Tell your doctor if you take blood thinners, antidepressants, blood pressure medication or immunosuppressants, or have an autoimmune condition."
+          }
+        },
+        "item-4": {
+          "type": "item",
+          "settings": {
+            "text": "Stop and contact your doctor if you have an allergic reaction, a severe headache or any side effect that worries you."
+          }
+        },
+        "item-5": {
+          "type": "item",
+          "settings": {
+            "text": "Lelap doesn’t replace a medical diagnosis. If you’ve had trouble sleeping for more than three weeks, see a doctor in person."
+          }
+        },
+        "item-6": {
+          "type": "item",
+          "settings": {
+            "text": "Store in a cool, dry place out of reach of children."
+          }
+        }
+      },
+      "block_order": [
+        "item-1",
+        "item-2",
+        "item-3",
+        "item-4",
+        "item-5",
+        "item-6"
+      ]
+    },
+    "final_cta": {
+      "type": "final-cta",
+      "settings": {
+        "title_line_1": "Your best sleep",
+        "title_line_2": "starts tonight.",
+        "text": "Take the 2-minute quiz, get a doctor-reviewed plan, and have your first pouch delivered free.",
+        "primary_label": "Take the sleep quiz",
+        "secondary_label": "Shop all products",
+        "note": "From $24/month. Free shipping. 30-night sleep promise.",
+        "handle": "sleep-classic"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "social_proof",
+    "shop_by_need",
+    "how_it_works",
+    "product_grid",
+    "care_panels",
+    "comparison",
+    "benefits_timeline",
+    "ingredients",
+    "reviews",
+    "guarantee",
+    "faq",
+    "safety_info",
+    "final_cta"
+  ]
+}

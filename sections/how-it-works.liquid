@@ -1,0 +1,56 @@
+<section class="how" id="how-it-works">
+  <div class="container how__inner">
+    <div class="how__head">
+      <h2 class="how__title">{{ section.settings.title }}</h2>
+      {%- if section.settings.button_label != blank -%}
+        <a href="{{ section.settings.button_link | default: settings.quiz_url | default: '/pages/sleep-quiz' }}" class="btn btn--light">{{ section.settings.button_label }}</a>
+      {%- endif -%}
+    </div>
+    <ol class="how__steps" role="list">
+      {%- for block in section.blocks -%}
+        <li class="how-step" {{ block.shopify_attributes }}>
+          <span class="how-step__num">{{ forloop.index }}</span>
+          <h3 class="how-step__title">{{ block.settings.title }}</h3>
+          <p class="how-step__text">{{ block.settings.text }}</p>
+          {%- if block.settings.meta != blank -%}
+            <p class="how-step__meta">{% render 'icon', name: 'check', color: '#c3c0e8' %}{{ block.settings.meta }}</p>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ol>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "How it works",
+  "class": "section-how",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "How Lelap works" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Start my free assessment" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Take the 2-minute quiz" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Tell us how you sleep, your routine and any medication you take." },
+        { "type": "text", "id": "meta", "label": "Check line", "default": "About 2 minutes" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "How it works",
+      "blocks": [
+        { "type": "step", "settings": { "title": "Take the 2-minute quiz", "text": "Tell us how you sleep, your routine and any medication you take.", "meta": "About 2 minutes" } },
+        { "type": "step", "settings": { "title": "A doctor reviews it", "text": "A licensed doctor confirms your formula and dose, or suggests another option.", "meta": "Within 24 hours" } },
+        { "type": "step", "settings": { "title": "Gummies arrive monthly", "text": "Free delivery across Indonesia. Adjust, pause or cancel from your account.", "meta": "Free shipping" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

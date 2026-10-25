@@ -1,0 +1,59 @@
+<section class="reviews">
+  <div class="container reviews__inner">
+    <div class="reviews__head">
+      <h2 class="reviews__title">{{ section.settings.title }}</h2>
+      <p class="reviews__summary">
+        <span class="stars stars--18">{%- for i in (1..5) -%}{% render 'icon', name: 'star', color: '#ffffff' %}{%- endfor -%}</span>
+        {{ section.settings.summary }}
+      </p>
+    </div>
+    <div class="reviews__grid">
+      {%- for block in section.blocks -%}
+        <article class="review-card" {{ block.shopify_attributes }}>
+          {% render 'stars' %}
+          <h3 class="review-card__title">{{ block.settings.title }}</h3>
+          <p class="review-card__body">{{ block.settings.body }}</p>
+          <p class="review-card__foot">
+            <strong>{{ block.settings.name }}</strong>
+            {% render 'icon', name: 'check', color: '#5f6179', size: 14 %}
+            <span>{{ section.settings.verified_label }}</span>
+          </p>
+        </article>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Reviews",
+  "class": "section-reviews",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "Real nights from real customers" },
+    { "type": "text", "id": "summary", "label": "Summary", "default": "4.8 out of 5 from 2,300+ reviews" },
+    { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified subscriber" }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Asleep before 11 again" },
+        { "type": "textarea", "id": "body", "label": "Review", "default": "I used to scroll until 1am. Now I take one gummy after dinner and I’m out before my alarm-setting routine is done." },
+        { "type": "text", "id": "name", "label": "Name", "default": "Nadia A." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reviews",
+      "blocks": [
+        { "type": "review", "settings": { "title": "Asleep before 11 again", "body": "I used to scroll until 1am. Now I take one gummy after dinner and I’m out before my alarm-setting routine is done.", "name": "Nadia A." } },
+        { "type": "review", "settings": { "title": "Finally works with my shifts", "body": "Sleep Reset helps me fall asleep after night shifts at the hospital. I wake up for the next one without feeling foggy.", "name": "Bima S." } },
+        { "type": "review", "settings": { "title": "The doctor actually listened", "body": "I was nervous about melatonin. The doctor explained everything and started me on a lower dose. It made a big difference.", "name": "Rahma P." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

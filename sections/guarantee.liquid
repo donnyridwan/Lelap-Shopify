@@ -1,0 +1,28 @@
+<section class="guarantee">
+  <div class="container">
+    <div class="guarantee__panel">
+      <span class="guarantee__icon">{% render 'icon', name: 'shield', size: 40 %}</span>
+      <div class="guarantee__copy">
+        <h2 class="guarantee__title">{{ section.settings.title }}</h2>
+        <p class="guarantee__text">{{ section.settings.text }}</p>
+      </div>
+      {%- if section.settings.button_label != blank -%}
+        <a href="{{ section.settings.button_link | default: settings.quiz_url | default: '/pages/sleep-quiz' }}" class="btn btn--primary">{{ section.settings.button_label }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Guarantee",
+  "class": "section-guarantee",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "The 30-Night Sleep Promise" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Give Lelap 30 nights. If you’re not sleeping better, we’ll refund your first order. No need to send anything back." },
+    { "type": "text", "id": "button_label", "label": "Button", "default": "Start risk-free" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "Guarantee" }]
+}
+{% endschema %}

@@ -1,0 +1,67 @@
+<section class="faq" id="faq">
+  <div class="container faq__inner">
+    <h2 class="faq__title">{{ section.settings.title }}</h2>
+    <div class="faq__list" data-accordion="{% if section.settings.single_open %}single{% else %}multi{% endif %}">
+      {%- for block in section.blocks -%}
+        <details class="faq-row" {{ block.shopify_attributes }}{% if forloop.first and section.settings.open_first %} open{% endif %}>
+          <summary class="faq-row__q">
+            <span>{{ block.settings.question }}</span>
+            <span class="faq-row__icon faq-row__icon--plus">{% render 'icon', name: 'plus', size: 22 %}</span>
+            <span class="faq-row__icon faq-row__icon--minus">{% render 'icon', name: 'minus', size: 22 %}</span>
+          </summary>
+          <div class="faq-row__a rte">{{ block.settings.answer }}</div>
+        </details>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{%- if section.settings.schema_markup and section.blocks.size > 0 -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {%- for block in section.blocks -%}
+        { "@type": "Question", "name": {{ block.settings.question | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ block.settings.answer | strip_html | json }} } }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  }
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FAQ",
+  "class": "section-faq",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "Frequently asked questions" },
+    { "type": "checkbox", "id": "open_first", "label": "Open first question", "default": true },
+    { "type": "checkbox", "id": "single_open", "label": "Only one answer open at a time", "default": true },
+    { "type": "checkbox", "id": "schema_markup", "label": "Add FAQ structured data", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Is melatonin safe to take every night?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>For most healthy adults, low-dose melatonin is well tolerated for short-term use. Your doctor sets your dose and how long to take it, and checks in after your first month.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ",
+      "blocks": [
+        { "type": "question", "settings": { "question": "Is melatonin safe to take every night?", "answer": "<p>For most healthy adults, low-dose melatonin is well tolerated for short-term use. Your doctor sets your dose and how long to take it, and checks in after your first month.</p>" } },
+        { "type": "question", "settings": { "question": "Do I need a prescription first?", "answer": "<p>No. Take the sleep quiz and a licensed doctor reviews your answers before anything ships.</p>" } },
+        { "type": "question", "settings": { "question": "How soon will I feel it?", "answer": "<p>Most people feel drowsy 30 to 60 minutes after a gummy, though everyone responds a little differently.</p>" } },
+        { "type": "question", "settings": { "question": "Will I become dependent on it?", "answer": "<p>Melatonin isn’t generally considered habit-forming. Your doctor still decides how long you take it and checks in with you.</p>" } },
+        { "type": "question", "settings": { "question": "Can I change or cancel my subscription?", "answer": "<p>Yes. Change your formula, skip a month or cancel from your account. No fees.</p>" } },
+        { "type": "question", "settings": { "question": "Where do you deliver?", "answer": "<p>Anywhere in Indonesia, free. Most major cities receive orders in 1 to 3 working days.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

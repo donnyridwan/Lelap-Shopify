@@ -1,0 +1,50 @@
+<section class="social-proof">
+  <div class="container social-proof__inner">
+    <div class="social-proof__score">
+      <span class="social-proof__num">{{ section.settings.score }}</span>
+      <span class="social-proof__meta">
+        <span class="stars stars--14">{%- for i in (1..5) -%}{% render 'icon', name: 'star' %}{%- endfor -%}</span>
+        <span class="social-proof__count">{{ section.settings.count_text }}</span>
+      </span>
+    </div>
+    {%- for block in section.blocks -%}
+      <span class="social-proof__divider" aria-hidden="true"></span>
+      <figure class="social-proof__quote" {{ block.shopify_attributes }}>
+        <blockquote>“{{ block.settings.quote }}”</blockquote>
+        <figcaption>{{ block.settings.author }}</figcaption>
+      </figure>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Social proof",
+  "class": "section-social-proof",
+  "max_blocks": 3,
+  "settings": [
+    { "type": "text", "id": "score", "label": "Score", "default": "4.8" },
+    { "type": "text", "id": "count_text", "label": "Review count", "default": "2,300+ verified reviews" }
+  ],
+  "blocks": [
+    {
+      "type": "quote",
+      "name": "Quote",
+      "settings": [
+        { "type": "text", "id": "quote", "label": "Quote", "default": "Asleep before 11 again." },
+        { "type": "text", "id": "author", "label": "Author", "default": "Nadia A., verified subscriber" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Social proof",
+      "blocks": [
+        { "type": "quote", "settings": { "quote": "Asleep before 11 again.", "author": "Nadia A., verified subscriber" } },
+        { "type": "quote", "settings": { "quote": "No groggy mornings at all.", "author": "Dimas R., verified subscriber" } },
+        { "type": "quote", "settings": { "quote": "The doctor actually listened.", "author": "Rahma P., verified subscriber" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

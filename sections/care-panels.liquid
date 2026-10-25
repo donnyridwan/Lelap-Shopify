@@ -1,0 +1,101 @@
+{%- liquid
+  assign rec_handle = section.settings.rec_handle | default: 'sleep-classic'
+  assign rec_product = section.settings.rec_product
+  if rec_product != blank
+    assign rec_handle = rec_product.handle
+  endif
+-%}
+<section class="care">
+  <div class="container care__inner">
+    <div class="care-panel care-panel--quiz">
+      <div class="care-panel__copy">
+        <h2 class="care-panel__title"><span>{{ section.settings.quiz_title_1 }}</span> <span class="text-lav">{{ section.settings.quiz_title_2 }}</span></h2>
+        <p class="care-panel__text">{{ section.settings.quiz_text }}</p>
+        <a href="{{ section.settings.quiz_link | default: settings.quiz_url | default: '/pages/sleep-quiz' }}" class="btn btn--primary">{{ section.settings.quiz_button }}</a>
+      </div>
+      <div class="care-phone" aria-hidden="true">
+        <div class="care-phone__screen">
+          <div class="care-phone__top">
+            {% render 'icon', name: 'back', size: 18 %}
+            <span class="wordmark care-phone__logo">lelap</span>
+            <span class="care-phone__step">3/10</span>
+          </div>
+          <div class="care-phone__progress"><span></span></div>
+          <p class="care-phone__q">{{ section.settings.phone_question }}</p>
+          {%- assign options = section.settings.phone_options | newline_to_br | split: '<br />' -%}
+          {%- for opt in options -%}
+            {%- assign o = opt | strip -%}
+            {%- if o != blank -%}
+              <span class="care-phone__opt{% if forloop.index == section.settings.phone_selected %} is-selected{% endif %}">{{ o }}{% if forloop.index == section.settings.phone_selected %}{% render 'icon', name: 'check', color: '#ffffff' %}{% endif %}</span>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+      <div class="care-rec" aria-hidden="true">
+        <p class="care-rec__label">{{ section.settings.rec_label }}</p>
+        <p class="care-rec__name">{% render 'product-fact', product: rec_product, handle: rec_handle, key: 'title' %}</p>
+        <div class="care-rec__img">{% render 'product-image', product: rec_product, handle: rec_handle, width: 400, sizes: '196px', alt: '' %}</div>
+        <p class="care-rec__dose">{{ section.settings.rec_dose }}</p>
+      </div>
+    </div>
+
+    <div class="care-panel care-panel--doctor">
+      <div class="care-panel__copy">
+        <h2 class="care-panel__title"><span>{{ section.settings.doc_title_1 }}</span> <span class="text-lav">{{ section.settings.doc_title_2 }}</span></h2>
+        <p class="care-panel__text">{{ section.settings.doc_text }}</p>
+        <a href="{{ section.settings.doc_link | default: '/pages/science-doctors' }}" class="btn btn--primary">{{ section.settings.doc_button }}</a>
+      </div>
+      <div class="care-doctor">
+        {%- if section.settings.doc_image != blank -%}
+          {{ section.settings.doc_image | image_url: width: 1200 | image_tag: loading: 'lazy', sizes: '(min-width: 768px) 400px, 290px', widths: '400, 600, 800, 1200', class: 'care-doctor__img', alt: section.settings.doc_name }}
+        {%- else -%}
+          <picture>
+            <source media="(max-width: 767px)" srcset="{{ 'photo-doctor-mobile.jpg' | asset_url }}" width="290" height="340">
+            <img src="{{ 'photo-doctor.jpg' | asset_url }}" class="care-doctor__img" width="400" height="370" loading="lazy" alt="{{ section.settings.doc_name | escape }}">
+          </picture>
+        {%- endif -%}
+      </div>
+      <span class="care-badge">
+        <span class="care-badge__dot">{% render 'icon', name: 'check', color: '#efeb9f', size: 12 %}</span>
+        {{ section.settings.doc_badge }}
+      </span>
+      <span class="care-name">
+        <strong>{{ section.settings.doc_name }}</strong>
+        <span>{{ section.settings.doc_role }}</span>
+      </span>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Care panels",
+  "class": "section-care",
+  "settings": [
+    { "type": "header", "content": "Quiz panel" },
+    { "type": "text", "id": "quiz_title_1", "label": "Heading line 1", "default": "Care that fits" },
+    { "type": "text", "id": "quiz_title_2", "label": "Heading line 2 (lavender)", "default": "your schedule" },
+    { "type": "textarea", "id": "quiz_text", "label": "Text", "default": "No appointments or waiting rooms. Answer a few questions from bed and get your plan in a day." },
+    { "type": "text", "id": "quiz_button", "label": "Button", "default": "Take the sleep quiz" },
+    { "type": "url", "id": "quiz_link", "label": "Button link" },
+    { "type": "text", "id": "phone_question", "label": "Phone mockup question", "default": "How long does it take you to fall asleep?" },
+    { "type": "textarea", "id": "phone_options", "label": "Phone mockup answers (one per line)", "default": "Under 15 minutes\n15 to 30 minutes\n30 to 60 minutes\nMore than an hour" },
+    { "type": "range", "id": "phone_selected", "label": "Selected answer", "min": 1, "max": 4, "step": 1, "default": 3 },
+    { "type": "text", "id": "rec_label", "label": "Recommendation label", "default": "Your recommendation" },
+    { "type": "product", "id": "rec_product", "label": "Recommended product" },
+    { "type": "text", "id": "rec_handle", "label": "Fallback product handle", "default": "sleep-classic" },
+    { "type": "text", "id": "rec_dose", "label": "Recommendation dose", "default": "3 mg melatonin, nightly" },
+    { "type": "header", "content": "Doctor panel" },
+    { "type": "text", "id": "doc_title_1", "label": "Heading line 1", "default": "Prescribed by" },
+    { "type": "text", "id": "doc_title_2", "label": "Heading line 2 (lavender)", "default": "licensed doctors" },
+    { "type": "textarea", "id": "doc_text", "label": "Text", "default": "Every plan is reviewed by a doctor, with free follow-ups whenever you need them." },
+    { "type": "text", "id": "doc_button", "label": "Button", "default": "Meet our doctors" },
+    { "type": "url", "id": "doc_link", "label": "Button link" },
+    { "type": "image_picker", "id": "doc_image", "label": "Doctor photo", "info": "Defaults to the photo from the design." },
+    { "type": "text", "id": "doc_badge", "label": "Badge", "default": "Licensed doctor" },
+    { "type": "text", "id": "doc_name", "label": "Doctor name", "default": "Dr. Ratna Wijaya" },
+    { "type": "text", "id": "doc_role", "label": "Doctor role", "default": "General practitioner" }
+  ],
+  "presets": [{ "name": "Care panels" }]
+}
+{% endschema %}

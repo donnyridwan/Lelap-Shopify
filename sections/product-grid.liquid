@@ -1,0 +1,52 @@
+{%- liquid
+  assign handles = 'sleep-classic,sleep-deep,sleep-reset,sleep-calm' | split: ','
+  assign col = section.settings.collection
+-%}
+<section class="pgrid" id="formulas">
+  <div class="container pgrid__inner">
+    <div class="pgrid__head">
+      <h2 class="pgrid__title"><span>{{ section.settings.title_line_1 }}</span> <span>{{ section.settings.title_line_2 }}</span></h2>
+      <div class="pgrid__aside">
+        <p class="pgrid__lead">{{ section.settings.lead }}</p>
+        {%- if section.settings.link_label != blank -%}
+          <a class="link-underline pgrid__link" href="{{ section.settings.link | default: routes.all_products_collection_url }}">{{ section.settings.link_label }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+    <div class="pgrid__grid">
+      {%- if col != blank and col.products_count > 0 -%}
+        {%- for p in col.products limit: section.settings.limit -%}
+          {% render 'product-card', product: p %}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for h in handles -%}
+          {%- assign p = all_products[h] -%}
+          {%- if p != blank and p.id -%}
+            {% render 'product-card', product: p %}
+          {%- else -%}
+            {% render 'product-card', handle: h %}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+    {%- if section.settings.disclaimer != blank -%}<p class="pgrid__disclaimer">{{ section.settings.disclaimer }}</p>{%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product grid",
+  "class": "section-pgrid",
+  "settings": [
+    { "type": "text", "id": "title_line_1", "label": "Heading line 1", "default": "Sleep support for" },
+    { "type": "text", "id": "title_line_2", "label": "Heading line 2", "default": "every kind of night." },
+    { "type": "textarea", "id": "lead", "label": "Text", "default": "Each formula is made for one sleep problem and dosed by a doctor. Subscribe and save 20% on every delivery." },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "Shop all" },
+    { "type": "url", "id": "link", "label": "Link" },
+    { "type": "collection", "id": "collection", "label": "Collection", "info": "Leave empty to show Sleep Classic, Sleep Deep, Sleep Reset and Sleep Calm." },
+    { "type": "range", "id": "limit", "label": "Products to show", "min": 2, "max": 8, "step": 2, "default": 4 },
+    { "type": "textarea", "id": "disclaimer", "label": "Disclaimer", "default": "*These statements have not been evaluated by BPOM. This product is not intended to diagnose, treat, cure or prevent any disease." }
+  ],
+  "presets": [{ "name": "Product grid" }]
+}
+{% endschema %}

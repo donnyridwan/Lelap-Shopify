@@ -1,0 +1,102 @@
+{%- liquid
+  assign h = section.settings.handle | default: 'sleep-classic'
+  assign p = section.settings.product
+-%}
+<section class="benefits bg-canvas">
+  <div class="container benefits__inner">
+    <div class="benefits__head">
+      <h2 class="benefits__title">{{ section.settings.title }}</h2>
+      <p class="benefits__lead">{{ section.settings.lead }}</p>
+    </div>
+    <div class="benefits__row">
+      <div class="benefits__timeline">
+        <ol class="benefits__steps" role="list">
+          {%- for block in section.blocks -%}
+            <li class="benefit-step" {{ block.shopify_attributes }}>
+              <div class="benefit-step__head">
+                <span class="benefit-step__badge">{{ block.settings.badge }}</span>
+                <h3 class="benefit-step__title">{{ block.settings.title }}</h3>
+              </div>
+              {%- assign lines = block.settings.bullets | newline_to_br | split: '<br />' -%}
+              <ul class="benefit-step__list" role="list">
+                {%- for line in lines -%}{%- assign l = line | strip -%}{%- if l != blank -%}<li>{{ l }}</li>{%- endif -%}{%- endfor -%}
+              </ul>
+            </li>
+          {%- endfor -%}
+        </ol>
+        <div class="benefits__howto">
+          <span class="benefits__howto-img">{% render 'product-image', product: p, handle: h, width: 160, sizes: '56px', alt: '' %}</span>
+          <div>
+            <p class="benefits__howto-title">{{ section.settings.howto_title }}</p>
+            <p class="benefits__howto-text">{{ section.settings.howto_text }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="benefits__collage">
+        <div class="benefits__tea">
+          {%- if section.settings.image_1 != blank -%}
+            {{ section.settings.image_1 | image_url: width: 760 | image_tag: loading: 'lazy', sizes: '(min-width: 768px) 380px, 214px', alt: section.settings.image_1.alt }}
+          {%- else -%}
+            <img src="{{ 'photo-tea.jpg' | asset_url }}" width="380" height="500" loading="lazy" alt="A cup of tea and an open journal on a bed">
+          {%- endif -%}
+        </div>
+        <div class="benefits__stack">
+          <div class="benefits__jar">
+            {%- if section.settings.image_2 != blank -%}
+              {{ section.settings.image_2 | image_url: width: 440 | image_tag: loading: 'lazy', sizes: '220px', alt: section.settings.image_2.alt }}
+            {%- else -%}
+              <img src="{{ 'photo-jar.jpg' | asset_url }}" width="220" height="220" loading="lazy" alt="Sleep Classic pouch">
+            {%- endif -%}
+          </div>
+          <div class="benefits__bedroom">
+            {%- if section.settings.image_3 != blank -%}
+              {{ section.settings.image_3 | image_url: width: 440 | image_tag: loading: 'lazy', sizes: '220px', alt: section.settings.image_3.alt }}
+            {%- else -%}
+              <img src="{{ 'photo-bedroom-tall.jpg' | asset_url }}" width="220" height="264" loading="lazy" alt="A woman sleeping next to a bedside lamp">
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Benefits over time",
+  "class": "section-benefits",
+  "max_blocks": 5,
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "Better nights that build over time." },
+    { "type": "textarea", "id": "lead", "label": "Text", "default": "Designed for nightly use, with your doctor fine-tuning your dose along the way.*" },
+    { "type": "text", "id": "howto_title", "label": "How to use title", "default": "How to use" },
+    { "type": "textarea", "id": "howto_text", "label": "How to use text", "default": "Chew one gummy 30 to 60 minutes before bed. Don’t drive or operate machinery afterwards." },
+    { "type": "product", "id": "product", "label": "How to use product image" },
+    { "type": "text", "id": "handle", "label": "Fallback product handle", "default": "sleep-classic" },
+    { "type": "image_picker", "id": "image_1", "label": "Large photo" },
+    { "type": "image_picker", "id": "image_2", "label": "Round photo" },
+    { "type": "image_picker", "id": "image_3", "label": "Small photo" }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "text", "id": "badge", "label": "Badge", "default": "Night 1" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Wind down more easily*" },
+        { "type": "textarea", "id": "bullets", "label": "Bullets (one per line)", "default": "Take one gummy 30 to 60 minutes before bed\nFeel drowsy at a more regular time\nNo groggy mornings at a low dose" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Benefits over time",
+      "blocks": [
+        { "type": "step", "settings": { "badge": "Night 1", "title": "Wind down more easily*", "bullets": "Take one gummy 30 to 60 minutes before bed\nFeel drowsy at a more regular time\nNo groggy mornings at a low dose" } },
+        { "type": "step", "settings": { "badge": "Week 2", "title": "A steadier sleep routine*", "bullets": "Fall asleep closer to the same time each night\nFewer nights lying awake\nTrack your sleep in your account" } },
+        { "type": "step", "settings": { "badge": "Week 4", "title": "Check in with your doctor", "bullets": "Talk through how you’re sleeping\nAdjust your dose or formula if needed\nPause or continue, it’s your call" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

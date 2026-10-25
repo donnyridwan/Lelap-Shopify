@@ -1,0 +1,50 @@
+{%- liquid
+  assign items = section.blocks
+  assign half = items.size | plus: 1 | divided_by: 2
+-%}
+<section class="safety">
+  <div class="container safety__wrap">
+    <div class="safety__box">
+      <div class="safety__top">
+        <h2 class="safety__title">{{ section.settings.title }}</h2>
+        {%- if section.settings.reg != blank -%}<p class="safety__reg">{{ section.settings.reg }}</p>{%- endif -%}
+      </div>
+      <div class="safety__cols">
+        <ul class="safety__col" role="list">
+          {%- for block in section.blocks limit: half -%}<li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>{%- endfor -%}
+        </ul>
+        <ul class="safety__col" role="list">
+          {%- for block in section.blocks offset: half -%}<li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>{%- endfor -%}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Safety information",
+  "class": "section-safety",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "Important safety information" },
+    { "type": "text", "id": "reg", "label": "Registration note", "default": "BPOM reg. no. to be added" }
+  ],
+  "blocks": [
+    { "type": "item", "name": "Item", "settings": [ { "type": "textarea", "id": "text", "label": "Text", "default": "Store in a cool, dry place out of reach of children." } ] }
+  ],
+  "presets": [
+    {
+      "name": "Safety information",
+      "blocks": [
+        { "type": "item", "settings": { "text": "Not suitable during pregnancy or breastfeeding, or for anyone under 18 unless a doctor advises it." } },
+        { "type": "item", "settings": { "text": "Melatonin can cause drowsiness. Don’t drive or operate machinery after taking it." } },
+        { "type": "item", "settings": { "text": "Tell your doctor if you take blood thinners, antidepressants, blood pressure medication or immunosuppressants, or have an autoimmune condition." } },
+        { "type": "item", "settings": { "text": "Stop and contact your doctor if you have an allergic reaction, a severe headache or any side effect that worries you." } },
+        { "type": "item", "settings": { "text": "Lelap doesn’t replace a medical diagnosis. If you’ve had trouble sleeping for more than three weeks, see a doctor in person." } },
+        { "type": "item", "settings": { "text": "Store in a cool, dry place out of reach of children." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,88 @@
+{%- liquid
+  assign img_handle = section.settings.handle | default: 'sleep-classic'
+  assign img_product = section.settings.product
+-%}
+<section class="cmp">
+  <div class="container cmp__inner">
+    <div class="cmp__head">
+      {%- if section.settings.chip != blank -%}<span class="chip">{% render 'icon', name: 'moon' %}{{ section.settings.chip }}</span>{%- endif -%}
+      <h2 class="cmp__title"><span>{{ section.settings.title_line_1 }}</span> <span class="cmp__accent">{{ section.settings.title_line_2 }}</span></h2>
+      <p class="cmp__lead">{{ section.settings.lead }}</p>
+    </div>
+
+    <div class="cmp__card" role="table" aria-label="{{ section.settings.them_title | escape }} vs {{ section.settings.us_title | escape }}">
+      <div class="cmp__row cmp__row--head" role="row">
+        <div class="cmp__cell cmp__cell--them" role="columnheader">
+          <span class="cmp__bottle">{% render 'icon', name: 'bottle', size: 28 %}</span>
+          <span class="cmp__name"><strong>{{ section.settings.them_title }}</strong><span>{{ section.settings.them_sub }}</span></span>
+        </div>
+        <div class="cmp__cell cmp__cell--us" role="columnheader">
+          <span class="cmp__pouch">{% render 'product-image', product: img_product, handle: img_handle, width: 200, sizes: '88px', alt: '' %}</span>
+          <span class="cmp__name"><strong>{{ section.settings.us_title }}</strong><span>{{ section.settings.us_sub }}</span></span>
+        </div>
+        <span class="cmp__vs" aria-hidden="true">VS</span>
+      </div>
+      {%- for block in section.blocks -%}
+        <div class="cmp__row" role="row" {{ block.shopify_attributes }}>
+          <div class="cmp__cell cmp__cell--them" role="cell">
+            <span class="cmp__x">{% render 'icon', name: 'x', size: 12 %}</span>{{ block.settings.them }}
+          </div>
+          <div class="cmp__cell cmp__cell--us" role="cell">
+            <span class="cmp__check">{% render 'icon', name: 'check', color: '#ffffff', size: 13 %}</span>{{ block.settings.us }}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <div class="cmp__cta">
+      <a href="{{ section.settings.button_link | default: settings.quiz_url | default: '/pages/sleep-quiz' }}" class="btn btn--light">{{ section.settings.button_label }}</a>
+      <p>{{ section.settings.note }}</p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Comparison",
+  "class": "section-cmp",
+  "max_blocks": 10,
+  "settings": [
+    { "type": "text", "id": "chip", "label": "Chip", "default": "Why lelap" },
+    { "type": "text", "id": "title_line_1", "label": "Heading line 1", "default": "Not your average" },
+    { "type": "text", "id": "title_line_2", "label": "Heading line 2 (lavender)", "default": "sleep gummy." },
+    { "type": "textarea", "id": "lead", "label": "Text", "default": "Drugstore melatonin is one-size-fits-all. Lelap starts with a doctor, a lower dose and a formula matched to how you sleep." },
+    { "type": "text", "id": "them_title", "label": "Left column title", "default": "Drugstore melatonin" },
+    { "type": "text", "id": "them_sub", "label": "Left column subtitle", "default": "Off the shelf, one size fits all" },
+    { "type": "text", "id": "us_title", "label": "Right column title", "default": "With lelap" },
+    { "type": "text", "id": "us_sub", "label": "Right column subtitle", "default": "Doctor-guided, personalized, delivered" },
+    { "type": "product", "id": "product", "label": "Pouch image product" },
+    { "type": "text", "id": "handle", "label": "Fallback product handle", "default": "sleep-classic" },
+    { "type": "text", "id": "button_label", "label": "Button", "default": "Find my formula" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "text", "id": "note", "label": "Note", "default": "Takes 2 minutes. Free doctor review." }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Row",
+      "settings": [
+        { "type": "text", "id": "them", "label": "Drugstore", "default": "Same dose for everyone" },
+        { "type": "text", "id": "us", "label": "lelap", "default": "Dose set by a licensed doctor" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Comparison",
+      "blocks": [
+        { "type": "row", "settings": { "them": "Same dose for everyone", "us": "Dose set by a licensed doctor" } },
+        { "type": "row", "settings": { "them": "Dose varies by brand", "us": "Low, steady dose of 1 to 3 mg" } },
+        { "type": "row", "settings": { "them": "You figure it out alone", "us": "Free follow-ups with your doctor" } },
+        { "type": "row", "settings": { "them": "Often sugar or gelatin", "us": "Sugar-free, vegan, gelatin-free" } },
+        { "type": "row", "settings": { "them": "One formula for every problem", "us": "Matched to how you sleep" } },
+        { "type": "row", "settings": { "them": "Buy again when you run out", "us": "Delivered monthly, cancel anytime" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

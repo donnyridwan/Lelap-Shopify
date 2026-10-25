@@ -1,0 +1,85 @@
+{%- liquid
+  assign quiz_url = section.settings.primary_link | default: settings.quiz_url | default: '/pages/sleep-quiz'
+  assign shop_url = section.settings.secondary_link | default: routes.all_products_collection_url
+-%}
+<section class="hero bg-canvas" aria-labelledby="HeroTitle-{{ section.id }}">
+  <div class="hero__inner">
+    {%- if section.settings.chip != blank -%}
+      <span class="chip">{% render 'icon', name: 'moon' %}{{ section.settings.chip }}</span>
+    {%- endif -%}
+    <h1 class="hero__title" id="HeroTitle-{{ section.id }}">
+      <span>{{ section.settings.title_line_1 }}</span>
+      <span class="text-lav">{{ section.settings.title_line_2 }}</span>
+    </h1>
+    <p class="hero__lead">{{ section.settings.lead }}</p>
+    <div class="hero__actions">
+      {%- if section.settings.primary_label != blank -%}<a href="{{ quiz_url }}" class="btn btn--primary">{{ section.settings.primary_label }}</a>{%- endif -%}
+      {%- if section.settings.secondary_label != blank -%}<a href="{{ shop_url }}" class="btn btn--outline">{{ section.settings.secondary_label }}</a>{%- endif -%}
+    </div>
+    <p class="hero__note">{{ section.settings.note }}</p>
+    <div class="hero__rating">
+      {% render 'stars' %}
+      <span>{{ section.settings.rating_text }}</span>
+    </div>
+
+    <div class="hero__lineup">
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 2784 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 1440px) 1392px, calc(100vw - 24px)', widths: '700, 1000, 1392, 2000, 2784', class: 'hero__lineup-img', alt: section.settings.image.alt | default: section.settings.image_alt }}
+      {%- else -%}
+        <img src="{{ 'lineup.jpg' | asset_url }}" class="hero__lineup-img" width="1392" height="600" alt="{{ section.settings.image_alt | escape }}" fetchpriority="high">
+      {%- endif -%}
+      {%- if section.blocks.size > 0 -%}
+        <ul class="hero__labels" role="list">
+          {%- for block in section.blocks -%}
+            <li {{ block.shopify_attributes }}>
+              {%- if block.settings.link != blank -%}<a class="hero__label" href="{{ block.settings.link }}">{{ block.settings.label }}</a>{%- else -%}<span class="hero__label">{{ block.settings.label }}</span>{%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "class": "section-hero",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "text", "id": "chip", "label": "Chip", "default": "New: 4 formulas for 4 kinds of nights" },
+    { "type": "text", "id": "title_line_1", "label": "Heading line 1", "default": "Doctor-guided sleep," },
+    { "type": "text", "id": "title_line_2", "label": "Heading line 2 (lavender)", "default": "delivered every month." },
+    { "type": "textarea", "id": "lead", "label": "Text", "default": "Low-dose melatonin gummies matched to your sleep problem by a licensed doctor." },
+    { "type": "text", "id": "primary_label", "label": "Primary button", "default": "Take the sleep quiz" },
+    { "type": "url", "id": "primary_link", "label": "Primary link" },
+    { "type": "text", "id": "secondary_label", "label": "Secondary button", "default": "Shop all" },
+    { "type": "url", "id": "secondary_link", "label": "Secondary link" },
+    { "type": "text", "id": "note", "label": "Note", "default": "From $24/month. Free doctor review, free shipping, cancel anytime." },
+    { "type": "text", "id": "rating_text", "label": "Rating text", "default": "4.8 from 2,300+ reviews" },
+    { "type": "image_picker", "id": "image", "label": "Lineup image", "info": "Defaults to the lelap lineup photo. 1392 × 600 px." },
+    { "type": "text", "id": "image_alt", "label": "Image alt text", "default": "Sleep Classic, Sleep Deep, Sleep Reset and Sleep Calm gummy pouches" }
+  ],
+  "blocks": [
+    {
+      "type": "label",
+      "name": "Label",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Fall asleep" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero",
+      "blocks": [
+        { "type": "label", "settings": { "label": "Fall asleep" } },
+        { "type": "label", "settings": { "label": "Stay asleep" } },
+        { "type": "label", "settings": { "label": "Jet lag & shifts" } },
+        { "type": "label", "settings": { "label": "Busy mind" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

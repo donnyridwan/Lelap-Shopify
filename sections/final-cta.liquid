@@ -1,0 +1,47 @@
+{%- liquid
+  assign h = section.settings.handle | default: 'sleep-classic'
+  assign p = section.settings.product
+-%}
+<section class="final-cta">
+  <div class="final-cta__wrap">
+    <div class="final-cta__panel">
+      <div class="final-cta__copy">
+        <h2 class="final-cta__title"><span>{{ section.settings.title_line_1 }}</span> <span class="final-cta__accent">{{ section.settings.title_line_2 }}</span></h2>
+        <p class="final-cta__text">{{ section.settings.text }}</p>
+        <div class="final-cta__actions">
+          <a href="{{ section.settings.primary_link | default: settings.quiz_url | default: '/pages/sleep-quiz' }}" class="btn btn--light">{{ section.settings.primary_label }}</a>
+          <a href="{{ section.settings.secondary_link | default: routes.all_products_collection_url }}" class="final-cta__link">{{ section.settings.secondary_label }}</a>
+        </div>
+        <p class="final-cta__note">{{ section.settings.note }}</p>
+      </div>
+      <div class="final-cta__img">
+        {%- if section.settings.image != blank -%}
+          {{ section.settings.image | image_url: width: 840 | image_tag: loading: 'lazy', sizes: '(min-width: 1200px) 420px, calc(100vw - 80px)', alt: section.settings.image.alt }}
+        {%- else -%}
+          {% render 'product-image', product: p, handle: h, width: 840, sizes: '(min-width: 1200px) 420px, calc(100vw - 80px)' %}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Final call to action",
+  "class": "section-final-cta",
+  "settings": [
+    { "type": "text", "id": "title_line_1", "label": "Heading line 1", "default": "Your best sleep" },
+    { "type": "text", "id": "title_line_2", "label": "Heading line 2 (lavender)", "default": "starts tonight." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Take the 2-minute quiz, get a doctor-reviewed plan, and have your first pouch delivered free." },
+    { "type": "text", "id": "primary_label", "label": "Button", "default": "Take the sleep quiz" },
+    { "type": "url", "id": "primary_link", "label": "Button link" },
+    { "type": "text", "id": "secondary_label", "label": "Link label", "default": "Shop all products" },
+    { "type": "url", "id": "secondary_link", "label": "Link" },
+    { "type": "text", "id": "note", "label": "Note", "default": "From $24/month. Free shipping. 30-night sleep promise." },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "product", "id": "product", "label": "Product image" },
+    { "type": "text", "id": "handle", "label": "Fallback product handle", "default": "sleep-classic" }
+  ],
+  "presets": [{ "name": "Final call to action" }]
+}
+{% endschema %}

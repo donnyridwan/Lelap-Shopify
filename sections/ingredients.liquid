@@ -1,0 +1,80 @@
+<section class="ingr" id="ingredients">
+  <div class="container ingr__inner">
+    <div class="ingr__head">
+      <h2 class="ingr__title"><span>{{ section.settings.title_line_1 }}</span> <span>{{ section.settings.title_line_2 }}</span></h2>
+      <p class="ingr__lead">{{ section.settings.lead }}</p>
+    </div>
+    <div class="ingr__cards" data-scroller>
+      <div class="ingr__track" data-scroller-track>
+        {%- for block in section.blocks -%}
+          <article class="ingr-card{% if block.settings.badge != blank %} ingr-card--badge{% endif %}" {{ block.shopify_attributes }}>
+            <div class="ingr-card__top">
+              {%- if block.settings.badge != blank -%}<span class="ingr-card__badge">{{ block.settings.badge }}</span>{%- endif -%}
+              <h3 class="ingr-card__name">{{ block.settings.name }} <span>{{ block.settings.amount }}</span></h3>
+              <p class="ingr-card__desc">{{ block.settings.desc }}</p>
+            </div>
+            <div class="ingr-card__art">
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 520 | image_tag: loading: 'lazy', alt: '' }}
+              {%- else -%}
+                <img src="{{ block.settings.illustration | append: '.svg' | asset_url }}" width="260" height="140" loading="lazy" alt="">
+              {%- endif -%}
+            </div>
+            <div class="ingr-card__why">
+              <p class="ingr-card__why-label">{{ section.settings.why_label }}</p>
+              <p class="ingr-card__why-text">{{ block.settings.why }}</p>
+            </div>
+          </article>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Ingredients",
+  "class": "section-ingr",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "text", "id": "title_line_1", "label": "Heading line 1", "default": "Clean ingredients that" },
+    { "type": "text", "id": "title_line_2", "label": "Heading line 2", "default": "work with your body." },
+    { "type": "textarea", "id": "lead", "label": "Text", "default": "Every gummy is vegan, gelatin-free and made without added sugar or artificial colours. Here’s what’s inside Sleep Classic." },
+    { "type": "text", "id": "why_label", "label": "Why label", "default": "Why it’s in there" }
+  ],
+  "blocks": [
+    {
+      "type": "ingredient",
+      "name": "Ingredient",
+      "settings": [
+        { "type": "text", "id": "badge", "label": "Badge" },
+        { "type": "text", "id": "name", "label": "Name", "default": "Melatonin" },
+        { "type": "text", "id": "amount", "label": "Amount", "default": "3 mg" },
+        { "type": "textarea", "id": "desc", "label": "Description", "default": "The hormone your body makes when it gets dark, in a low, steady dose." },
+        {
+          "type": "select", "id": "illustration", "label": "Molecule illustration", "default": "molecule-melatonin",
+          "options": [
+            { "value": "molecule-melatonin", "label": "Melatonin" },
+            { "value": "molecule-chamomile", "label": "Chamomile" },
+            { "value": "molecule-l-theanine", "label": "L-theanine" },
+            { "value": "molecule-pectin", "label": "Fruit pectin" }
+          ]
+        },
+        { "type": "image_picker", "id": "image", "label": "Custom illustration" },
+        { "type": "textarea", "id": "why", "label": "Why it’s in there", "default": "Signals to your body that it’s time to sleep." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ingredients",
+      "blocks": [
+        { "type": "ingredient", "settings": { "badge": "Main active", "name": "Melatonin", "amount": "3 mg", "desc": "The hormone your body makes when it gets dark, in a low, steady dose.", "illustration": "molecule-melatonin", "why": "Signals to your body that it’s time to sleep." } },
+        { "type": "ingredient", "settings": { "name": "Chamomile extract", "amount": "50 mg", "desc": "A gentle herb used for centuries as part of a bedtime routine.", "illustration": "molecule-chamomile", "why": "Helps you feel calm and ready for bed." } },
+        { "type": "ingredient", "settings": { "name": "L-theanine", "amount": "50 mg", "desc": "An amino acid naturally found in green tea leaves.", "illustration": "molecule-l-theanine", "why": "Supports a quieter mind without making you groggy." } },
+        { "type": "ingredient", "settings": { "name": "Fruit pectin", "amount": "Base", "desc": "A plant-based gelling agent from citrus and apple peel.", "illustration": "molecule-pectin", "why": "Keeps every gummy vegan and gelatin-free." } }
+      ]
+    }
+  ]
+}
+{% endschema %}
