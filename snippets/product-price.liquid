@@ -24,6 +24,11 @@
   endif
 -%}
 <div class="price{% if class %} {{ class }}{% endif %}">
-  <span class="price__sale">{{ sub | money_without_trailing_zeros }}</span>
-  {%- if full > sub -%}<s class="price__was">{{ full | money_without_trailing_zeros }}</s>{%- endif -%}
+  {%- if product != blank -%}
+    <span class="price__sale">{{ sub | money_without_trailing_zeros }}</span>
+    {%- if full > sub -%}<s class="price__was">{{ full | money_without_trailing_zeros }}</s>{%- endif -%}
+  {%- else -%}
+    <span class="price__sale">{% render 'design-money', cents: sub %}</span>
+    {%- if full > sub -%}<s class="price__was">{% render 'design-money', cents: full %}</s>{%- endif -%}
+  {%- endif -%}
 </div>

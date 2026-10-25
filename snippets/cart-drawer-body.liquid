@@ -209,7 +209,7 @@
           <a href="{% if pop != blank %}{{ pop.url }}{% else %}/products/{{ pop_h }}{% endif %}" class="cart-popular__media" tabindex="-1" aria-hidden="true">{% render 'product-image', product: pop, handle: pop_h, width: 120, sizes: '56px', class: 'cart-upsell__img', alt: '' %}</a>
           <div class="cart-popular__info">
             <a href="{% if pop != blank %}{{ pop.url }}{% else %}/products/{{ pop_h }}{% endif %}" class="cart-popular__title">{{ pop_title }}</a>
-            <p class="cart-popular__price">{{ settings.cart_from_label | default: 'From' }} {{ pop_price | money_without_trailing_zeros }} / {{ settings.cart_month_label | default: 'month' }}</p>
+            <p class="cart-popular__price">{{ settings.cart_from_label | default: 'From' }} {% if pop != blank %}{{ pop_price | money_without_trailing_zeros }}{% else %}{% render 'design-money', cents: pop_price %}{% endif %} / {{ settings.cart_month_label | default: 'month' }}</p>
           </div>
           {%- if pop != blank and pv.available -%}
             {%- form 'product', pop, data-product-form: '', class: 'cart-popular__form' -%}

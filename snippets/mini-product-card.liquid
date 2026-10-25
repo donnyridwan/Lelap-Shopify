@@ -41,6 +41,6 @@
   <span class="c-mini-card__info">
     <span class="c-mini-card__title">{{ t }}</span>
     <span class="c-mini-card__line">{{ line }}</span>
-    <span class="c-mini-card__price">{{ sub | money_without_trailing_zeros }} {{ per | default: '/ month' }}</span>
+    <span class="c-mini-card__price">{% if product != blank %}{{ sub | money_without_trailing_zeros }}{% else %}{% render 'design-money', cents: sub %}{% endif %} {{ per | default: '/ month' }}</span>
   </span>
 </a>

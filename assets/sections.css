@@ -534,3 +534,9 @@ a.hero__label:hover { color: var(--navy); }
   .final-cta__panel { padding: 48px 40px; }
   .final-cta__title { font-size: 52px; letter-spacing: -1.82px; }
 }
+
+/* Need tile head on mobile: fixed 262px head like Figma (chevron runs off the 260px tile) */
+@media (max-width: 767px) {
+  .need-tile__head { right: auto; width: 262px; gap: 8px; }
+  .need-tile__title { flex: 0 0 auto; }
+}

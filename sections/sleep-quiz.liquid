@@ -181,6 +181,13 @@
               assign full = full_s | plus: 0
             endif
           -%}
+          {%- if has_p -%}
+            {%- capture sub_txt -%}{{ sub_txt }}{%- endcapture -%}
+            {%- capture full_txt -%}{{ full_txt }}{%- endcapture -%}
+          {%- else -%}
+            {%- capture sub_txt -%}{% render 'design-money', cents: sub %}{%- endcapture -%}
+            {%- capture full_txt -%}{% render 'design-money', cents: full %}{%- endcapture -%}
+          {%- endif -%}
           {%- capture p_title -%}{% if has_p %}{{ p.title }}{% else %}{% render 'product-fact', handle: h, key: 'title' %}{% endif %}{%- endcapture -%}
           {%- capture p_rating -%}{% if has_p %}{% render 'product-fact', product: p, key: 'rating' %}{% else %}{% render 'product-fact', handle: h, key: 'rating' %}{% endif %}{%- endcapture -%}
           {%- capture p_reviews -%}{% if has_p %}{% render 'product-fact', product: p, key: 'reviews' %}{% else %}{% render 'product-fact', handle: h, key: 'reviews' %}{% endif %}{%- endcapture -%}
@@ -210,15 +217,15 @@
                   <input type="hidden" name="quantity" value="1">
                   <input type="hidden" name="properties[_Sleep assessment]" value="" data-quiz-summary>
                   {%- if plan_id != blank -%}<input type="hidden" name="selling_plan" value="{{ plan_id }}" data-quiz-plan-input>{%- endif -%}
-                  {%- render 'quiz-plan-options', h: h, sub: sub, full: full, sub_label: section.settings.sub_label, per_month: section.settings.per_month, sub_note: section.settings.sub_note, onetime_label: section.settings.onetime_label, onetime_note: section.settings.onetime_note -%}
-                  <button type="submit" class="btn btn--primary btn--block" data-quiz-cta data-sub-label="{{ section.settings.add_label | escape }} {{ sub | money_without_trailing_zeros }}" data-full-label="{{ section.settings.add_label | escape }} {{ full | money_without_trailing_zeros }}"{% unless v.available %} disabled{% endunless %}>
-                    {%- if v.available -%}{{ section.settings.add_label | escape }} {{ sub | money_without_trailing_zeros }}{%- else -%}{{ 'products.product.sold_out' | t }}{%- endif -%}
+                  {%- render 'quiz-plan-options', h: h, sub: sub, full: full, sub_txt: sub_txt, full_txt: full_txt, sub_label: section.settings.sub_label, per_month: section.settings.per_month, sub_note: section.settings.sub_note, onetime_label: section.settings.onetime_label, onetime_note: section.settings.onetime_note -%}
+                  <button type="submit" class="btn btn--primary btn--block" data-quiz-cta data-sub-label="{{ section.settings.add_label | escape }} {{ sub_txt }}" data-full-label="{{ section.settings.add_label | escape }} {{ full_txt }}"{% unless v.available %} disabled{% endunless %}>
+                    {%- if v.available -%}{{ section.settings.add_label | escape }} {{ sub_txt }}{%- else -%}{{ 'products.product.sold_out' | t }}{%- endif -%}
                   </button>
                 {%- endform -%}
               {%- else -%}
                 <div class="quiz-buy__form" data-quiz-buy>
-                  {%- render 'quiz-plan-options', h: h, sub: sub, full: full, sub_label: section.settings.sub_label, per_month: section.settings.per_month, sub_note: section.settings.sub_note, onetime_label: section.settings.onetime_label, onetime_note: section.settings.onetime_note -%}
-                  <a href="/products/{{ h }}" class="btn btn--primary btn--block" data-quiz-cta data-sub-label="{{ section.settings.add_label | escape }} {{ sub | money_without_trailing_zeros }}" data-full-label="{{ section.settings.add_label | escape }} {{ full | money_without_trailing_zeros }}">{{ section.settings.add_label | escape }} {{ sub | money_without_trailing_zeros }}</a>
+                  {%- render 'quiz-plan-options', h: h, sub: sub, full: full, sub_txt: sub_txt, full_txt: full_txt, sub_label: section.settings.sub_label, per_month: section.settings.per_month, sub_note: section.settings.sub_note, onetime_label: section.settings.onetime_label, onetime_note: section.settings.onetime_note -%}
+                  <a href="/products/{{ h }}" class="btn btn--primary btn--block" data-quiz-cta data-sub-label="{{ section.settings.add_label | escape }} {{ sub_txt }}" data-full-label="{{ section.settings.add_label | escape }} {{ full_txt }}">{{ section.settings.add_label | escape }} {{ sub_txt }}</a>
                 </div>
               {%- endif -%}
               <p class="quiz-buy__promise">{% render 'icon', name: 'shield', size: 18, color: '#1d2142' %}<span>{{ section.settings.refund_note | escape }}</span></p>

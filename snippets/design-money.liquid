@@ -1,0 +1,18 @@
+{%- comment -%}
+  Formats a price for Figma fallback content (no real product yet) exactly like the design: "$28".
+  Real products always use the store currency via the money filters instead.
+  Params: cents (number)
+{%- endcomment -%}
+{%- liquid
+  assign rest = cents | modulo: 100
+  assign whole = cents | minus: rest | divided_by: 100 | round
+  if rest == 0
+    echo '$' | append: whole
+  else
+    assign pad = ''
+    if rest < 10
+      assign pad = '0'
+    endif
+    echo '$' | append: whole | append: '.' | append: pad | append: rest
+  endif
+-%}
