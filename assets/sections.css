@@ -152,17 +152,17 @@ a.hero__label:hover { color: var(--navy); }
 .how-step__num { width: 36px; height: 36px; border-radius: 999px; background: var(--lav-light); color: var(--navy); display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; }
 .how-step__title { font-size: 20px; font-weight: 600; line-height: normal; color: var(--white); }
 .how-step__text { font-size: 15px; line-height: 1.55; color: var(--white); }
-.how-step__meta { display: flex; gap: 6px; align-items: center; font-size: 13px; font-weight: 600; color: var(--lav-light); }
+.how-step__meta { display: flex; gap: 6px; align-items: center; font-size: 13px; line-height: 16px; font-weight: 600; color: var(--lav-light); }
 .how-step__meta .icon { width: 14px; height: 14px; }
 @media (max-width: 1199px) {
   .how__head { flex-direction: column; align-items: flex-start; }
-  .how__steps { grid-template-columns: 1fr; }
+  .how__steps { grid-template-columns: 1fr; gap: 12px; }
 }
 @media (max-width: 767px) {
   .how__inner { padding-block: 48px; gap: 40px; }
   .how__head { gap: 20px; }
   .how__title { font-size: 32px; letter-spacing: -0.64px; }
-  .how__steps { gap: 12px; }
+  .how-step__title { font-size: 17px; }
 }
 
 /* Landing — Product grid (184:818 / 224:1640 / 225:1041) */
@@ -296,6 +296,7 @@ a.hero__label:hover { color: var(--navy); }
   .cmp__row--head .cmp__cell { height: 130px; }
   .cmp__name strong { font-size: 19px; }
   .cmp__vs { top: 37px; }
+  .cmp__cta { flex-direction: column; gap: 16px; }
 }
 @media (max-width: 767px) {
   .cmp__inner { padding-block: 64px; gap: 40px; }
@@ -331,7 +332,7 @@ a.hero__label:hover { color: var(--navy); }
 .benefit-step__title { font-size: 18px; font-weight: 600; color: var(--navy); line-height: normal; }
 .benefit-step__list { display: flex; flex-direction: column; gap: 12px; }
 .benefit-step__list li { font-size: 15px; color: var(--body); line-height: normal; }
-.benefit-step__list li::before { content: '•'; margin-right: 10px; }
+.benefit-step__list li::before { content: '•'; margin-right: 7px; }
 .benefits__howto { display: flex; align-items: center; gap: 16px; padding: 18px 20px; border-radius: 18px; background: var(--white); }
 .benefits__howto-img { width: 56px; height: 56px; border-radius: 12px; overflow: hidden; flex-shrink: 0; background: #e7e7f3; }
 .benefits__howto-img img { width: 100%; height: 100%; object-fit: cover; }
@@ -350,9 +351,9 @@ a.hero__label:hover { color: var(--navy); }
   .benefits__collage { justify-content: center; }
 }
 @media (max-width: 767px) {
-  .benefits__inner { padding-block: 64px; gap: 48px; }
+  .benefits__inner { padding-block: 64px; gap: 56px; }
   .benefits__title { font-size: 32px; letter-spacing: -0.8px; max-width: 300px; }
-  .benefits__lead { font-size: 16px; }
+  .benefits__lead { font-size: 17px; }
   .benefits__collage { gap: 16px; }
   .benefits__tea { width: 214px; height: 280px; }
   .benefits__jar { width: 120px; height: 120px; }
@@ -388,9 +389,9 @@ a.hero__label:hover { color: var(--navy); }
   .ingr__track { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 767px) {
-  .ingr__inner { padding-block: 64px; gap: 48px; }
-  .ingr__title { font-size: 32px; letter-spacing: -0.8px; line-height: 1.1; }
-  .ingr__lead { font-size: 16px; }
+  .ingr__inner { padding-block: 64px; gap: 56px; }
+  .ingr__title { font-size: 32px; letter-spacing: -0.8px; line-height: 1.06; }
+  .ingr__lead { font-size: 17px; }
   .ingr__cards { margin-inline: calc(var(--page-gutter) * -1); }
   .ingr__track {
     display: flex; overflow-x: auto; gap: 12px; scroll-snap-type: x mandatory; scrollbar-width: none;
@@ -462,7 +463,7 @@ a.hero__label:hover { color: var(--navy); }
   .faq__title { font-size: 32px; letter-spacing: -0.8px; line-height: 1.2; max-width: 300px; }
   .faq-row { padding: 24px 0; }
   .faq-row__q { font-size: 19px; gap: 24px; }
-  .faq-row__a { font-size: 15px; line-height: 1.75; padding-top: 16px; }
+  .faq-row__a { font-size: 16px; line-height: 1.6; padding-top: 12px; }
 }
 
 /* Landing — Safety information (184:1200 / 224:2047 / 225:1448) */
@@ -474,7 +475,7 @@ a.hero__label:hover { color: var(--navy); }
 .safety__cols { display: flex; gap: 48px; }
 .safety__col { flex: 1 1 0; display: flex; flex-direction: column; gap: 12px; font-size: 14px; line-height: 1.55; color: var(--body); }
 .safety__col li::before { content: '•'; margin-right: 10px; }
-@media (max-width: 1199px) { .safety__wrap { padding-bottom: 96px; } }
+@media (max-width: 1199px) { .safety__wrap { padding-bottom: 88px; } }
 @media (max-width: 767px) {
   .safety__wrap { padding-bottom: 64px; }
   .safety__box { padding: 24px 20px 72px; gap: 24px; }
@@ -505,11 +506,11 @@ a.hero__label:hover { color: var(--navy); }
   .final-cta__img { width: 100%; height: auto; aspect-ratio: 1; max-width: 420px; align-self: center; }
 }
 @media (max-width: 767px) {
-  .final-cta__wrap { padding: 0 12px 12px; }
-  .final-cta__panel { padding: 48px 24px 24px; border-radius: 28px; gap: 32px; }
-  .final-cta__title { font-size: 40px; letter-spacing: -1.4px; }
-  .final-cta__text { font-size: 16px; }
-  .final-cta__img { max-width: none; border-radius: 20px; }
+  .final-cta__wrap { padding: 0 12px 24px; }
+  .final-cta__panel { padding: 36px 24px; border-radius: 28px; gap: 28px; }
+  .final-cta__title { font-size: 36px; letter-spacing: -1.26px; }
+  .final-cta__text { font-size: 18px; }
+  .final-cta__img { max-width: none; height: 300px; aspect-ratio: auto; border-radius: 20px; }
 }
 
 
@@ -518,7 +519,8 @@ a.hero__label:hover { color: var(--navy); }
    ========================================================================== */
 @media (min-width: 768px) and (max-width: 1199px) {
   .need__inner { padding-block: 56px; }
-  .need__title { font-size: 44px; letter-spacing: -1.1px; }
+  .need__title { font-size: 42px; letter-spacing: -1.05px; }
+  .social-proof__num { font-size: 30px; letter-spacing: -0.6px; }
   .how__inner { padding-block: 56px; }
   .how__head { flex-direction: row; align-items: center; justify-content: space-between; }
   .how__title { font-size: 36px; letter-spacing: -0.72px; }
