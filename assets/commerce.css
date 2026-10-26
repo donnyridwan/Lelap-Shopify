@@ -148,8 +148,9 @@
   .pdp-sticky__price span { font-size: 16px; font-weight: 600; color: var(--navy); }
   .pdp-sticky__price small { font-size: 12px; color: var(--body); }
   .pdp-sticky__btn { flex: 1 1 0; min-width: 0; }
-  /* keep the footer's last row reachable above the fixed bar */
-  body:has(.pdp-sticky) { padding-bottom: 75px; }
+  /* the bar slides away over the footer (Figma floats it over the page, no extra space) */
+  .pdp-sticky { transition: translate .3s ease, visibility .3s; }
+  .pdp-sticky.is-hidden { translate: 0 100%; visibility: hidden; }
   @media (prefers-reduced-motion: no-preference) {
     .pdp-sticky { animation: pdp-sticky-in .5s cubic-bezier(.22, .61, .36, 1) .3s both; }
   }

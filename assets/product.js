@@ -53,6 +53,10 @@
     const sticky = root.querySelector('[data-sticky-atc]');
     const stickyPrice = root.querySelector('[data-sticky-price]');
     const stickyNote = root.querySelector('[data-sticky-note]');
+    const footer = document.querySelector('.site-footer');
+    if (sticky && footer && 'IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => sticky.classList.toggle('is-hidden', e.isIntersecting)).observe(footer);
+    }
     const variantSelect = form.querySelector('[data-variant-select]');
 
     const currentVariant = () => data.variants.find((v) => String(v.id) === String(variantInput.value)) || data.variants[0];
