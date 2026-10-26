@@ -4,8 +4,10 @@
     <div class="about-founder__avatar" data-reveal>
       {%- if section.settings.image != blank -%}
         {{ section.settings.image | image_url: width: 400 | image_tag: loading: 'lazy', sizes: '200px', alt: section.settings.name }}
-      {%- else -%}
+      {%- elsif section.settings.initials != blank -%}
         <span aria-hidden="true">{{ section.settings.initials | escape }}</span>
+      {%- else -%}
+        <img src="{{ 'photo-founder.jpg' | asset_url }}" width="600" height="600" loading="lazy" alt="">
       {%- endif -%}
     </div>
     <figure class="about-founder__body" data-reveal style="--reveal-delay: 120ms">
@@ -20,8 +22,8 @@
   "name": "Founder note",
   "class": "section-founder-note",
   "settings": [
-    { "type": "image_picker", "id": "image", "label": "Photo", "info": "Shown in the circle. Leave empty to show the initials." },
-    { "type": "text", "id": "initials", "label": "Initials", "default": "[F]" },
+    { "type": "image_picker", "id": "image", "label": "Founder photo", "info": "Upload the founder's portrait. Without one, a lifestyle photo from the design is shown." },
+    { "type": "text", "id": "initials", "label": "Initials (instead of a photo)", "info": "Optional. Shown in the circle when no photo is uploaded." },
     { "type": "textarea", "id": "quote", "label": "Quote", "default": "“For two years I took whatever melatonin I could find. Some nights it worked, most mornings I felt awful. A sleep doctor finally told me I was taking five times what I needed. lelap is the version of that conversation everyone should get.”" },
     { "type": "text", "id": "name", "label": "Name and role", "default": "[Founder name], Co-founder" }
   ],

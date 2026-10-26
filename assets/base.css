@@ -310,15 +310,16 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   border-top: 1px solid rgba(255, 255, 255, .55); padding-top: 24px; font-size: 13px;
 }
 .site-footer__legal-links { display: flex; gap: 24px; white-space: nowrap; }
-.site-footer__wordmark { height: 300px; position: relative; overflow: hidden; }
+.site-footer__wordmark { height: 621px; position: relative; overflow: hidden; }
 .site-footer__wordmark span {
-  position: absolute; left: -14px; top: -60px;
-  font-size: 470px; letter-spacing: -28.2px; color: var(--navy-2); line-height: normal; white-space: nowrap;
+  position: absolute; left: -14px; top: -250.49px;
+  font-size: 778.72px; letter-spacing: -46.72px; color: var(--navy-2); line-height: normal; white-space: nowrap;
 }
 @media (max-width: 1199px) {
   .site-footer__top { flex-direction: column; gap: 48px; }
-  .site-footer__wordmark { height: 180px; }
-  .site-footer__wordmark span { font-size: 280px; letter-spacing: -16.8px; top: -36px; }
+  /* tablet: same proportions as the desktop wordmark (778.72px in a 1280px container) */
+  .site-footer__wordmark { height: calc((100vw - 80px) * .4852); }
+  .site-footer__wordmark span { font-size: calc((100vw - 80px) * .6084); letter-spacing: -.06em; top: -.3217em; left: -.018em; }
 }
 @media (max-width: 767px) {
   .site-footer__inner { padding-top: 48px; }
@@ -327,8 +328,8 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   .site-footer__cols { flex-wrap: wrap; gap: 32px 24px; }
   .site-footer__col { width: 160px; }
   .site-footer__legal { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .site-footer__wordmark { height: 96px; }
-  .site-footer__wordmark span { font-size: 150px; letter-spacing: -9px; left: -4px; top: -18px; }
+  .site-footer__wordmark { height: 218px; margin-bottom: 52px; }
+  .site-footer__wordmark span { font-size: 212.4px; letter-spacing: -12.744px; left: calc(50% - 176.5px); top: -43.82px; }
 }
 
 /* Cart drawer --------------------------------------------------------------- */
@@ -354,6 +355,4 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   .site-footer__inner { padding-top: 56px; }
   .site-footer__legal { flex-direction: column; align-items: flex-start; gap: 12px; }
   .site-footer__legal p { max-width: 480px; }
-  .site-footer__wordmark { height: 170px; }
-  .site-footer__wordmark span { font-size: 266px; letter-spacing: -16px; top: -34px; left: -8px; }
 }

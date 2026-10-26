@@ -105,14 +105,13 @@ a.hero__label:hover { color: var(--navy); }
   transition: background-color .2s ease;
 }
 .need-tile:hover { background: #e6e6f2; }
-.need-tile__head { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 1; }
+.need-tile__head { position: absolute; top: 20px; left: 20px; width: 262px; display: flex; justify-content: space-between; align-items: center; z-index: 1; }
 .need-tile__title { font-size: 19px; font-weight: 500; color: var(--navy); white-space: nowrap; }
 .need-tile__right { display: flex; gap: 8px; align-items: center; }
 .need-tile__badge { background: var(--navy); color: var(--white); border-radius: 999px; padding: 3px 8px; font-size: 11px; font-weight: 600; }
 .need-tile .icon--chev { width: 18px; height: 18px; }
 .need-tile__img { position: absolute; top: 66px; left: 50%; transform: translateX(-50%); width: 224px; height: 224px; border-radius: 18px; overflow: hidden; }
-.need-tile__img img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.12); }
-.need-tile__img { -webkit-mask-image: radial-gradient(closest-side, #000 72%, transparent 100%); mask-image: radial-gradient(closest-side, #000 72%, transparent 100%); }
+.need-tile__img img { width: 100%; height: 100%; object-fit: cover; }
 .need__small { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .need-small {
   display: flex; align-items: center; gap: 12px; height: 96px; padding: 0 16px 0 20px;
@@ -191,7 +190,7 @@ a.hero__label:hover { color: var(--navy); }
   position: relative; height: 780px; border-radius: 32px; background: var(--panel); overflow: hidden;
 }
 .care-panel__copy { display: flex; flex-direction: column; align-items: center; gap: 14px; padding-top: 72px; text-align: center; }
-.care-panel__copy .btn { margin-top: 6px; }
+.care-panel__copy .btn { margin-top: 20px; }
 .care-panel__title { display: flex; flex-direction: column; font-size: 48px; line-height: 1.04; letter-spacing: -1.2px; color: var(--navy); }
 .care-panel__text { max-width: 340px; font-size: 16px; line-height: 1.5; color: var(--body); }
 
@@ -248,7 +247,7 @@ a.hero__label:hover { color: var(--navy); }
   .care__inner { padding-block: 48px; gap: 16px; }
   .care-panel--quiz { height: 685px; }
   .care-panel--doctor { height: 660px; }
-  .care-panel__title { font-size: 32px; letter-spacing: -0.8px; }
+  .care-panel__title { font-size: 32px; letter-spacing: -0.8px; line-height: 31px; }
   .care-panel__text { max-width: 310px; }
   .care-phone { top: 345px; left: calc(50% - 150px); transform: none; }
   .care-rec { display: none; }
@@ -427,22 +426,21 @@ a.hero__label:hover { color: var(--navy); }
   .reviews__title { line-height: 1.2; }
 }
 
-/* Landing — Guarantee (184:1181 / 224:2028 / 225:1429) */
-.guarantee__panel { display: flex; align-items: center; gap: 32px; padding: 40px 48px; border-radius: 28px; background: var(--panel); }
+/* Landing — Guarantee (184:1181 / 224:2028 / 225:1429) — full-bleed band */
+.guarantee { background: var(--panel); }
+.guarantee__panel { display: flex; align-items: center; gap: 32px; padding: 56px 0; }
 .guarantee__icon { width: 96px; height: 96px; border-radius: 999px; background: var(--moon); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .guarantee__copy { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
 .guarantee__title { font-size: 28px; font-weight: 500; letter-spacing: -0.28px; color: var(--navy); line-height: normal; }
 .guarantee__text { font-size: 16px; line-height: 1.55; color: var(--body); }
 @media (max-width: 1199px) {
-  .guarantee__panel { gap: 24px; padding: 40px 32px; }
+  .guarantee__panel { gap: 24px; padding: 56px 0; }
 }
 @media (max-width: 767px) {
-  .guarantee__panel { flex-direction: column; align-items: flex-start; gap: 0; padding: 24px; }
-  .guarantee__icon { width: 64px; height: 64px; margin-bottom: 16px; }
-  .guarantee__icon .icon { width: 28px !important; height: 28px !important; }
-  .guarantee__copy { margin-bottom: 20px; }
-  .guarantee__title { font-size: 22px; letter-spacing: -0.22px; }
-  .guarantee__text { font-size: 16px; line-height: 1.6; }
+  .guarantee__panel { flex-direction: column; align-items: flex-start; gap: 32px; padding: 40px 0; }
+  .guarantee__icon { width: 64px; height: 64px; }
+  .guarantee__title { font-size: 24px; letter-spacing: -0.24px; }
+  .guarantee__text { font-size: 16px; line-height: 25px; }
 }
 
 /* Landing — FAQ (184:1191 / 224:2038 / 225:1439) */
