@@ -2,3 +2,5 @@
 node_modules/
 .shopify/
 *.log
+__pycache__/
+*.pyc
