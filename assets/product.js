@@ -65,7 +65,7 @@
         const a = (variant.allocations || []).find((x) => String(x.plan) === String(f.dataset.planId));
         if (a) return a.price;
       }
-      if (variant) return Math.round(variant.price * 0.8);
+      if (variant) return Math.round(variant.price * 0.8 / 100) * 100;
       return f ? Number(f.dataset.price) : 0;
     }
 

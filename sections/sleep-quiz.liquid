@@ -164,7 +164,7 @@
             if has_p
               assign v = p.selected_or_first_available_variant
               assign full = v.price
-              assign sub = full | times: 0.8 | round
+              assign sub = full | times: 0.8 | divided_by: 100.0 | round | times: 100
               assign plan_id = ''
               if v.selling_plan_allocations.size > 0
                 assign sub = v.selling_plan_allocations.first.price

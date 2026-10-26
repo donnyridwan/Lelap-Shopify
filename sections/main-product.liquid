@@ -64,7 +64,7 @@
   endif
 
   assign full_price = current_variant.price
-  assign sub_price = full_price | times: 0.8 | round
+  assign sub_price = full_price | times: 0.8 | divided_by: 100.0 | round | times: 100
   if has_plans
     for alloc in current_variant.selling_plan_allocations
       if alloc.selling_plan.id == selected_plan.id

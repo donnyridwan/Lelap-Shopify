@@ -188,7 +188,7 @@
         endunless
         if pop != blank
           assign pv = pop.selected_or_first_available_variant
-          assign pop_price = pv.price | times: 0.8 | round
+          assign pop_price = pv.price | times: 0.8 | divided_by: 100.0 | round | times: 100
           if pv.selling_plan_allocations.size > 0
             assign pop_price = pv.selling_plan_allocations.first.price
           endif
