@@ -173,8 +173,8 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 }
 .ticker__item { display: inline-flex; gap: 8px; align-items: center; font-size: 13px; font-weight: 500; line-height: 16px; white-space: nowrap; }
 .ticker__item .icon { width: 16px; height: 16px; }
-@media (max-width: 1199px) { .ticker { gap: 28px; } .ticker__item:nth-child(n+4) { display: none; } }
-@media (max-width: 767px)  { .ticker__item:nth-child(n+2) { display: none; } }
+/* tablet + mobile: Figma "Site Header / Mobile" shows one ticker item */
+@media (max-width: 1199px) { .ticker__item:nth-child(n+2) { display: none; } }
 
 .site-header-section { position: sticky; top: 0; z-index: 50; }
 .site-header { background: var(--white); position: relative; }
@@ -208,7 +208,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   .site-header__account { display: none; }
   .site-header__menu-toggle { display: inline-flex; }
 }
-@media (max-width: 767px) {
+@media (max-width: 1199px) {
   .site-header__inner { padding: 12px 16px; }
   .site-header__logo { font-size: 26px; letter-spacing: -0.78px; }
   .site-header__actions { gap: 12px; }
@@ -278,9 +278,6 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   .nav-panel--mobile .nav-tile__img { height: 128px; }
   .nav-panel--mobile .nav-tile__img img { width: 122px; height: 122px; }
 }
-@media (min-width: 768px) and (max-width: 1199px) {
-  .site-header__inner { padding: 18px 24px; }
-}
 @media (max-width: 1199px) { .mega-menu { display: none !important; } }
 
 /* Footer -------------------------------------------------------------------- */
@@ -310,26 +307,28 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
   border-top: 1px solid rgba(255, 255, 255, .55); padding-top: 24px; font-size: 13px;
 }
 .site-footer__legal-links { display: flex; gap: 24px; white-space: nowrap; }
-.site-footer__wordmark { height: 621px; position: relative; overflow: hidden; }
+.site-footer__legal p { line-height: 16px; }
+.site-footer__wordmark { height: 620px; position: relative; overflow: hidden; }
 .site-footer__wordmark span {
   position: absolute; left: -14px; top: -250.49px;
   font-size: 778.72px; letter-spacing: -46.72px; color: var(--navy-2); line-height: normal; white-space: nowrap;
 }
+/* Tablet + mobile use Figma "Site Footer / Mobile" (232:1340): 20px sides, 26px heading,
+   160px columns, 350px legal text, 212px wordmark. Tablet instances are cut at 728px (96px of wordmark). */
 @media (max-width: 1199px) {
+  .site-footer__inner { padding-top: 48px; padding-inline: 20px; }
   .site-footer__top { flex-direction: column; gap: 48px; }
-  /* tablet: same proportions as the desktop wordmark (778.72px in a 1280px container) */
-  .site-footer__wordmark { height: calc((100vw - 80px) * .4852); }
-  .site-footer__wordmark span { font-size: calc((100vw - 80px) * .6084); letter-spacing: -.06em; top: -.3217em; left: -.018em; }
-}
-@media (max-width: 767px) {
-  .site-footer__inner { padding-top: 48px; }
   .site-footer__heading { font-size: 26px; letter-spacing: -0.39px; }
   .newsletter-field input { width: 150px; }
   .site-footer__cols { flex-wrap: wrap; gap: 32px 24px; }
   .site-footer__col { width: 160px; }
   .site-footer__legal { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .site-footer__wordmark { height: 218px; margin-bottom: 52px; }
+  .site-footer__legal p { max-width: 350px; }
+  .site-footer__wordmark { height: 96px; }
   .site-footer__wordmark span { font-size: 212.4px; letter-spacing: -12.744px; left: calc(50% - 176.5px); top: -43.82px; }
+}
+@media (max-width: 767px) {
+  .site-footer__wordmark { height: 218px; margin-bottom: 30px; }
 }
 
 /* Cart drawer --------------------------------------------------------------- */
@@ -350,9 +349,3 @@ h1, h2, h3, h4, h5, h6 { font-weight: 400; }
 .rte ol { list-style: decimal; padding-left: 1.2em; }
 .rte h2, .rte h3 { color: var(--navy); margin: 1.4em 0 .5em; }
 
-/* Footer — tablet (Figma 224:2071) */
-@media (min-width: 768px) and (max-width: 1199px) {
-  .site-footer__inner { padding-top: 56px; }
-  .site-footer__legal { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .site-footer__legal p { max-width: 480px; }
-}
