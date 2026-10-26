@@ -142,7 +142,7 @@
     function next(q) {
       if (!answered(q) || q !== current) return;
       const stop = inputsOf(q).find((i) => i.checked && i.dataset.outcome === 'not_fit');
-      if (stop) { showNotFit(stop.dataset.notfit); return; }
+      if (stop) { showNotFit(stop.dataset.notfit, stop.dataset.notfitAdvice); return; }
       const i = questions.indexOf(q);
       if (i < questions.length - 1) show(questions[i + 1]);
       else runBuilding();
@@ -244,10 +244,16 @@
       show(plan);
     }
 
-    function showNotFit(reason) {
+    function showNotFit(reason, advice) {
       fillNames();
       const p = notfit.querySelector('[data-quiz-notfit-text]');
       if (p && reason) p.textContent = p.dataset.template.split('[reason]').join(reason);
+      const t = notfit.querySelector('[data-quiz-advice-title]');
+      const d = notfit.querySelector('[data-quiz-advice-text]');
+      if (t && !t.dataset.default) { t.dataset.default = t.textContent; if (d) d.dataset.default = d.textContent; }
+      const [title, text] = (advice || '').split('|').map((x) => x.trim());
+      if (t) t.textContent = title || t.dataset.default;
+      if (d) { d.textContent = title ? (text || '') : d.dataset.default; d.hidden = !d.textContent; }
       show(notfit);
     }
 

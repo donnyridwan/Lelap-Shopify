@@ -307,7 +307,8 @@
             "formula": "none",
             "points": 0,
             "outcome": "not_fit",
-            "not_fit_reason": "you’re currently pregnant"
+            "not_fit_reason": "you’re pregnant or breastfeeding",
+            "not_fit_advice": "Talk to your own doctor or midwife | They can suggest sleep support that’s safe during pregnancy and breastfeeding."
           }
         },
         "q7o2": {
@@ -348,7 +349,8 @@
             "formula": "none",
             "points": 0,
             "outcome": "not_fit",
-            "not_fit_reason": "you have epilepsy or seizures"
+            "not_fit_reason": "you have epilepsy or seizures",
+            "not_fit_advice": "Talk to your own doctor or neurologist | They can check which sleep support is safe alongside your treatment."
           }
         },
         "q7o6": {
@@ -379,7 +381,8 @@
             "formula": "none",
             "points": 0,
             "outcome": "not_fit",
-            "not_fit_reason": "you’re under 18"
+            "not_fit_reason": "you’re under 18",
+            "not_fit_advice": "Talk to a parent and your doctor | A doctor can suggest sleep support that’s right for your age."
           }
         },
         "q8o2": {

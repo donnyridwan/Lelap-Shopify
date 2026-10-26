@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
-"""Create the Lelap products, pages and blog in a Shopify store via the Admin GraphQL API.
+"""Create the Lelap products, pages, blog, articles and subscription policy via the Admin GraphQL API.
 
 Idempotent: anything that already exists (matched by handle) is updated or skipped.
 
 Requirements: a custom-app Admin API access token with scopes
-  write_products, read_products, write_content, read_content, write_publications, read_publications
+  write_products, read_products, write_content, read_content, write_publications, read_publications,
+  write_legal_policies, read_legal_policies
 exported as SHOPIFY_ADMIN_TOKEN. Optional: SHOPIFY_STORE (default lelap-shop.myshopify.com).
 
 Usage:
   python3 scripts/setup_store.py            # create / update everything
   python3 scripts/setup_store.py --dry-run  # only print what would happen
+  python3 scripts/setup_store.py --publish-articles  # also publish the Sleep Library articles
+
+Articles (import/articles.json) are created hidden by default so a doctor can review them first;
+publish them in Admin > Online Store > Blog posts, or rerun with --publish-articles.
 """
 import csv, json, os, sys, urllib.request, urllib.error
 
@@ -17,6 +22,7 @@ STORE = os.environ.get('SHOPIFY_STORE', 'lelap-shop.myshopify.com')
 TOKEN = os.environ.get('SHOPIFY_ADMIN_TOKEN')
 API = os.environ.get('SHOPIFY_API_VERSION', '2025-10')
 DRY = '--dry-run' in sys.argv
+PUBLISH_ARTICLES = '--publish-articles' in sys.argv
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Product photos exported from Figma, served from the live theme's CDN.
@@ -132,16 +138,57 @@ def setup_pages():
 
 
 def setup_blogs():
+    ids = {}
     for title, handle in BLOGS:
         found = gql('query($q: String!) { blogs(first: 1, query: $q) { nodes { id handle } } }',
                     {'q': f'handle:{handle}'})['blogs']['nodes']
         if found:
             print('Blog exists', handle)
+            ids[handle] = found[0]['id']
             continue
         print('Create blog', handle)
         d = gql('''mutation($blog: BlogCreateInput!) { blogCreate(blog: $blog) { blog { id handle } userErrors { field message } } }''',
                 {'blog': {'title': title, 'handle': handle}})
         user_errors(d.get('blogCreate') if d else None, handle)
+        if d and d['blogCreate']['blog']:
+            ids[handle] = d['blogCreate']['blog']['id']
+    return ids
+
+
+def setup_articles(blog_id, theme_id):
+    articles = json.load(open(os.path.join(ROOT, 'import', 'articles.json'), encoding='utf-8'))
+    for a in articles:
+        found = gql('query($q: String!) { articles(first: 1, query: $q) { nodes { id handle } } }',
+                    {'q': f"handle:{a['handle']}"})['articles']['nodes']
+        if found:
+            if PUBLISH_ARTICLES:
+                print('Publish article', a['handle'])
+                d = gql('''mutation($id: ID!, $article: ArticleUpdateInput!) { articleUpdate(id: $id, article: $article) {
+                    article { id } userErrors { field message } } }''', {'id': found[0]['id'], 'article': {'isPublished': True}})
+                user_errors(d.get('articleUpdate') if d else None, a['handle'])
+            else:
+                print('Article exists', a['handle'])
+            continue
+        print('Create article', a['handle'], '(published)' if PUBLISH_ARTICLES else '(hidden)')
+        image = THEME_ASSET.format(store=STORE, theme=theme_id.split('/')[-1], file=a['image'])
+        d = gql('''mutation($article: ArticleCreateInput!) { articleCreate(article: $article) {
+            article { id handle } userErrors { field message } } }''', {'article': {
+                'blogId': blog_id, 'title': a['title'], 'handle': a['handle'], 'body': a['body'],
+                'summary': a['summary'], 'tags': [a['tag']], 'author': {'name': 'Lelap care team'},
+                'image': {'url': image, 'altText': a['title']}, 'isPublished': PUBLISH_ARTICLES}})
+        user_errors(d.get('articleCreate') if d else None, a['handle'])
+
+
+def setup_policies():
+    body = open(os.path.join(ROOT, 'import', 'subscription-policy.html'), encoding='utf-8').read()
+    current = gql('{ shop { shopPolicies { type body } } }')['shop']['shopPolicies']
+    if any(p['type'] == 'SUBSCRIPTION_POLICY' and p['body'].strip() for p in current):
+        print('Subscription policy exists')
+        return
+    print('Create subscription policy')
+    d = gql('''mutation($p: ShopPolicyInput!) { shopPolicyUpdate(shopPolicy: $p) {
+        shopPolicy { id } userErrors { field message } } }''', {'p': {'type': 'SUBSCRIPTION_POLICY', 'body': body}})
+    user_errors(d.get('shopPolicyUpdate') if d else None, 'subscription policy')
 
 
 if __name__ == '__main__':
@@ -153,5 +200,8 @@ if __name__ == '__main__':
     print('Live theme:', theme_name, theme_id)
     setup_products(theme_id, online_store_publication())
     setup_pages()
-    setup_blogs()
+    blogs = setup_blogs()
+    if blogs.get('sleep-library'):
+        setup_articles(blogs['sleep-library'], theme_id)
+    setup_policies()
     print('Done.')

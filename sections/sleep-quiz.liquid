@@ -96,7 +96,7 @@
             {%- if opt_count > 0 -%}
               {%- for opt in section.blocks offset: opt_from limit: opt_count -%}
                 <label class="quiz-option" style="--i: {{ forloop.index0 }}" {{ opt.shopify_attributes }}>
-                  <input type="{% if q_type == 'multi' %}checkbox{% else %}radio{% endif %}" name="{{ q_id }}" value="{{ opt.settings.label | escape }}" data-formula="{{ opt.settings.formula }}" data-points="{{ opt.settings.points }}" data-outcome="{{ opt.settings.outcome }}" data-notfit="{{ opt.settings.not_fit_reason | escape }}" data-reason-title="{{ opt.settings.reason_title | escape }}" data-reason-text="{{ opt.settings.reason_text | escape }}">
+                  <input type="{% if q_type == 'multi' %}checkbox{% else %}radio{% endif %}" name="{{ q_id }}" value="{{ opt.settings.label | escape }}" data-formula="{{ opt.settings.formula }}" data-points="{{ opt.settings.points }}" data-outcome="{{ opt.settings.outcome }}" data-notfit="{{ opt.settings.not_fit_reason | escape }}" data-notfit-advice="{{ opt.settings.not_fit_advice | escape }}" data-reason-title="{{ opt.settings.reason_title | escape }}" data-reason-text="{{ opt.settings.reason_text | escape }}">
                   <span class="quiz-option__mark" aria-hidden="true">{% render 'icon', name: 'check', color: '#ffffff', size: 12 %}</span>
                   <span class="quiz-option__text">
                     <span class="quiz-option__label">{{ opt.settings.label | escape }}</span>
@@ -156,7 +156,7 @@
           {%- liquid
             assign p = all_products[h]
             assign has_p = false
-            if p.id != nil
+            if p != blank and p.id
               assign has_p = true
             endif
             assign f_line = formula_texts[forloop.index0] | split: '|'
@@ -254,7 +254,7 @@
             {%- liquid
               assign p = all_products[h]
               assign has_p = false
-              if p.id != nil
+              if p != blank and p.id
                 assign has_p = true
               endif
               assign f_line = formula_texts[forloop.index0] | split: '|'
@@ -289,7 +289,7 @@
             {%- assign sg_title = parts[0] | strip -%}
             {%- if sg_title != blank -%}
               {%- case forloop.index -%}{%- when 1 -%}{%- assign ic = 'chat' -%}{%- when 2 -%}{%- assign ic = 'moon' -%}{%- else -%}{%- assign ic = 'undo' -%}{%- endcase -%}
-              <li><span class="quiz-notfit__mini">{% render 'icon', name: ic, size: 16, color: '#1d2142' %}</span><span><strong>{{ sg_title | escape }}</strong>{% if parts[1] != blank %}<small>{{ parts[1] | strip | escape }}</small>{% endif %}</span></li>
+              <li><span class="quiz-notfit__mini">{% render 'icon', name: ic, size: 16, color: '#1d2142' %}</span><span><strong{% if forloop.first %} data-quiz-advice-title{% endif %}>{{ sg_title | escape }}</strong><small{% if forloop.first %} data-quiz-advice-text{% endif %}{% if parts[1] == blank %} hidden{% endif %}>{{ parts[1] | strip | escape }}</small></span></li>
             {%- endif -%}
           {%- endfor -%}
         </ul>
@@ -567,8 +567,8 @@
       "type": "textarea",
       "id": "suggestions",
       "label": "Suggestions",
-      "info": "One per line (chat, moon, undo icons). Format: title | text",
-      "default": "Talk to your own doctor or midwife | They can suggest sleep support that’s safe during pregnancy.\nTry a calmer wind-down | Our free guide covers routines that help without supplements.\nCome back anytime | If your situation changes, you can retake the assessment."
+      "info": "One per line (chat, moon, undo icons). Format: title | text. The first line is replaced by the answer’s “Not a fit advice” when set.",
+      "default": "Talk to your own doctor | They can suggest sleep support that’s safe for you.\nTry a calmer wind-down | Our free guide covers routines that help without supplements.\nCome back anytime | If your situation changes, you can retake the assessment."
     },
     {
       "type": "text",
@@ -743,6 +743,12 @@
           "type": "text",
           "id": "not_fit_reason",
           "label": "Not a fit reason"
+        },
+        {
+          "type": "text",
+          "id": "not_fit_advice",
+          "label": "Not a fit advice",
+          "info": "Replaces the first suggestion. Format: title | text"
         },
         {
           "type": "text",
