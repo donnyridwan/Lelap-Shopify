@@ -1,0 +1,74 @@
+/*
+ * ------------------------------------------------------------
+ * Lelap theme — generated from the Figma design. Edit in the
+ * theme editor; changes made there are saved back to this file.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-policy-page",
+      "settings": {
+        "updated": "Last updated 1 October 2026",
+        "notice": "Template. Final wording must be reviewed by your legal counsel before launch.",
+        "fallback_title": "Telehealth consent",
+        "fallback_content": "<h2>1. What telehealth means at lelap</h2><p>Lelap connects you with independent licensed doctors who review your sleep assessment online. There is no video call or waiting room: a doctor reads your answers, decides whether a formula and dose are right for you, and can message you through your account.</p><h2>2. What you agree to share</h2><p>To give safe advice, the doctor needs accurate information about how you sleep, your medical history, the medication you take and whether you are pregnant or breastfeeding. You agree to answer truthfully and to update your health profile if anything changes.</p><h2>3. What the doctor can decide</h2><p>Your doctor may approve your plan, adjust the formula or dose, ask for more information, or decline the order and recommend in-person care. If an order is declined, you receive a full refund.</p><h2>4. Limits of online care</h2><p>Telehealth is not a replacement for an in-person examination or emergency care. If you have trouble sleeping for more than three weeks, or experience a severe reaction or side effect, contact a doctor in person or emergency services.</p><h2>5. Privacy</h2><p>Your answers are encrypted and only shared with the doctor reviewing your plan and the care team supporting them. See our Privacy Policy for how we store and protect your health information.</p><h2>6. Your consent</h2><p>By completing the sleep assessment and placing an order, you consent to receive care from lelap's independent doctors through this online service. You can withdraw consent at any time by cancelling your subscription and contacting our care team.</p>"
+      },
+      "blocks": {
+        "p1": {
+          "type": "policy",
+          "settings": {
+            "title": "Terms of Service",
+            "link": "/pages/terms-of-service"
+          }
+        },
+        "p2": {
+          "type": "policy",
+          "settings": {
+            "title": "Privacy Policy",
+            "link": "/policies/privacy-policy"
+          }
+        },
+        "p3": {
+          "type": "policy",
+          "settings": {
+            "title": "Telehealth Consent",
+            "link": "/pages/telehealth-consent"
+          }
+        },
+        "p4": {
+          "type": "policy",
+          "settings": {
+            "title": "Subscription Terms",
+            "link": "/policies/subscription-policy"
+          }
+        },
+        "p5": {
+          "type": "policy",
+          "settings": {
+            "title": "Shipping Policy",
+            "link": "/policies/shipping-policy"
+          }
+        },
+        "p6": {
+          "type": "policy",
+          "settings": {
+            "title": "Refunds & 30-Night Promise",
+            "link": "/policies/refund-policy"
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6"
+      ]
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

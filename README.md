@@ -32,7 +32,7 @@ Online Store 2.0 theme for **lelap** (doctor-guided sleep gummies), built 1:1 fr
    | Help center | `help` | `page.help` |
    | Refund request | `refund-request` | `page.refund` |
    | Terms of service | `terms-of-service` | `page.terms` |
-   | Telehealth consent | `telehealth-consent` | `page.terms` |
+   | Telehealth consent | `telehealth-consent` | `page.telehealth` |
    | Sleep quiz | `sleep-quiz` | `page.quiz` |
    | Care team (account) | `care-team` | `page.account-care-team` |
    | Profile & health (account) | `profile-health` | `page.account-profile` |

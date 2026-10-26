@@ -28,7 +28,7 @@ PAGES = [
     ('Help', 'help', 'help'),
     ('Sleep quiz', 'sleep-quiz', 'quiz'),
     ('Terms of service', 'terms-of-service', 'terms'),
-    ('Telehealth consent', 'telehealth-consent', 'terms'),
+    ('Telehealth consent', 'telehealth-consent', 'telehealth'),
     ('Refund request', 'refund-request', 'refund'),
     ('Care team', 'care-team', 'account-care-team'),
     ('Profile & health', 'profile-health', 'account-profile'),
